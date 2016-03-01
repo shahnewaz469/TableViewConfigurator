@@ -1,0 +1,25 @@
+{
+  "name": "TableViewConfigurator",
+  "version": "0.1.0",
+  "summary": "A short description of TableViewConfigurator.",
+  "description": "",
+  "homepage": "https://github.com/<GITHUB_USERNAME>/TableViewConfigurator",
+  "license": "MIT",
+  "authors": {
+    "John Volk": "john.t.volk@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/<GITHUB_USERNAME>/TableViewConfigurator.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "requires_arc": true,
+  "source_files": "Pod/Classes/**/*",
+  "resource_bundles": {
+    "TableViewConfigurator": [
+      "Pod/Assets/*.png"
+    ]
+  }
+}
