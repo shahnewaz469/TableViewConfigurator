@@ -33,6 +33,9 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         var configurations = [SectionConfiguration]();
         
+        // TODO: There should be a way to avoid passing cellConfigurator. subclassing UITableViewCell or something
+        // TODO: Need a way to turn rows / sections on / off depending on a Bool closure.
+        
         configurations.append(ConstantSectionConfiguration(rowConfigurations: [ConstantRowConfiguration<UITableViewCell>(cellReuseId: MainViewController.BASIC_CELL_REUSE_ID,
             cellConfigurator: { (cell) -> Void in
                 cell.textLabel?.text = "Basic Cell";
