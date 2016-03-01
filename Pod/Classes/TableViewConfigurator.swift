@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class TableViewConfigurator: NSObject, UITableViewDataSource {
+public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableViewDelegate {
 
     private let sectionConfigurations: [SectionConfiguration];
     
@@ -23,18 +23,26 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource {
     }
     
     public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return calculateSectionValue(section, handler: { (sectionConfiguration, localizedSection) in
+        return performSectionOperation(section, handler: { (sectionConfiguration, localizedSection) in
             return sectionConfiguration.numberOfRowsInSection(localizedSection);
         });
     }
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        return calculateSectionValue(indexPath.section, handler: { (sectionConfiguration, localizedSection) in
+        return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) in
             return sectionConfiguration.cellForRowAtIndexPath(NSIndexPath(forRow: indexPath.row, inSection: localizedSection), inTableView: tableView);
         });
     }
     
-    private func calculateSectionValue<T>(section: Int, handler: (sectionConfiguration: SectionConfiguration, localizedSection: Int) -> T) -> T {
+    public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) in
+            if sectionConfiguration.didSelectRowAtIndexPath(NSIndexPath(forRow: indexPath.row, inSection: localizedSection)) {
+                tableView.deselectRowAtIndexPath(indexPath, animated: true);
+            }
+        })
+    }
+    
+    private func performSectionOperation<T>(section: Int, handler: (sectionConfiguration: SectionConfiguration, localizedSection: Int) -> T) -> T {
         var sectionTotal = 0;
         
         for sectionConfiguration in self.sectionConfigurations {

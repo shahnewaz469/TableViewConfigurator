@@ -9,7 +9,7 @@
 import UIKit
 import TableViewConfigurator
 
-class MainViewController: UIViewController {
+class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     private static let BASIC_CELL_REUSE_ID = "basicCell";
     private static let PERSON_CELL_REUSE_ID = "personCell";
@@ -33,34 +33,50 @@ class MainViewController: UIViewController {
         
         var configurations = [SectionConfiguration]();
         
-        configurations.append(ConstantSectionConfiguration(rowConfigurations: [ConstantRowConfiguration<UITableViewCell>(rowSpan: 1, cellReuseId: MainViewController.BASIC_CELL_REUSE_ID,
+        configurations.append(ConstantSectionConfiguration(rowConfigurations: [ConstantRowConfiguration<UITableViewCell>(cellReuseId: MainViewController.BASIC_CELL_REUSE_ID,
             cellConfigurator: { (cell) -> Void in
                 cell.textLabel?.text = "Basic Cell";
-        })]));
+        }, selectionHandler: nil)]));
         
-        configurations.append(ModelSectionConfiguration<PersonCell, Person>(models: self.people, cellReuseId: MainViewController.PERSON_CELL_REUSE_ID,
+        configurations.append(ModelSectionConfiguration<PersonCell, Person>(modelSections: [self.people], cellReuseId: MainViewController.PERSON_CELL_REUSE_ID,
             cellConfigurator: { (cell, model) -> Void in
                 cell.configure(model);
+            }, selectionHandler: { (model) -> Bool in
+                print(model);
+                return true;
         }));
         
-        configurations.append(ConstantSectionConfiguration(rowConfigurations: [ConstantRowConfiguration<UITableViewCell>(rowSpan: 1, cellReuseId: MainViewController.DISCLOSURE_CELL_REUSE_ID,
+        configurations.append(ConstantSectionConfiguration(rowConfigurations: [ConstantRowConfiguration<UITableViewCell>(cellReuseId: MainViewController.DISCLOSURE_CELL_REUSE_ID,
             cellConfigurator: { (cell) -> Void in
                 cell.textLabel?.text = "Disclosure Cell";
                 cell.accessoryType = .DisclosureIndicator;
-        })]));
+        }, selectionHandler: nil)]));
         
         configurations.append(ModelSectionConfiguration<AnimalCell, Animal>(modelSections: self.animals, cellReuseId: MainViewController.ANIMAL_CELL_REUSE_ID,
             cellConfigurator: { (cell, model) -> Void in
                 cell.configure(model);
+            }, selectionHandler: { (model) -> Bool in
+                print(model);
+                return true;
         }));
         
         self.configurator = TableViewConfigurator(sectionConfigurations: configurations);
-        
-        self.tableView.dataSource = self.configurator;
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning();
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return self.configurator.numberOfSectionsInTableView(tableView);
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.configurator.tableView(tableView, numberOfRowsInSection: section);
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        return self.configurator.tableView(tableView, cellForRowAtIndexPath: indexPath);
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        self.configurator.tableView(tableView, didSelectRowAtIndexPath: indexPath);
     }
 }
 

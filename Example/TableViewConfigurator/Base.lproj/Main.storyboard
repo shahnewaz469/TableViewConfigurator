@@ -128,6 +128,10 @@
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="lot-pr-HQp" id="MaB-10-4fl"/>
+                                    <outlet property="delegate" destination="lot-pr-HQp" id="6wg-p3-nTo"/>
+                                </connections>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

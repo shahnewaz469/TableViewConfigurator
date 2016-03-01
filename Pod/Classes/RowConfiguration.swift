@@ -12,5 +12,6 @@ public protocol RowConfiguration {
     
     func numberOfRows() -> Int;
     func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell;
+    func didSelectRow(row: Int) -> Bool;
     
 }

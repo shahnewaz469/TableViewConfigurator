@@ -13,25 +13,15 @@ public class ModelSectionConfiguration<CellType: UITableViewCell, ModelType>: Se
     private let modelSections: [[ModelType]];
     private let rowConfigurations: [ModelRowConfiguration<CellType, ModelType>];
     
-    public init(models: [ModelType], cellReuseId: String, cellConfigurator: (cell: CellType, model: ModelType) -> Void) {
-        self.modelSections = [models];
-        self.rowConfigurations = [ModelRowConfiguration<CellType, ModelType>(models: models,
-            cellReuseId: cellReuseId, cellConfigurator: cellConfigurator)];
+    public init(modelSections: [[ModelType]], cellReuseId: String, cellConfigurator: ((cell: CellType, model: ModelType) -> Void)?,
+        selectionHandler: ((model: ModelType) -> Bool)?) {
+            self.modelSections = modelSections;
+            self.rowConfigurations = modelSections.map({ (modelSection) -> ModelRowConfiguration<CellType, ModelType> in
+                return ModelRowConfiguration<CellType, ModelType>(models: modelSection,
+                    cellReuseId: cellReuseId, cellConfigurator: cellConfigurator, selectionHandler: selectionHandler);
+            })
     }
-    
-    public init(modelSections: [[ModelType]], cellReuseId: String, cellConfigurator: (cell: CellType, model: ModelType) -> Void) {
-        self.modelSections = modelSections;
-        
-        var rowConfigurations = [ModelRowConfiguration<CellType, ModelType>]();
-        
-        for modelSection in modelSections {
-            rowConfigurations.append(ModelRowConfiguration<CellType, ModelType>(models: modelSection,
-                cellReuseId: cellReuseId, cellConfigurator: cellConfigurator))
-        }
-        
-        self.rowConfigurations = rowConfigurations;
-    }
-    
+
     public func numberOfSections() -> Int {
         return self.modelSections.count;
     }
@@ -42,5 +32,9 @@ public class ModelSectionConfiguration<CellType: UITableViewCell, ModelType>: Se
     
     public func cellForRowAtIndexPath(indexPath: NSIndexPath, inTableView tableView: UITableView) -> UITableViewCell {
         return self.rowConfigurations[indexPath.section].cellForRow(indexPath.row, inTableView: tableView);
+    }
+    
+    public func didSelectRowAtIndexPath(indexPath: NSIndexPath) -> Bool {
+        return self.rowConfigurations[indexPath.section].didSelectRow(indexPath.row);
     }
 }

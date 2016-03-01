@@ -13,5 +13,6 @@ public protocol SectionConfiguration {
     func numberOfSections() -> Int;
     func numberOfRowsInSection(section: Int) -> Int;
     func cellForRowAtIndexPath(indexPath: NSIndexPath, inTableView tableView: UITableView) -> UITableViewCell;
+    func didSelectRowAtIndexPath(indexPath: NSIndexPath) -> Bool;
     
 }
