@@ -33,8 +33,6 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     override func viewDidLoad() {
         super.viewDidLoad();
         
-        // TODO: measureHeight()
-        
         let basicSection = SectionConfiguration(rowConfiguration:
             ConstantRowConfiguration<BasicCell>()
                 .height(44.0));
@@ -97,13 +95,15 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 })
                 .height(44.0), disclosureRow]);
         
-        self.configurator = TableViewConfigurator(sectionConfigurations: [basicSection, peopleSection, disclosureSection]);
+        var configurations = [basicSection, peopleSection, disclosureSection];
 
         for animalClass in animals {
-            self.configurator.addConfiguration(SectionConfiguration(rowConfiguration:
+            configurations.append(SectionConfiguration(rowConfiguration:
                 ModelRowConfiguration<AnimalCell, Animal>(models: animalClass)
                     .height(44.0)));
         }
+        
+        self.configurator = TableViewConfigurator(sectionConfigurations: configurations);
     }
 
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
