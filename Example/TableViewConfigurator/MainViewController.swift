@@ -34,33 +34,31 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     override func viewDidLoad() {
         super.viewDidLoad();
         
-        // TODO: hideWhen()
-        // TODO: height()
+        self.tableView.rowHeight = UITableViewAutomaticDimension;
+        
         // TODO: measureHeight()
-        // TODO: estimatedHeight()
         
         self.configurator = TableViewConfigurator();
         
         self.configurator.addConfiguration(SectionConfiguration(rowConfiguration:
-            ConstantRowConfiguration<BasicCell>()));
+            ConstantRowConfiguration<BasicCell>()
+                .height(44.0)));
         
         self.configurator.addConfiguration(SectionConfiguration(rowConfigurations:
-            [ConstantRowConfiguration<SwitchCell>()
-                .additionalCellConfig({ (cell) -> Void in
-                    cell.hideSwitch.on = self.hidePerson;
-                    cell.switchChangedHandler = { (on) -> Void in
-                        self.hidePerson = on;
-                        self.tableView.reloadData();
-                    }
-                }),
-                ModelRowConfiguration<PersonCell, Person>(models: self.people)
-                    .hideWhen({ (model) -> Bool in
-                        return self.hidePerson && model.firstName == "Hide";
-                    })
-                    .selectionHandler({ (model) -> Bool in
-                        return false;
-                    })
-            ]));
+            [ModelRowConfiguration<PersonCell, Person>(models: self.people)
+                .selectionHandler({ (model) -> Bool in
+                    return true;
+                })
+                .height(44.0)]));
+        
+        let disclosureConfig = ConstantRowConfiguration<DisclosureCell>()
+            .additionalCellConfig({ (cell) -> Void in
+                cell.accessoryType = .DisclosureIndicator;
+            })
+            .hideWhen({ () -> Bool in
+                return self.hideDisclosure;
+            })
+            .height(44.0);
         
         self.configurator.addConfiguration(SectionConfiguration(rowConfigurations:
             [ConstantRowConfiguration<SwitchCell>()
@@ -68,20 +66,22 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                     cell.hideSwitch.on = self.hideDisclosure;
                     cell.switchChangedHandler = { (on) -> Void in
                         self.hideDisclosure = on;
-                        self.tableView.reloadData();
+                        
+                        if let indexPath = self.configurator.indexPathForRowConfiguration(disclosureConfig) {
+                            if on {
+                                self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic);
+                            } else {
+                                self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic);
+                            }
+                        }
                     }
-                }),
-                ConstantRowConfiguration<DisclosureCell>()
-                    .additionalCellConfig({ (cell) -> Void in
-                        cell.accessoryType = .DisclosureIndicator;
-                    }).hideWhen({ () -> Bool in
-                        return self.hideDisclosure;
-                    })
-            ]));
+                })
+                .height(44.0), disclosureConfig]));
 
         for animalClass in animals {
             self.configurator.addConfiguration(SectionConfiguration(rowConfiguration:
-                ModelRowConfiguration<AnimalCell, Animal>(models: animalClass)));
+                ModelRowConfiguration<AnimalCell, Animal>(models: animalClass)
+                    .height(44.0)));
         }
     }
 
@@ -95,6 +95,10 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         return self.configurator.tableView(tableView, cellForRowAtIndexPath: indexPath);
+    }
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return self.configurator.tableView(tableView, heightForRowAtIndexPath: indexPath);
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {

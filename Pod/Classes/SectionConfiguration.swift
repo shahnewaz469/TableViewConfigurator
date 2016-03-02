@@ -20,6 +20,12 @@ public class SectionConfiguration {
         self.rowConfigurations = [rowConfiguration];
     }
     
+    public func rowIndexForRowConfiguration(rowConfiguration: RowConfiguration) -> Int? {
+        return self.rowConfigurations.indexOf { (candidate) -> Bool in
+            return rowConfiguration === candidate;
+        };
+    }
+    
     public func numberOfSections() -> Int {
         return 1;
     }
@@ -30,14 +36,26 @@ public class SectionConfiguration {
         }
     }
     
-    public func cellForRowAtIndexPath(indexPath: NSIndexPath, inTableView tableView: UITableView) -> UITableViewCell? {
-        return performRowOperation(indexPath.row, handler: { (rowConfiguration, localizedRow) -> UITableViewCell? in
+    public func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
+        return performRowOperation(row, handler: { (rowConfiguration, localizedRow) -> UITableViewCell? in
             return rowConfiguration.cellForRow(localizedRow, inTableView: tableView);
         });
     }
     
-    public func didSelectRowAtIndexPath(indexPath: NSIndexPath) -> Bool? {
-        return performRowOperation(indexPath.row, handler: { (rowConfiguration, localizedRow) -> Bool? in
+    public func heightForRow(row: Int) -> CGFloat? {
+        return performRowOperation(row, handler: { (rowConfiguration, localizedRow) -> CGFloat? in
+            return rowConfiguration.heightForRow(localizedRow);
+        });
+    }
+    
+    public func estimatedHeightForRow(row: Int) -> CGFloat? {
+        return performRowOperation(row, handler: { (rowConfiguration, localizedRow) -> CGFloat? in
+            return rowConfiguration.estimatedHeightForRow(localizedRow);
+        });
+    }
+    
+    public func didSelectRow(row: Int) -> Bool? {
+        return performRowOperation(row, handler: { (rowConfiguration, localizedRow) -> Bool? in
             return rowConfiguration.didSelectRow(localizedRow);
         });
     }

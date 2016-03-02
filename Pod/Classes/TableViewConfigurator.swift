@@ -32,6 +32,16 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         self.sectionConfigurations.removeAll(keepCapacity: true);
     }
     
+    public func indexPathForRowConfiguration(rowConfiguration: RowConfiguration) -> NSIndexPath? {
+        for i in 0 ..< self.sectionConfigurations.count {
+            if let rowIndex = self.sectionConfigurations[i].rowIndexForRowConfiguration(rowConfiguration) {
+                return NSIndexPath(forRow: rowIndex, inSection: i);
+            }
+        }
+        
+        return nil;
+    }
+    
     public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return self.sectionConfigurations.reduce(0) { (totalSections, sectionConfiguration) -> Int in
             return totalSections + sectionConfiguration.numberOfSections();
@@ -46,7 +56,7 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) in
-            if let cell = sectionConfiguration.cellForRowAtIndexPath(NSIndexPath(forRow: indexPath.row, inSection: localizedSection), inTableView: tableView) {
+            if let cell = sectionConfiguration.cellForRow(indexPath.row, inTableView: tableView) {
                 return cell;
             }
             
@@ -54,9 +64,29 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         });
     }
     
+    public func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) -> CGFloat in
+            if let height = sectionConfiguration.heightForRow(indexPath.row) {
+                return height;
+            }
+            
+            fatalError("Couldn't calculate height at indexPath \(indexPath).");
+        });
+    }
+    
+    public func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) -> CGFloat in
+            if let estimatedHeight = sectionConfiguration.estimatedHeightForRow(indexPath.row) {
+                return estimatedHeight;
+            }
+            
+            fatalError("Couldn't calculate estimatedHeight at indexPath \(indexPath).");
+        });
+    }
+    
     public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) in
-            if sectionConfiguration.didSelectRowAtIndexPath(NSIndexPath(forRow: indexPath.row, inSection: localizedSection)) ?? true {
+            if sectionConfiguration.didSelectRow(indexPath.row) ?? true {
                 tableView.deselectRowAtIndexPath(indexPath, animated: true);
             }
         })
