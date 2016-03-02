@@ -76,6 +76,14 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         for animalClass in animals {
             configurations.append(SectionConfiguration(rowConfiguration:
                 ModelRowConfiguration<AnimalCell, Animal>(models: animalClass)
+                    .selectionHandler({ (model) -> Bool in
+                        let alertController = UIAlertController(title: model.name, message: model.scientificName, preferredStyle: .Alert);
+                        
+                        alertController.addAction(UIAlertAction(title: "Dismiss", style: .Default, handler: nil));
+                        self.presentViewController(alertController, animated: true, completion: nil);
+                        
+                        return true;
+                    })
                     .height(44.0)));
         }
         
