@@ -30,13 +30,17 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) in
-            return sectionConfiguration.cellForRowAtIndexPath(NSIndexPath(forRow: indexPath.row, inSection: localizedSection), inTableView: tableView);
+            if let cell = sectionConfiguration.cellForRowAtIndexPath(NSIndexPath(forRow: indexPath.row, inSection: localizedSection), inTableView: tableView) {
+                return cell;
+            }
+            
+            fatalError("Couldn't dequeue cell at indexPath \(indexPath).");
         });
     }
     
     public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) in
-            if sectionConfiguration.didSelectRowAtIndexPath(NSIndexPath(forRow: indexPath.row, inSection: localizedSection)) {
+            if sectionConfiguration.didSelectRowAtIndexPath(NSIndexPath(forRow: indexPath.row, inSection: localizedSection)) ?? true {
                 tableView.deselectRowAtIndexPath(indexPath, animated: true);
             }
         })

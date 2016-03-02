@@ -7,16 +7,19 @@
 //
 
 import UIKit
+import TableViewConfigurator
 
-class AnimalCell: UITableViewCell {
-
-    typealias ModelType = Animal;
+class AnimalCell: UITableViewCell, ModelConfigurableTableViewCell {
     
     @IBOutlet var nameLabel: UILabel!;
     @IBOutlet var scientificNameLabel: UILabel!;
     
-    func configure(animal: Animal) {
-        self.nameLabel.text = animal.name
-        self.scientificNameLabel.text = animal.scientificName;
+    override class func buildReuseIdentifier() -> String? {
+        return "animalCell";
+    }
+    
+    func configure(model: Animal) {
+        self.nameLabel.text = model.name
+        self.scientificNameLabel.text = model.scientificName;
     }
 }

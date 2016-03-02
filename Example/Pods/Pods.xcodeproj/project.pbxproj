@@ -10,11 +10,10 @@
 		02BF9988CC94A01E7CB6049694390020 /* NMBExceptionCapture.h in Headers */ = {isa = PBXBuildFile; fileRef = 40FBD52025077E5788ADCE71EF040393 /* NMBExceptionCapture.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		02DF5BD2281BA10105A447F95FCF8CF3 /* BeLogical.swift in Sources */ = {isa = PBXBuildFile; fileRef = B011BCE1507648ECA7586CF7DABF6F4C /* BeLogical.swift */; };
 		0309FC581C84FFF400F30EE5 /* RowConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0309FC571C84FFF400F30EE5 /* RowConfiguration.swift */; };
-		03811D5F1C86041A00056610 /* SectionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03811D5E1C86041A00056610 /* SectionConfiguration.swift */; };
-		03811D611C86049E00056610 /* ModelSectionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03811D601C86049E00056610 /* ModelSectionConfiguration.swift */; };
 		0396ADB51C85E97000A79F9E /* ModelRowConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0396ADB41C85E97000A79F9E /* ModelRowConfiguration.swift */; };
+		03E361071C873D0B00F29C57 /* ConfigurableTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E361061C873D0B00F29C57 /* ConfigurableTableViewCell.swift */; };
 		03EB68C31C84D93B008D6678 /* TableViewConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB68C21C84D92A008D6678 /* TableViewConfigurator.swift */; };
-		03EB68C71C84E099008D6678 /* ConstantSectionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB68C61C84E099008D6678 /* ConstantSectionConfiguration.swift */; };
+		03EB68C71C84E099008D6678 /* SectionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB68C61C84E099008D6678 /* SectionConfiguration.swift */; };
 		03EB68CB1C84E95D008D6678 /* ConstantRowConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB68CA1C84E95D008D6678 /* ConstantRowConfiguration.swift */; };
 		0492354DA7EF0C9068F7B4E8F74001B0 /* FailureMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25961731CF4F7537A5ECD61A000A150C /* FailureMessage.swift */; };
 		0A6E71555F55082003A3DB2B03CA85D2 /* AsyncMatcherWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D42013D479CDC11E7882C7C0045B66B /* AsyncMatcherWrapper.swift */; };
@@ -142,11 +141,10 @@
 		021C4E135FFC34B4A74FD0560A640549 /* Quick.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = Quick.modulemap; sourceTree = "<group>"; };
 		02297D692E5CA1B1C21CCCDA1853BA44 /* BeNil.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BeNil.swift; path = Nimble/Matchers/BeNil.swift; sourceTree = "<group>"; };
 		0309FC571C84FFF400F30EE5 /* RowConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RowConfiguration.swift; sourceTree = "<group>"; };
-		03811D5E1C86041A00056610 /* SectionConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionConfiguration.swift; sourceTree = "<group>"; };
-		03811D601C86049E00056610 /* ModelSectionConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelSectionConfiguration.swift; sourceTree = "<group>"; };
 		0396ADB41C85E97000A79F9E /* ModelRowConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelRowConfiguration.swift; sourceTree = "<group>"; };
+		03E361061C873D0B00F29C57 /* ConfigurableTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurableTableViewCell.swift; sourceTree = "<group>"; };
 		03EB68C21C84D92A008D6678 /* TableViewConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewConfigurator.swift; sourceTree = "<group>"; };
-		03EB68C61C84E099008D6678 /* ConstantSectionConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstantSectionConfiguration.swift; sourceTree = "<group>"; };
+		03EB68C61C84E099008D6678 /* SectionConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionConfiguration.swift; sourceTree = "<group>"; };
 		03EB68CA1C84E95D008D6678 /* ConstantRowConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstantRowConfiguration.swift; sourceTree = "<group>"; };
 		0B0C995C72A44C02A9369FA2BDB1F4FF /* AssertionDispatcher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AssertionDispatcher.swift; path = Nimble/Adapters/AssertionDispatcher.swift; sourceTree = "<group>"; };
 		0B53DF3C5B85F993313E9FA09386C167 /* BeAKindOf.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BeAKindOf.swift; path = Nimble/Matchers/BeAKindOf.swift; sourceTree = "<group>"; };
@@ -399,12 +397,11 @@
 		584AE8429310912ADCF5E049607DCB5B /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				03E361061C873D0B00F29C57 /* ConfigurableTableViewCell.swift */,
 				03EB68CA1C84E95D008D6678 /* ConstantRowConfiguration.swift */,
-				03EB68C61C84E099008D6678 /* ConstantSectionConfiguration.swift */,
 				0396ADB41C85E97000A79F9E /* ModelRowConfiguration.swift */,
-				03811D601C86049E00056610 /* ModelSectionConfiguration.swift */,
 				0309FC571C84FFF400F30EE5 /* RowConfiguration.swift */,
-				03811D5E1C86041A00056610 /* SectionConfiguration.swift */,
+				03EB68C61C84E099008D6678 /* SectionConfiguration.swift */,
 				03EB68C21C84D92A008D6678 /* TableViewConfigurator.swift */,
 			);
 			path = Classes;
@@ -813,12 +810,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03811D611C86049E00056610 /* ModelSectionConfiguration.swift in Sources */,
-				03811D5F1C86041A00056610 /* SectionConfiguration.swift in Sources */,
-				03EB68C71C84E099008D6678 /* ConstantSectionConfiguration.swift in Sources */,
+				03EB68C71C84E099008D6678 /* SectionConfiguration.swift in Sources */,
 				0309FC581C84FFF400F30EE5 /* RowConfiguration.swift in Sources */,
 				03EB68CB1C84E95D008D6678 /* ConstantRowConfiguration.swift in Sources */,
 				9BBDE869D63BDACB2DA73FB24749D1DC /* TableViewConfigurator-dummy.m in Sources */,
+				03E361071C873D0B00F29C57 /* ConfigurableTableViewCell.swift in Sources */,
 				03EB68C31C84D93B008D6678 /* TableViewConfigurator.swift in Sources */,
 				0396ADB51C85E97000A79F9E /* ModelRowConfiguration.swift in Sources */,
 			);

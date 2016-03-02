@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03682BF11C876DA00010CE0F /* BasicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03682BF01C876DA00010CE0F /* BasicCell.swift */; };
+		03682BF31C876DAF0010CE0F /* DisclosureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03682BF21C876DAF0010CE0F /* DisclosureCell.swift */; };
 		03811D5D1C85FBA000056610 /* AnimalCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03811D5C1C85FBA000056610 /* AnimalCell.swift */; };
 		0396ADB31C85E77700A79F9E /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0396ADB21C85E77700A79F9E /* Person.swift */; };
 		0396ADB71C85EB3300A79F9E /* PersonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0396ADB61C85EB3300A79F9E /* PersonCell.swift */; };
@@ -32,6 +34,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		03682BF01C876DA00010CE0F /* BasicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicCell.swift; sourceTree = "<group>"; };
+		03682BF21C876DAF0010CE0F /* DisclosureCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisclosureCell.swift; sourceTree = "<group>"; };
 		03811D5C1C85FBA000056610 /* AnimalCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimalCell.swift; sourceTree = "<group>"; };
 		0396ADB21C85E77700A79F9E /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		0396ADB61C85EB3300A79F9E /* PersonCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersonCell.swift; sourceTree = "<group>"; };
@@ -81,6 +85,8 @@
 			isa = PBXGroup;
 			children = (
 				03811D5C1C85FBA000056610 /* AnimalCell.swift */,
+				03682BF01C876DA00010CE0F /* BasicCell.swift */,
+				03682BF21C876DAF0010CE0F /* DisclosureCell.swift */,
 				0396ADB61C85EB3300A79F9E /* PersonCell.swift */,
 			);
 			path = Cells;
@@ -391,7 +397,9 @@
 				03811D5D1C85FBA000056610 /* AnimalCell.swift in Sources */,
 				0396ADB71C85EB3300A79F9E /* PersonCell.swift in Sources */,
 				0396ADB31C85E77700A79F9E /* Person.swift in Sources */,
+				03682BF31C876DAF0010CE0F /* DisclosureCell.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				03682BF11C876DA00010CE0F /* BasicCell.swift in Sources */,
 				0396ADB91C85F0C200A79F9E /* Animal.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

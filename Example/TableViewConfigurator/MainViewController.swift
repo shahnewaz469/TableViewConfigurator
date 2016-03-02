@@ -31,37 +31,27 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     override func viewDidLoad() {
         super.viewDidLoad();
         
-        var configurations = [SectionConfiguration]();
-        
-        // TODO: There should be a way to avoid passing cellConfigurator. subclassing UITableViewCell or something
         // TODO: Need a way to turn rows / sections on / off depending on a Bool closure.
         
-        configurations.append(ConstantSectionConfiguration(rowConfigurations: [ConstantRowConfiguration<UITableViewCell>(cellReuseId: MainViewController.BASIC_CELL_REUSE_ID,
-            cellConfigurator: { (cell) -> Void in
-                cell.textLabel?.text = "Basic Cell";
-        }, selectionHandler: nil)]));
+        let basicConfig = SectionConfiguration(rowConfigurations: [ConstantRowConfiguration<BasicCell>()]);
         
-        configurations.append(ModelSectionConfiguration<PersonCell, Person>(modelSections: [self.people], cellReuseId: MainViewController.PERSON_CELL_REUSE_ID,
-            cellConfigurator: { (cell, model) -> Void in
-                cell.configure(model);
-            }, selectionHandler: { (model) -> Bool in
-                print(model);
-                return true;
-        }));
+        let personConfig = SectionConfiguration(rowConfigurations:
+            [ModelRowConfiguration<PersonCell, Person>(models: self.people)
+                .selectionHandler({ (model) -> Bool in
+                    return false;
+                })]);
         
-        configurations.append(ConstantSectionConfiguration(rowConfigurations: [ConstantRowConfiguration<UITableViewCell>(cellReuseId: MainViewController.DISCLOSURE_CELL_REUSE_ID,
-            cellConfigurator: { (cell) -> Void in
-                cell.textLabel?.text = "Disclosure Cell";
-                cell.accessoryType = .DisclosureIndicator;
-        }, selectionHandler: nil)]));
+        let disclosureConfig = SectionConfiguration(rowConfigurations:
+            [ConstantRowConfiguration<DisclosureCell>()
+                .additionalCellConfig({ (cell) -> Void in
+                    cell.accessoryType = .DisclosureIndicator;
+                })]);
         
-        configurations.append(ModelSectionConfiguration<AnimalCell, Animal>(modelSections: self.animals, cellReuseId: MainViewController.ANIMAL_CELL_REUSE_ID,
-            cellConfigurator: { (cell, model) -> Void in
-                cell.configure(model);
-            }, selectionHandler: { (model) -> Bool in
-                print(model);
-                return true;
-        }));
+        var configurations = [basicConfig, personConfig, disclosureConfig];
+        
+        for animalClass in animals {
+            configurations.append(SectionConfiguration(rowConfigurations: [ModelRowConfiguration<AnimalCell, Animal>(models: animalClass)]));
+        }
         
         self.configurator = TableViewConfigurator(sectionConfigurations: configurations);
     }

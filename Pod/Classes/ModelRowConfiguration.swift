@@ -8,42 +8,48 @@
 
 import UIKit
 
-public class ModelRowConfiguration<CellType: UITableViewCell, ModelType>: RowConfiguration {
+public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, ModelType where CellType: UITableViewCell, CellType.Model == ModelType>: RowConfiguration {
 
     private let models: [ModelType];
-    private let cellReuseId: String;
-    private let cellConfigurator: ((cell: CellType, model: ModelType) -> Void)?;
-    private let selectionHandler: ((model: ModelType) -> Bool)?;
     
-    public init(models: [ModelType], cellReuseId: String, cellConfigurator: ((cell: CellType, model: ModelType) -> Void)?,
-        selectionHandler: ((model: ModelType) -> Bool)?) {
-            self.models = models
-            self.cellReuseId = cellReuseId;
-            self.cellConfigurator = cellConfigurator;
-            self.selectionHandler = selectionHandler;
+    private var additionalCellConfig: ((cell: CellType, model: ModelType) -> Void)?;
+    private var selectionHandler: ((model: ModelType) -> Bool)?;
+    
+    public init(models: [ModelType]) {
+        self.models = models;
     }
     
-    public func numberOfRows() -> Int {
+    public func additionalCellConfig(additionalCellConfig: (cell: CellType, model: ModelType) -> Void) -> Self {
+        self.additionalCellConfig = additionalCellConfig; return self;
+    }
+    
+    public func selectionHandler(selectionHandler: (model: ModelType) -> Bool) -> Self {
+        self.selectionHandler = selectionHandler; return self;
+    }
+    
+    override public func numberOfRows() -> Int {
         return self.models.count;
     }
     
-    public func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCellWithIdentifier(self.cellReuseId) as? CellType {
-            if let cellConfigurator = self.cellConfigurator {
-                cellConfigurator(cell: cell, model: self.models[row]);
+    override public func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
+        let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier();
+        
+        if let reuseId = reuseId {
+            if let cell = tableView.dequeueReusableCellWithIdentifier(reuseId) as? CellType {
+                if let additionalCellConfig = self.additionalCellConfig {
+                    additionalCellConfig(cell: cell, model: self.models[row]);
+                }
+                
+                cell.configure(self.models[row]);
+                
+                return cell;
             }
-            
-            return cell;
         }
         
-        fatalError("Couldn't dequeue cell for reuse identifier \(self.cellReuseId).");
+        return nil;
     }
     
-    public func didSelectRow(row: Int) -> Bool {
-        if let selectionHandler = self.selectionHandler {
-            return selectionHandler(model: self.models[row]);
-        } else {
-            return false;
-        }
+    override public func didSelectRow(row: Int) -> Bool? {
+        return self.selectionHandler?(model: self.models[row]);
     }
 }

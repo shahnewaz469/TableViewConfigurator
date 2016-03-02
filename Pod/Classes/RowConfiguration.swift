@@ -8,10 +8,16 @@
 
 import Foundation
 
-public protocol RowConfiguration {
+public class RowConfiguration {
     
-    func numberOfRows() -> Int;
-    func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell;
-    func didSelectRow(row: Int) -> Bool;
+    internal var cellReuseId: String?;
+    
+    public func cellReuseId(cellReuseId: String) -> Self {
+        self.cellReuseId = cellReuseId; return self;
+    }
+    
+    public func numberOfRows() -> Int { return 0; }
+    public func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? { return nil };
+    public func didSelectRow(row: Int) -> Bool? { return nil };
     
 }

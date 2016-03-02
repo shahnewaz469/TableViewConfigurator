@@ -8,40 +8,44 @@
 
 import UIKit
 
-public class ConstantRowConfiguration<CellType: UITableViewCell>: RowConfiguration {
+public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where CellType: UITableViewCell>: RowConfiguration {
     
-    private let cellReuseId: String;
-    private let cellConfigurator: ((cell: CellType) -> Void)?;
-    private let selectionHandler: (() -> Bool)?;
+    private var additionalCellConfig: ((cell: CellType) -> Void)?;
+    private var selectionHandler: (() -> Bool)?;
     
-    public init(cellReuseId: String, cellConfigurator: ((cell: CellType) -> Void)?,
-        selectionHandler: (() -> Bool)?) {
-            self.cellReuseId = cellReuseId;
-            self.cellConfigurator = cellConfigurator;
-            self.selectionHandler = selectionHandler;
+    public override init() { }
+    
+    public func additionalCellConfig(additionalCellConfig: (cell: CellType) -> Void) -> Self {
+        self.additionalCellConfig = additionalCellConfig; return self;
     }
     
-    public func numberOfRows() -> Int {
+    public func selectionHandler(selectionHandler: () -> Bool) -> Self {
+        self.selectionHandler = selectionHandler; return self;
+    }
+    
+    override public func numberOfRows() -> Int {
         return 1;
     }
     
-    public func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCellWithIdentifier(self.cellReuseId) as? CellType {
-            if let cellConfigurator = self.cellConfigurator {
-                cellConfigurator(cell: cell);
+    override public func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
+        let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier();
+        
+        if let reuseId = reuseId {
+            if let cell = tableView.dequeueReusableCellWithIdentifier(reuseId) as? CellType {
+                if let additionalCellConfig = self.additionalCellConfig {
+                    additionalCellConfig(cell: cell);
+                }
+                
+                cell.configure();
+                
+                return cell;
             }
-            
-            return cell;
         }
         
-        fatalError("Couldn't dequeue cell for reuse identifier \(self.cellReuseId).");
+        return nil;
     }
     
-    public func didSelectRow(row: Int) -> Bool {
-        if let selectionHandler = self.selectionHandler {
-            return selectionHandler();
-        }
-        
-        return false;
+    override public func didSelectRow(row: Int) -> Bool? {
+        return self.selectionHandler?();
     }
 }

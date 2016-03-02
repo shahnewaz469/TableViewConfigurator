@@ -7,14 +7,19 @@
 //
 
 import UIKit
+import TableViewConfigurator
 
-class PersonCell: UITableViewCell {
+class PersonCell: UITableViewCell, ModelConfigurableTableViewCell {
     
     @IBOutlet var nameLabel: UILabel!;
     @IBOutlet var ageLabel: UILabel!;
     
-    func configure(person: Person) {
-        self.nameLabel.text = "\(person.firstName) \(person.lastName)";
-        self.ageLabel.text = "Age \(person.age)";
+    override class func buildReuseIdentifier() -> String? {
+        return "personCell";
+    }
+    
+    func configure(model: Person) {
+        self.nameLabel.text = "\(model.firstName) \(model.lastName)";
+        self.ageLabel.text = "Age \(model.age)";
     }
 }
