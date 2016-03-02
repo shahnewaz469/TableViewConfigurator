@@ -41,9 +41,6 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             .hideWhen({ (model) -> Bool in
                 return self.hidePeople;
             })
-            .selectionHandler({ (model) -> Bool in
-                return true;
-            })
             .height(44.0);
         
         let peopleSection = SectionConfiguration(rowConfigurations:
@@ -66,34 +63,13 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 })
                 .height(44.0), peopleRows]);
         
-        let disclosureRow = ConstantRowConfiguration<DisclosureCell>()
-            .additionalCellConfig({ (cell) -> Void in
-                cell.accessoryType = .DisclosureIndicator;
-            })
-            .hideWhen({ () -> Bool in
-                return self.hideDisclosure;
-            })
-            .height(44.0);
-        
-        let disclosureSection = SectionConfiguration(rowConfigurations:
-            [ConstantRowConfiguration<SwitchCell>()
-                .additionalCellConfig({ (cell) -> Void in
-                    let hideIndexPaths = self.configurator.indexPathsForRowConfiguration(disclosureRow);
-                    
-                    cell.hideSwitch.on = self.hideDisclosure;
-                    cell.switchChangedHandler = { (on) -> Void in
-                        self.hideDisclosure = on;
-                        
-                        if let indexPaths = hideIndexPaths {
-                            if on {
-                                self.tableView.deleteRowsAtIndexPaths(indexPaths, withRowAnimation: .Automatic);
-                            } else {
-                                self.tableView.insertRowsAtIndexPaths(indexPaths, withRowAnimation: .Automatic);
-                            }
-                        }
-                    }
+        let disclosureSection = SectionConfiguration(rowConfiguration:
+            ConstantRowConfiguration<DisclosureCell>()
+                .selectionHandler({ () -> Bool in
+                    self.performSegueWithIdentifier("showDetails", sender: self);
+                    return true;
                 })
-                .height(44.0), disclosureRow]);
+                .height(44.0));
         
         var configurations = [basicSection, peopleSection, disclosureSection];
 
