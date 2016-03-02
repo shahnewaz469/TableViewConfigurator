@@ -10,10 +10,26 @@ import UIKit
 
 public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableViewDelegate {
 
-    private let sectionConfigurations: [SectionConfiguration];
+    private var sectionConfigurations: [SectionConfiguration];
+    
+    public override init() {
+        self.sectionConfigurations = [];
+    }
     
     public init(sectionConfigurations: [SectionConfiguration]) {
         self.sectionConfigurations = sectionConfigurations;
+    }
+    
+    public func addConfiguration(sectionConfiguration: SectionConfiguration) {
+        self.sectionConfigurations.append(sectionConfiguration);
+    }
+    
+    public func insertConfiguration(sectionConfiguration: SectionConfiguration, atIndex index: Int) {
+        self.sectionConfigurations.insert(sectionConfiguration, atIndex: index);
+    }
+    
+    public func removeAllConfigurations() {
+        self.sectionConfigurations.removeAll(keepCapacity: true);
     }
     
     public func numberOfSectionsInTableView(tableView: UITableView) -> Int {

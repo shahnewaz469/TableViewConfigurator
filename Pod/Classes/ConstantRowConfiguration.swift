@@ -12,6 +12,7 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
     
     private var additionalCellConfig: ((cell: CellType) -> Void)?;
     private var selectionHandler: (() -> Bool)?;
+    private var hideWhen: (() -> Bool)?
     
     public override init() { }
     
@@ -23,7 +24,15 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
         self.selectionHandler = selectionHandler; return self;
     }
     
+    public func hideWhen(hideWhen: () -> Bool) -> Self {
+        self.hideWhen = hideWhen; return self;
+    }
+    
     override public func numberOfRows() -> Int {
+        if let hideWhen = self.hideWhen {
+            return hideWhen() ? 0 : 1;
+        }
+        
         return 1;
     }
     

@@ -127,6 +127,39 @@
                                             <outlet property="scientificNameLabel" destination="Gd6-My-Rls" id="WIn-WY-Yke"/>
                                         </connections>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="switchCell" rowHeight="44" id="9ls-nx-W1n" customClass="SwitchCell" customModule="TableViewConfigurator_Example" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="226" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9ls-nx-W1n" id="fGI-5l-eiV">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ocu-wx-ugv">
+                                                    <rect key="frame" x="20" y="11" width="503" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="z8k-o7-r3v">
+                                                    <rect key="frame" x="531" y="6" width="51" height="31"/>
+                                                    <connections>
+                                                        <action selector="switchValueChanged:" destination="9ls-nx-W1n" eventType="valueChanged" id="PhW-Up-5QL"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="z8k-o7-r3v" secondAttribute="trailing" constant="20" id="Edp-a3-6RF"/>
+                                                <constraint firstItem="ocu-wx-ugv" firstAttribute="centerY" secondItem="fGI-5l-eiV" secondAttribute="centerY" id="Jlj-an-QIc"/>
+                                                <constraint firstItem="z8k-o7-r3v" firstAttribute="centerY" secondItem="fGI-5l-eiV" secondAttribute="centerY" id="Kv0-iJ-bgF"/>
+                                                <constraint firstItem="z8k-o7-r3v" firstAttribute="leading" secondItem="ocu-wx-ugv" secondAttribute="trailing" constant="8" id="ULG-CB-0MH"/>
+                                                <constraint firstItem="ocu-wx-ugv" firstAttribute="leading" secondItem="fGI-5l-eiV" secondAttribute="leading" constant="20" id="h9d-g0-eSz"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="hideLabel" destination="ocu-wx-ugv" id="cr9-Oi-KFQ"/>
+                                            <outlet property="hideSwitch" destination="z8k-o7-r3v" id="3Dv-pv-DeX"/>
+                                        </connections>
+                                    </tableViewCell>
                                 </prototypes>
                                 <connections>
                                     <outlet property="dataSource" destination="lot-pr-HQp" id="MaB-10-4fl"/>

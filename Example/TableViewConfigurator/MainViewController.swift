@@ -19,9 +19,12 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     @IBOutlet var tableView: UITableView!;
     
     private var configurator: TableViewConfigurator!;
+    private var hidePerson = false;
+    private var hideDisclosure = false;
     
-    private let people = [Person(firstName: "John", lastName: "Doe", age: 32),
-        Person(firstName: "Alex", lastName: "Great", age: 50),
+    private let people = [Person(firstName: "John", lastName: "Doe", age: 50),
+        Person(firstName: "Alex", lastName: "Great", age: 32),
+        Person(firstName: "Hide", lastName: "Me", age: 26),
         Person(firstName: "Napoléon", lastName: "Bonaparte", age: 18)];
     
     private let animals = [[Animal(name: "American Bullfrog", scientificName: "Rana catesbeiana"), Animal(name: "Fire Salamander", scientificName: "Salamandra salamandra")],
@@ -31,29 +34,55 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     override func viewDidLoad() {
         super.viewDidLoad();
         
-        // TODO: Need a way to turn rows / sections on / off depending on a Bool closure.
+        // TODO: hideWhen()
+        // TODO: height()
+        // TODO: measureHeight()
+        // TODO: estimatedHeight()
         
-        let basicConfig = SectionConfiguration(rowConfigurations: [ConstantRowConfiguration<BasicCell>()]);
+        self.configurator = TableViewConfigurator();
         
-        let personConfig = SectionConfiguration(rowConfigurations:
-            [ModelRowConfiguration<PersonCell, Person>(models: self.people)
-                .selectionHandler({ (model) -> Bool in
-                    return false;
-                })]);
+        self.configurator.addConfiguration(SectionConfiguration(rowConfiguration:
+            ConstantRowConfiguration<BasicCell>()));
         
-        let disclosureConfig = SectionConfiguration(rowConfigurations:
-            [ConstantRowConfiguration<DisclosureCell>()
+        self.configurator.addConfiguration(SectionConfiguration(rowConfigurations:
+            [ConstantRowConfiguration<SwitchCell>()
                 .additionalCellConfig({ (cell) -> Void in
-                    cell.accessoryType = .DisclosureIndicator;
-                })]);
+                    cell.hideSwitch.on = self.hidePerson;
+                    cell.switchChangedHandler = { (on) -> Void in
+                        self.hidePerson = on;
+                        self.tableView.reloadData();
+                    }
+                }),
+                ModelRowConfiguration<PersonCell, Person>(models: self.people)
+                    .hideWhen({ (model) -> Bool in
+                        return self.hidePerson && model.firstName == "Hide";
+                    })
+                    .selectionHandler({ (model) -> Bool in
+                        return false;
+                    })
+            ]));
         
-        var configurations = [basicConfig, personConfig, disclosureConfig];
-        
+        self.configurator.addConfiguration(SectionConfiguration(rowConfigurations:
+            [ConstantRowConfiguration<SwitchCell>()
+                .additionalCellConfig({ (cell) -> Void in
+                    cell.hideSwitch.on = self.hideDisclosure;
+                    cell.switchChangedHandler = { (on) -> Void in
+                        self.hideDisclosure = on;
+                        self.tableView.reloadData();
+                    }
+                }),
+                ConstantRowConfiguration<DisclosureCell>()
+                    .additionalCellConfig({ (cell) -> Void in
+                        cell.accessoryType = .DisclosureIndicator;
+                    }).hideWhen({ () -> Bool in
+                        return self.hideDisclosure;
+                    })
+            ]));
+
         for animalClass in animals {
-            configurations.append(SectionConfiguration(rowConfigurations: [ModelRowConfiguration<AnimalCell, Animal>(models: animalClass)]));
+            self.configurator.addConfiguration(SectionConfiguration(rowConfiguration:
+                ModelRowConfiguration<AnimalCell, Animal>(models: animalClass)));
         }
-        
-        self.configurator = TableViewConfigurator(sectionConfigurations: configurations);
     }
 
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {

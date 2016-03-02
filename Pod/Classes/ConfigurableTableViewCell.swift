@@ -16,9 +16,9 @@ public protocol ConfigurableTableViewCell {
 
 public protocol ModelConfigurableTableViewCell {
 
-    typealias Model;
+    typealias ModelType;
     
-    func configure(model: Model);
+    func configure(model: ModelType);
     
 }
 

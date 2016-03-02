@@ -16,6 +16,10 @@ public class SectionConfiguration {
         self.rowConfigurations = rowConfigurations;
     }
     
+    public init(rowConfiguration: RowConfiguration) {
+        self.rowConfigurations = [rowConfiguration];
+    }
+    
     public func numberOfSections() -> Int {
         return 1;
     }
