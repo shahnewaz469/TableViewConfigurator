@@ -32,10 +32,16 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         self.sectionConfigurations.removeAll(keepCapacity: true);
     }
     
-    public func indexPathForRowConfiguration(rowConfiguration: RowConfiguration) -> NSIndexPath? {
+    public func indexPathsForRowConfiguration(rowConfiguration: RowConfiguration) -> [NSIndexPath]? {
         for i in 0 ..< self.sectionConfigurations.count {
-            if let rowIndex = self.sectionConfigurations[i].rowIndexForRowConfiguration(rowConfiguration) {
-                return NSIndexPath(forRow: rowIndex, inSection: i);
+            if let rowIndices = self.sectionConfigurations[i].rowIndexSetForRowConfiguration(rowConfiguration) {
+                var result = [NSIndexPath]();
+                
+                for index in rowIndices {
+                    result.append(NSIndexPath(forRow: index, inSection: i));
+                }
+                
+                return result;
             }
         }
         

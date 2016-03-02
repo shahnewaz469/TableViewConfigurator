@@ -20,10 +20,20 @@ public class SectionConfiguration {
         self.rowConfigurations = [rowConfiguration];
     }
     
-    public func rowIndexForRowConfiguration(rowConfiguration: RowConfiguration) -> Int? {
-        return self.rowConfigurations.indexOf { (candidate) -> Bool in
-            return rowConfiguration === candidate;
-        };
+    public func rowIndexSetForRowConfiguration(rowConfiguration: RowConfiguration) -> NSIndexSet? {
+        var currentIndex = 0;
+        
+        for candidate in self.rowConfigurations {
+            let numberOfRows = candidate.numberOfRows();
+            
+            if rowConfiguration === candidate {
+                return NSIndexSet(indexesInRange: NSMakeRange(currentIndex, numberOfRows));
+            }
+            
+            currentIndex += numberOfRows;
+        }
+        
+        return nil;
     }
     
     public func numberOfSections() -> Int {

@@ -19,12 +19,11 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     @IBOutlet var tableView: UITableView!;
     
     private var configurator: TableViewConfigurator!;
-    private var hidePerson = false;
+    private var hidePeople = false;
     private var hideDisclosure = false;
     
     private let people = [Person(firstName: "John", lastName: "Doe", age: 50),
         Person(firstName: "Alex", lastName: "Great", age: 32),
-        Person(firstName: "Hide", lastName: "Me", age: 26),
         Person(firstName: "Napoléon", lastName: "Bonaparte", age: 18)];
     
     private let animals = [[Animal(name: "American Bullfrog", scientificName: "Rana catesbeiana"), Animal(name: "Fire Salamander", scientificName: "Salamandra salamandra")],
@@ -34,24 +33,42 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     override func viewDidLoad() {
         super.viewDidLoad();
         
-        self.tableView.rowHeight = UITableViewAutomaticDimension;
-        
         // TODO: measureHeight()
         
-        self.configurator = TableViewConfigurator();
-        
-        self.configurator.addConfiguration(SectionConfiguration(rowConfiguration:
+        let basicSection = SectionConfiguration(rowConfiguration:
             ConstantRowConfiguration<BasicCell>()
-                .height(44.0)));
+                .height(44.0));
         
-        self.configurator.addConfiguration(SectionConfiguration(rowConfigurations:
-            [ModelRowConfiguration<PersonCell, Person>(models: self.people)
-                .selectionHandler({ (model) -> Bool in
-                    return true;
+        let peopleRows = ModelRowConfiguration<PersonCell, Person>(models: self.people)
+            .hideWhen({ (model) -> Bool in
+                return self.hidePeople;
+            })
+            .selectionHandler({ (model) -> Bool in
+                return true;
+            })
+            .height(44.0);
+        
+        let peopleSection = SectionConfiguration(rowConfigurations:
+            [ConstantRowConfiguration<SwitchCell>()
+                .additionalCellConfig({ (cell) -> Void in
+                    let hideIndexPaths = self.configurator.indexPathsForRowConfiguration(peopleRows);
+                    
+                    cell.hideSwitch.on = self.hidePeople;
+                    cell.switchChangedHandler = { (on) -> Void in
+                        self.hidePeople = on;
+                        
+                        if let indexPaths = hideIndexPaths {
+                            if on {
+                                self.tableView.deleteRowsAtIndexPaths(indexPaths, withRowAnimation: .Top);
+                            } else {
+                                self.tableView.insertRowsAtIndexPaths(indexPaths, withRowAnimation: .Top);
+                            }
+                        }
+                    }
                 })
-                .height(44.0)]));
+                .height(44.0), peopleRows]);
         
-        let disclosureConfig = ConstantRowConfiguration<DisclosureCell>()
+        let disclosureRow = ConstantRowConfiguration<DisclosureCell>()
             .additionalCellConfig({ (cell) -> Void in
                 cell.accessoryType = .DisclosureIndicator;
             })
@@ -60,23 +77,27 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             })
             .height(44.0);
         
-        self.configurator.addConfiguration(SectionConfiguration(rowConfigurations:
+        let disclosureSection = SectionConfiguration(rowConfigurations:
             [ConstantRowConfiguration<SwitchCell>()
                 .additionalCellConfig({ (cell) -> Void in
+                    let hideIndexPaths = self.configurator.indexPathsForRowConfiguration(disclosureRow);
+                    
                     cell.hideSwitch.on = self.hideDisclosure;
                     cell.switchChangedHandler = { (on) -> Void in
                         self.hideDisclosure = on;
                         
-                        if let indexPath = self.configurator.indexPathForRowConfiguration(disclosureConfig) {
+                        if let indexPaths = hideIndexPaths {
                             if on {
-                                self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic);
+                                self.tableView.deleteRowsAtIndexPaths(indexPaths, withRowAnimation: .Automatic);
                             } else {
-                                self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic);
+                                self.tableView.insertRowsAtIndexPaths(indexPaths, withRowAnimation: .Automatic);
                             }
                         }
                     }
                 })
-                .height(44.0), disclosureConfig]));
+                .height(44.0), disclosureRow]);
+        
+        self.configurator = TableViewConfigurator(sectionConfigurations: [basicSection, peopleSection, disclosureSection]);
 
         for animalClass in animals {
             self.configurator.addConfiguration(SectionConfiguration(rowConfiguration:
