@@ -27,10 +27,10 @@ public class RowConfiguration {
         self.estimatedHeight = estimatedHeight; return self;
     }
     
-    public func numberOfRows() -> Int { return 0; }
-    public func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? { return nil };
-    public func heightForRow(row: Int) -> CGFloat? { return self.height }
-    public func estimatedHeightForRow(row: Int) -> CGFloat? { return self.estimatedHeight }
-    public func didSelectRow(row: Int) -> Bool? { return nil };
+    internal func numberOfRows() -> Int { return 0; }
+    internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? { return nil };
+    internal func heightForRow(row: Int) -> CGFloat? { return self.height }
+    internal func estimatedHeightForRow(row: Int) -> CGFloat? { return self.estimatedHeight }
+    internal func didSelectRow(row: Int) -> Bool? { return nil };
     
 }

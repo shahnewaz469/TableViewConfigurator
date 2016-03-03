@@ -12,7 +12,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
 
     private let models: [ModelType];
     
-    private var additionalCellConfig: ((cell: CellType, model: ModelType) -> Void)?;
+    private var additionalConfig: ((cell: CellType, model: ModelType) -> Void)?;
     private var selectionHandler: ((model: ModelType) -> Bool)?;
     private var hideWhen: ((model: ModelType) -> Bool)?;
     
@@ -20,8 +20,8 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         self.models = models;
     }
     
-    public func additionalCellConfig(additionalCellConfig: (cell: CellType, model: ModelType) -> Void) -> Self {
-        self.additionalCellConfig = additionalCellConfig; return self;
+    public func additionalConfig(additionalConfig: (cell: CellType, model: ModelType) -> Void) -> Self {
+        self.additionalConfig = additionalConfig; return self;
     }
     
     public func selectionHandler(selectionHandler: (model: ModelType) -> Bool) -> Self {
@@ -32,7 +32,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         self.hideWhen = hideWhen; return self;
     }
     
-    override public func numberOfRows() -> Int {
+    override internal func numberOfRows() -> Int {
         if let hideWhen = self.hideWhen {
             return self.models.reduce(0) { (totalRows, model) -> Int in
                 return totalRows + (hideWhen(model: model) ? 0 : 1);
@@ -42,15 +42,15 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         return self.models.count;
     }
     
-    override public func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
+    override internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
         let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier();
         
         if let reuseId = reuseId {
             if let cell = tableView.dequeueReusableCellWithIdentifier(reuseId) as? CellType {
                 let model = self.selectModelForRow(row);
                     
-                if let additionalCellConfig = self.additionalCellConfig {
-                    additionalCellConfig(cell: cell, model: model);
+                if let additionalConfig = self.additionalConfig {
+                    additionalConfig(cell: cell, model: model);
                 }
                 
                 cell.configure(model);
@@ -62,7 +62,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         return nil;
     }
     
-    override public func didSelectRow(row: Int) -> Bool? {
+    override internal func didSelectRow(row: Int) -> Bool? {
         return self.selectionHandler?(model: self.models[row]);
     }
     

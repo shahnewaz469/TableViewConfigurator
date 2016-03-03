@@ -45,7 +45,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         let peopleSection = SectionConfiguration(rowConfigurations:
             [ConstantRowConfiguration<SwitchCell>()
-                .additionalCellConfig({ (cell) -> Void in
+                .additionalConfig({ (cell) -> Void in
                     let hideIndexPaths = self.configurator.indexPathsForRowConfiguration(peopleRows);
                     
                     cell.hideSwitch.on = self.hidePeople;

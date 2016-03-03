@@ -10,14 +10,14 @@ import UIKit
 
 public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where CellType: UITableViewCell>: RowConfiguration {
     
-    private var additionalCellConfig: ((cell: CellType) -> Void)?;
+    private var additionalConfig: ((cell: CellType) -> Void)?;
     private var selectionHandler: (() -> Bool)?;
     private var hideWhen: (() -> Bool)?
     
     public override init() { }
     
-    public func additionalCellConfig(additionalCellConfig: (cell: CellType) -> Void) -> Self {
-        self.additionalCellConfig = additionalCellConfig; return self;
+    public func additionalConfig(additionalConfig: (cell: CellType) -> Void) -> Self {
+        self.additionalConfig = additionalConfig; return self;
     }
     
     public func selectionHandler(selectionHandler: () -> Bool) -> Self {
@@ -28,7 +28,7 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
         self.hideWhen = hideWhen; return self;
     }
     
-    override public func numberOfRows() -> Int {
+    override internal func numberOfRows() -> Int {
         if let hideWhen = self.hideWhen {
             return hideWhen() ? 0 : 1;
         }
@@ -36,25 +36,31 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
         return 1;
     }
     
-    override public func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
-        let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier();
-        
-        if let reuseId = reuseId {
-            if let cell = tableView.dequeueReusableCellWithIdentifier(reuseId) as? CellType {
-                if let additionalCellConfig = self.additionalCellConfig {
-                    additionalCellConfig(cell: cell);
+    override internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
+        if row == 0 {
+            let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier();
+            
+            if let reuseId = reuseId {
+                if let cell = tableView.dequeueReusableCellWithIdentifier(reuseId) as? CellType {
+                    if let additionalConfig = self.additionalConfig {
+                        additionalConfig(cell: cell);
+                    }
+                    
+                    cell.configure();
+                    
+                    return cell;
                 }
-                
-                cell.configure();
-                
-                return cell;
             }
         }
         
         return nil;
     }
     
-    override public func didSelectRow(row: Int) -> Bool? {
-        return self.selectionHandler?();
+    override internal func didSelectRow(row: Int) -> Bool? {
+        if row == 0 {
+            return self.selectionHandler?();
+        }
+        
+        return nil;
     }
 }
