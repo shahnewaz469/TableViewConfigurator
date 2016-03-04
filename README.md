@@ -48,7 +48,7 @@ At this point `rowConfiguration` is ready to be used and will have its `configur
 
 ##### .cellResuseId()
 
-You can specify the reuse identifier that should be used for the cell in your controller.
+You can specify the reuse identifier that should be used for the cell in your controller rather than in your `ConfigurableTableViewCell` implementation.
 
 `let rowConfiguration = ConstantRowConfiguration<BasicCell>().cellReuseId("someReuseId");`
 
@@ -63,9 +63,39 @@ let anotherConfiguration = ConstantRowConfiguration<BasicCell>().estimatedHeight
 
 ##### .additionalConfig()
 
+You can specify additional configuration that should happen on the cell in your controller context after its `configure()` method has been called.
+
+```swift
+let rowConfiguration = ConstantRowConfiguration<BasicCell>()
+    .additionalConfig({ (cell) -> Void in
+        cell.accessoryType = self.someControllerFlag ? .DisclosureIndicator : .None;
+    });
+```
+
 ##### .selectionHandler()
 
+You can specify code that should be called in your controller context when the row in the `ConstantRowConfiguration` is selected.
+
+```swift
+let rowConfiguration = ConstantRowConfiguration<BasicCell>()
+    .selectionHandler({ () -> Bool in
+        self.performSegueWithIdentifier("someSegue", sender: self);
+        return true;
+    });
+```
+
+The return value of the selection handler determines whether or not the row is deselected.
+
 ##### .hideWhen()
+
+Finally, you can specify a closure that indicates when the row in the `ConstantRowConfiguration` should be hidden.
+
+```swift
+let rowConfiguration = ConstantRowConfiguration<BasicCell>()
+    .hideWhen({ () -> Bool in
+        return self.shouldHideRow;
+    });
+```
 
 ## Author
 
