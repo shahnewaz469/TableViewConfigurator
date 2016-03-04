@@ -5,20 +5,7 @@
 [![License](https://img.shields.io/cocoapods/l/TableViewConfigurator.svg?style=flat)](http://cocoapods.org/pods/TableViewConfigurator)
 [![Platform](https://img.shields.io/cocoapods/p/TableViewConfigurator.svg?style=flat)](http://cocoapods.org/pods/TableViewConfigurator)
 
-A declarative approach to UITableView configuration that enables you to create thinner controllers with less of the error-prone delegate code that typically results from implementing UITableView-based interfaces.
-
-## Installation
-
-TableViewConfigurator is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
-
-```ruby
-pod "TableViewConfigurator"
-```
-
-## Usage
-
-When implementing UITableView-based UIs, it is very often the case that you end up with controller objects polluted with many lines of annoying and error-prone implementations of `UITableViewDataSource` and `UITableViewDelegate`.
+When implementing UITableView-based UIs, it is very often the case that you end up with controller objects containing many lines of brittle and error-prone implementations of `UITableViewDataSource` and `UITableViewDelegate`.
 
 For example:
 
@@ -45,18 +32,18 @@ func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexP
             
     case self.selectedItemSection:
             
-        ...nonsense...
+        ...
             
     case scheduleSection:
         switch indexPath.row {
                 
         case 0:
               
-            ...more nonsense...
+            ...
                 
         case 1:
                 
-            ...still more...
+            ...
                 
         case 2:
               
@@ -76,7 +63,7 @@ func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexP
         let things = self.thingCollections[indexPath.section - 1].things;
             
         if things.count > 0 {
-            ...ugh...
+            ...
         } else {
             ...
         }
@@ -106,13 +93,26 @@ func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSInde
         let things = self.thingCollections[indexPath.section - 1].things;
             
         if things.count > 0 {
-            self.performSegueWithIdentifier("showMediaItems", sender: self);
+            self.performSegueWithIdentifier("showThings", sender: self);
         }
     }
         
     tableView.deselectRowAtIndexPath(indexPath, animated: true);
 }
 ```
+
+`TableViewConfigurator` was created to eliminate this kind of code and replace it with a more declartive approach.
+
+## Installation
+
+TableViewConfigurator is available through [CocoaPods](http://cocoapods.org). To install
+it, simply add the following line to your Podfile:
+
+```ruby
+pod "TableViewConfigurator"
+```
+
+## Usage
 
 `TableViewConfigurator` is based around the concepts of `RowConfiguration` and `SectionConfiguration`.
 
