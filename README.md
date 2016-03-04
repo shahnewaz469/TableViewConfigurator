@@ -18,7 +18,101 @@ pod "TableViewConfigurator"
 
 ## Usage
 
-DISCUSS MAIN BENEFITS AND SHOW EXAMPLE
+When implementing UITableView-based UIs, it is very often the case that you end up with controller objects polluted with many lines of annoying and error-prone implementations of `UITableViewDataSource` and `UITableViewDelegate`.
+
+For example:
+
+```swift
+func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    switch section {
+            
+    case selectedItemSection:
+        return 1;
+            
+    case fooSection:
+        return self.showFoo ? 4 : 1;
+            
+    default:
+        let thingCount = self.thingCollections[section - 1].things.count;
+            
+        return thingCount == 0 ? 1 : thingCount;
+            
+    }
+}
+    
+func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    switch indexPath.section {
+            
+    case self.selectedItemSection:
+            
+        ...nonsense...
+            
+    case scheduleSection:
+        switch indexPath.row {
+                
+        case 0:
+              
+            ...more nonsense...
+                
+        case 1:
+                
+            ...still more...
+                
+        case 2:
+              
+            ...
+                
+        case 3:
+                
+            ...
+                
+        default:
+                
+            break;
+                
+        }
+            
+    default:
+        let things = self.thingCollections[indexPath.section - 1].things;
+            
+        if things.count > 0 {
+            ...ugh...
+        } else {
+            ...
+        }
+    }
+}
+    
+func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    let section = indexPath.section;
+        
+    if section != selectedItemSection || (section == selectedItemSection && self.selectedItem == nil) {
+        ...
+    } else {
+        ...
+    }
+}
+    
+func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    switch indexPath.section {
+            
+    case selectedItemSection:
+        break;
+            
+    case scheduleSection:
+        break;
+            
+    default:
+        let things = self.thingCollections[indexPath.section - 1].things;
+            
+        if things.count > 0 {
+            self.performSegueWithIdentifier("showMediaItems", sender: self);
+        }
+    }
+        
+    tableView.deselectRowAtIndexPath(indexPath, animated: true);
+}
+```
 
 `TableViewConfigurator` is based around the concepts of `RowConfiguration` and `SectionConfiguration`.
 
@@ -101,11 +195,30 @@ let rowConfiguration = ConstantRowConfiguration<BasicCell>()
 
 #### ModelRowConfiguration
 
-A `ModelRowConfiguration` represents a group of rows that are defined by an array of some model object.
+A `ModelRowConfiguration` represents a group of rows that are defined by an array of some model object. It has all the same configuration options as `ConstantRowConfiguration` but closure callbacks you define will take an additional `model` parameter that represents the model associated with the actual row in question. Additionally, it's constructor requires two generic type parameters. The first is an implementation of `ModelConfigurableTableViewCell` and the second is a plain old Swift model object.
+
+```swift
+class PersonCell: UITableViewCell, ModelConfigurableTableViewCell {
+    
+    @IBOutlet var nameLabel: UILabel!;
+    @IBOutlet var ageLabel: UILabel!;
+    
+    override class func buildReuseIdentifier() -> String? {
+        return "personCell";
+    }
+    
+    func configure(model: Person) {
+        self.nameLabel.text = "\(model.firstName) \(model.lastName)";
+        self.ageLabel.text = "Age \(model.age)";
+    }
+}
+```
+
+`let rowConfiguration = ModelRowConfiguration<PersonCell, Person>(models: self.people);`
 
 #### SectionConfiguration
 
-The real power of `TableViewConfigurator` presents itself when you begin combining `RowConfiguration` instances into a `SectionConfiguration`. Instances of `RowConfiguration` can be grouped in any order you want, and `TableViewConfigurator` will make sure the correct results are generated for the parts of `UITableViewDataSource` and `UITableViewDelegate` that it supports.
+The real power of `TableViewConfigurator` presents itself when you begin combining `RowConfiguration` instances into a `SectionConfiguration`. Instances of `RowConfiguration` can be grouped in any order you want, and `TableViewConfigurator` will generate the correct results for the parts of `UITableViewDataSource` and `UITableViewDelegate` that it supports.
 
 For example, suppose you wanted to create a `UITableView` section that was composed of a range of N elements sandwiched between two constant rows. Normally, this would be both annoying and error-prone. With `TableViewConfigurator`, it's trivial:
 
@@ -120,9 +233,77 @@ let section = SectionConfiguration(rowConfigurations:
         ConstantRowConfiguration<BasicCell>()]);
 ```
 
-#### Putting it all together with TableViewConfigurator
+#### TableViewConfigurator
 
-Blah blah blah...
+Once you've created your `RowConfiguration` and `SectionConfiguration` instances, the final step is to put them together in your `TableViewConfigurator` and delegate to it from your controller where appropriate. `TableViewConfigurator` implements both `UITableViewDataSource` and `UITableViewDelegate` but it's unlikely that it will implement all the pieces you might need, so it's better to only delegate to it where appropriate from your controller.
+
+```swift
+override func viewDidLoad() {
+    super.viewDidLoad();
+        
+    let basicSection = SectionConfiguration(rowConfiguration:
+        ConstantRowConfiguration<BasicCell>()
+            .height(44.0));
+        
+    let peopleRows = ModelRowConfiguration<PersonCell, Person>(models: self.people)
+        .hideWhen({ (model) -> Bool in
+            return self.hidePeople;
+        })
+        .height(44.0);
+        
+    let peopleSection = SectionConfiguration(rowConfigurations:
+        [ConstantRowConfiguration<SwitchCell>()
+            .additionalConfig({ (cell) -> Void in
+                let hideIndexPaths = self.configurator.indexPathsForRowConfiguration(peopleRows);
+                    
+                cell.hideLabel.text = "Hide People";
+                cell.hideSwitch.on = self.hidePeople;
+                cell.switchChangedHandler = { (on) -> Void in
+                    self.hidePeople = on;
+                        
+                    if let indexPaths = hideIndexPaths {
+                        if on {
+                            self.tableView.deleteRowsAtIndexPaths(indexPaths, withRowAnimation: .Top);
+                        } else {
+                            self.tableView.insertRowsAtIndexPaths(indexPaths, withRowAnimation: .Top);
+                        }
+                    }
+                }
+            })
+            .height(44.0), peopleRows, ConstantRowConfiguration<BasicCell>().height(44.0)]);
+        
+    let disclosureSection = SectionConfiguration(rowConfiguration:
+        ConstantRowConfiguration<DisclosureCell>()
+            .selectionHandler({ () -> Bool in
+                self.performSegueWithIdentifier("showDetails", sender: self);
+                return true;
+            })
+            .height(44.0));
+        
+    self.configurator = TableViewConfigurator(tableView: tableView, sectionConfigurations:
+        [basicSection, peopleSection, disclosureSection]);
+}
+
+func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    return self.configurator.numberOfSectionsInTableView(tableView);
+}
+    
+func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    return self.configurator.tableView(tableView, numberOfRowsInSection: section);
+}
+    
+func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    return self.configurator.tableView(tableView, cellForRowAtIndexPath: indexPath);
+}
+    
+func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    return self.configurator.tableView(tableView, heightForRowAtIndexPath: indexPath);
+}
+    
+func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    self.configurator.tableView(tableView, didSelectRowAtIndexPath: indexPath);
+}
+```
 
 ## Author
 
