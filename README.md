@@ -5,11 +5,7 @@
 [![License](https://img.shields.io/cocoapods/l/TableViewConfigurator.svg?style=flat)](http://cocoapods.org/pods/TableViewConfigurator)
 [![Platform](https://img.shields.io/cocoapods/p/TableViewConfigurator.svg?style=flat)](http://cocoapods.org/pods/TableViewConfigurator)
 
-## Usage
-
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
-
-## Requirements
+A declarative approach to UITableView configuration that enables you to create thinner controllers with less of the error-prone delegate code that typically results from implementing UITableView-based interfaces.
 
 ## Installation
 
@@ -19,6 +15,8 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod "TableViewConfigurator"
 ```
+
+## Usage
 
 ## Author
 
