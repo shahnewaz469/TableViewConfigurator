@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		033E2D4A1C88928900CF2538 /* ConstantRowConfigurationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033E2D481C88927F00CF2538 /* ConstantRowConfigurationSpec.swift */; };
 		033E2D4D1C88952100CF2538 /* ConfigurableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033E2D4C1C88952100CF2538 /* ConfigurableCell.swift */; };
 		033E2D4F1C88BDD600CF2538 /* ImplicitReuseIdCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033E2D4E1C88BDD600CF2538 /* ImplicitReuseIdCell.swift */; };
 		03682BF11C876DA00010CE0F /* BasicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03682BF01C876DA00010CE0F /* BasicCell.swift */; };
@@ -17,10 +16,12 @@
 		0396ADB31C85E77700A79F9E /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0396ADB21C85E77700A79F9E /* Person.swift */; };
 		0396ADB71C85EB3300A79F9E /* PersonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0396ADB61C85EB3300A79F9E /* PersonCell.swift */; };
 		0396ADB91C85F0C200A79F9E /* Animal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0396ADB81C85F0C200A79F9E /* Animal.swift */; };
-		03E29C811C89E010008BCB78 /* ModelRowConfigurationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E29C801C89E010008BCB78 /* ModelRowConfigurationSpec.swift */; };
 		03E29C831C89E075008BCB78 /* ModelConfigurableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E29C821C89E075008BCB78 /* ModelConfigurableCell.swift */; };
 		03E29C881C89E126008BCB78 /* Thing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E29C871C89E126008BCB78 /* Thing.swift */; };
 		03E29C8A1C89E2B6008BCB78 /* ModelImplicitReuseIdCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E29C891C89E2B6008BCB78 /* ModelImplicitReuseIdCell.swift */; };
+		03E29C911C89FCBE008BCB78 /* ConstantRowConfigurationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E29C8E1C89FCBE008BCB78 /* ConstantRowConfigurationSpec.swift */; };
+		03E29C921C89FCBE008BCB78 /* ModelRowConfigurationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E29C8F1C89FCBE008BCB78 /* ModelRowConfigurationSpec.swift */; };
+		03E29C931C89FCBE008BCB78 /* SectionConfigurationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E29C901C89FCBE008BCB78 /* SectionConfigurationSpec.swift */; };
 		115FC34DE7CAE29512D6B474 /* Pods_TableViewConfigurator_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9B73E6A526AD2B0B739D91 /* Pods_TableViewConfigurator_Tests.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* MainViewController.swift */; };
@@ -41,7 +42,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		033E2D481C88927F00CF2538 /* ConstantRowConfigurationSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstantRowConfigurationSpec.swift; sourceTree = "<group>"; };
 		033E2D4C1C88952100CF2538 /* ConfigurableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurableCell.swift; sourceTree = "<group>"; };
 		033E2D4E1C88BDD600CF2538 /* ImplicitReuseIdCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImplicitReuseIdCell.swift; sourceTree = "<group>"; };
 		03682BF01C876DA00010CE0F /* BasicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicCell.swift; sourceTree = "<group>"; };
@@ -51,10 +51,12 @@
 		0396ADB21C85E77700A79F9E /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		0396ADB61C85EB3300A79F9E /* PersonCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersonCell.swift; sourceTree = "<group>"; };
 		0396ADB81C85F0C200A79F9E /* Animal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Animal.swift; sourceTree = "<group>"; };
-		03E29C801C89E010008BCB78 /* ModelRowConfigurationSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelRowConfigurationSpec.swift; sourceTree = "<group>"; };
 		03E29C821C89E075008BCB78 /* ModelConfigurableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelConfigurableCell.swift; sourceTree = "<group>"; };
 		03E29C871C89E126008BCB78 /* Thing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Thing.swift; sourceTree = "<group>"; };
 		03E29C891C89E2B6008BCB78 /* ModelImplicitReuseIdCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelImplicitReuseIdCell.swift; sourceTree = "<group>"; };
+		03E29C8E1C89FCBE008BCB78 /* ConstantRowConfigurationSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstantRowConfigurationSpec.swift; sourceTree = "<group>"; };
+		03E29C8F1C89FCBE008BCB78 /* ModelRowConfigurationSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelRowConfigurationSpec.swift; sourceTree = "<group>"; };
+		03E29C901C89FCBE008BCB78 /* SectionConfigurationSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionConfigurationSpec.swift; sourceTree = "<group>"; };
 		5E9B73E6A526AD2B0B739D91 /* Pods_TableViewConfigurator_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TableViewConfigurator_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* TableViewConfigurator_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableViewConfigurator_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -135,6 +137,16 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		03E29C8D1C89FCBE008BCB78 /* Specs */ = {
+			isa = PBXGroup;
+			children = (
+				03E29C8E1C89FCBE008BCB78 /* ConstantRowConfigurationSpec.swift */,
+				03E29C8F1C89FCBE008BCB78 /* ModelRowConfigurationSpec.swift */,
+				03E29C901C89FCBE008BCB78 /* SectionConfigurationSpec.swift */,
+			);
+			path = Specs;
+			sourceTree = "<group>";
+		};
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
@@ -184,9 +196,8 @@
 			isa = PBXGroup;
 			children = (
 				033E2D4B1C88950300CF2538 /* Cells */,
-				033E2D481C88927F00CF2538 /* ConstantRowConfigurationSpec.swift */,
-				03E29C801C89E010008BCB78 /* ModelRowConfigurationSpec.swift */,
 				03E29C841C89E0CC008BCB78 /* Models */,
+				03E29C8D1C89FCBE008BCB78 /* Specs */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
 			path = Tests;
@@ -447,10 +458,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				03E29C831C89E075008BCB78 /* ModelConfigurableCell.swift in Sources */,
-				033E2D4A1C88928900CF2538 /* ConstantRowConfigurationSpec.swift in Sources */,
+				03E29C931C89FCBE008BCB78 /* SectionConfigurationSpec.swift in Sources */,
 				03E29C8A1C89E2B6008BCB78 /* ModelImplicitReuseIdCell.swift in Sources */,
+				03E29C921C89FCBE008BCB78 /* ModelRowConfigurationSpec.swift in Sources */,
+				03E29C911C89FCBE008BCB78 /* ConstantRowConfigurationSpec.swift in Sources */,
 				033E2D4F1C88BDD600CF2538 /* ImplicitReuseIdCell.swift in Sources */,
-				03E29C811C89E010008BCB78 /* ModelRowConfigurationSpec.swift in Sources */,
 				03E29C881C89E126008BCB78 /* Thing.swift in Sources */,
 				033E2D4D1C88952100CF2538 /* ConfigurableCell.swift in Sources */,
 			);

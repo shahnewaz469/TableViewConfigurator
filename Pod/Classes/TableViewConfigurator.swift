@@ -56,7 +56,11 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     
     public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return performSectionOperation(section, handler: { (sectionConfiguration, localizedSection) in
-            return sectionConfiguration.numberOfRowsInSection(localizedSection);
+            if let numberOfRows = sectionConfiguration.numberOfRowsInSection(localizedSection) {
+                return numberOfRows;
+            }
+            
+            fatalError("Could find numberOfRows for section \(section).");
         });
     }
     

@@ -40,10 +40,14 @@ public class SectionConfiguration {
         return 1;
     }
     
-    public func numberOfRowsInSection(section: Int) -> Int {
-        return self.rowConfigurations.reduce(0) { (totalRows, rowConfiguration) -> Int in
-            return totalRows + rowConfiguration.numberOfRows();
+    public func numberOfRowsInSection(section: Int) -> Int? {
+        if section < numberOfSections() {
+            return self.rowConfigurations.reduce(0) { (totalRows, rowConfiguration) -> Int in
+                return totalRows + rowConfiguration.numberOfRows();
+            }
         }
+        
+        return nil;
     }
     
     public func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
