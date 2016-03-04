@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ImplicitReuseIdCell: ConstantCell {
+class ImplicitReuseIdCell: ConfigurableCell {
 
     static let REUSE_ID = "implicitReuseIdCell";
     

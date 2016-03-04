@@ -37,7 +37,7 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
     }
     
     override internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
-        if row == 0 {
+        if row < numberOfRows() {
             let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier();
             
             if let reuseId = reuseId {
@@ -57,7 +57,7 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
     }
     
     override internal func didSelectRow(row: Int) -> Bool? {
-        if row == 0 {
+        if row < numberOfRows() {
             return self.selectionHandler?();
         }
         

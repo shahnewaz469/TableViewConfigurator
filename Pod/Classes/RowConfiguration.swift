@@ -29,8 +29,23 @@ public class RowConfiguration {
     
     internal func numberOfRows() -> Int { return 0; }
     internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? { return nil };
-    internal func heightForRow(row: Int) -> CGFloat? { return self.height }
-    internal func estimatedHeightForRow(row: Int) -> CGFloat? { return self.estimatedHeight }
+    
+    internal func heightForRow(row: Int) -> CGFloat? {
+        if row < numberOfRows() {
+            return self.height;
+        }
+        
+        return nil;
+    }
+    
+    internal func estimatedHeightForRow(row: Int) -> CGFloat? {
+        if row < numberOfRows() {
+            return self.estimatedHeight;
+        }
+        
+        return nil;
+    }
+    
     internal func didSelectRow(row: Int) -> Bool? { return nil };
     
 }

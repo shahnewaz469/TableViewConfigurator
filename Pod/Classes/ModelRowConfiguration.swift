@@ -43,19 +43,21 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     }
     
     override internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
-        let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier();
-        
-        if let reuseId = reuseId {
-            if let cell = tableView.dequeueReusableCellWithIdentifier(reuseId) as? CellType {
-                let model = self.selectModelForRow(row);
+        if row < numberOfRows() {
+            let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier();
+            
+            if let reuseId = reuseId {
+                if let cell = tableView.dequeueReusableCellWithIdentifier(reuseId) as? CellType {
+                    let model = self.selectModelForRow(row);
+                        
+                    if let additionalConfig = self.additionalConfig {
+                        additionalConfig(cell: cell, model: model);
+                    }
                     
-                if let additionalConfig = self.additionalConfig {
-                    additionalConfig(cell: cell, model: model);
+                    cell.configure(model);
+                    
+                    return cell;
                 }
-                
-                cell.configure(model);
-                
-                return cell;
             }
         }
         
@@ -63,7 +65,11 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     }
     
     override internal func didSelectRow(row: Int) -> Bool? {
-        return self.selectionHandler?(model: self.models[row]);
+        if row < numberOfRows() {
+            return self.selectionHandler?(model: self.models[row]);
+        }
+        
+        return nil;
     }
     
     private func selectModelForRow(row: Int) -> ModelType {

@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import TableViewConfigurator
 
 class Person {
 

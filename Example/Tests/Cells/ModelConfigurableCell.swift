@@ -1,28 +1,28 @@
 //
-//  ConstantCell.swift
+//  ModelConfigurableCell.swift
 //  TableViewConfigurator
 //
-//  Created by John Volk on 3/3/16.
+//  Created by John Volk on 3/4/16.
 //  Copyright © 2016 CocoaPods. All rights reserved.
 //
 
 import UIKit
 import TableViewConfigurator
 
-class ConstantCell: UITableViewCell, ConfigurableTableViewCell {
+class ModelConfigurableCell: UITableViewCell, ModelConfigurableTableViewCell {
 
-    var configured = false;
+    var model: Thing?;
     var additionallyConfigured = false;
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier);
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder);
     }
     
-    func configure() {
-        self.configured = true;
+    func configure(model: Thing) {
+        self.model = model;
     }
 }
