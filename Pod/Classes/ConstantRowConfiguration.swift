@@ -42,11 +42,11 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
             
             if let reuseId = reuseId {
                 if let cell = tableView.dequeueReusableCellWithIdentifier(reuseId) as? CellType {
+                    cell.configure();
+                    
                     if let additionalConfig = self.additionalConfig {
                         additionalConfig(cell: cell);
                     }
-                    
-                    cell.configure();
                     
                     return cell;
                 }

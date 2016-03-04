@@ -48,6 +48,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 .additionalConfig({ (cell) -> Void in
                     let hideIndexPaths = self.configurator.indexPathsForRowConfiguration(peopleRows);
                     
+                    cell.hideLabel.text = "Hide People";
                     cell.hideSwitch.on = self.hidePeople;
                     cell.switchChangedHandler = { (on) -> Void in
                         self.hidePeople = on;
@@ -61,7 +62,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                         }
                     }
                 })
-                .height(44.0), peopleRows]);
+                .height(44.0), peopleRows, ConstantRowConfiguration<BasicCell>().height(44.0)]);
         
         let disclosureSection = SectionConfiguration(rowConfiguration:
             ConstantRowConfiguration<DisclosureCell>()

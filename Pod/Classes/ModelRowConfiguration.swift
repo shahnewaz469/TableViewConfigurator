@@ -49,12 +49,12 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
             if let reuseId = reuseId {
                 if let cell = tableView.dequeueReusableCellWithIdentifier(reuseId) as? CellType {
                     let model = self.selectModelForRow(row);
-                        
+                    
+                    cell.configure(model);
+                    
                     if let additionalConfig = self.additionalConfig {
                         additionalConfig(cell: cell, model: model);
                     }
-                    
-                    cell.configure(model);
                     
                     return cell;
                 }
