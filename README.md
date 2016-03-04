@@ -18,6 +18,32 @@ pod "TableViewConfigurator"
 
 ## Usage
 
+`TableViewConfigurator` is based around the concepts of `RowConfiguration` and `SectionConfiguration`.
+
+At the bottom of the conceptual hierachy is the `RowConfiguration`. A `RowConfiguration` allows you to specify individual rows or groups of rows that should appear in your `UITableView`. The two flavors it currently comes in are `ConstantRowConfiguration` and `ModelRowConfiguration`.
+
+A `ConstantRowConfiguration` represents a single row in your `UITableView`. All it takes to create one is an implementation of the `ConfigurableTableViewCell` protocol that is specified in the constructor of `ConstantRowConfiguration` via a generic type parameter.
+
+```swift
+import UIKit
+import TableViewConfigurator
+
+class BasicCell: UITableViewCell, ConfigurableTableViewCell {
+
+    override class func buildReuseIdentifier() -> String? {
+        return "basicCell";
+    }
+    
+    func configure() {
+        self.textLabel?.text = "Basic Cell"
+    }
+}
+```
+
+```swift
+let rowConfiguration = ConstantRowConfiguration<BasicCell>();
+```
+
 ## Author
 
 John Volk, john.t.volk@gmail.com
