@@ -101,7 +101,7 @@ func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSInde
 }
 ```
 
-`TableViewConfigurator` was created to eliminate this kind of code and replace it with a more declartive approach.
+`TableViewConfigurator` was created to eliminate this kind of code and replace it with a more declarative approach.
 
 ## Installation
 
