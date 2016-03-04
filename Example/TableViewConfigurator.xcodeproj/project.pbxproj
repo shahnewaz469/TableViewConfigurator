@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		033E2D4D1C88952100CF2538 /* ConfigurableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033E2D4C1C88952100CF2538 /* ConfigurableCell.swift */; };
 		033E2D4F1C88BDD600CF2538 /* ImplicitReuseIdCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033E2D4E1C88BDD600CF2538 /* ImplicitReuseIdCell.swift */; };
+		0362B0461C8A1A070088E91D /* TableViewConfiguratorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0362B0441C8A1A010088E91D /* TableViewConfiguratorSpec.swift */; };
 		03682BF11C876DA00010CE0F /* BasicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03682BF01C876DA00010CE0F /* BasicCell.swift */; };
 		03682BF31C876DAF0010CE0F /* DisclosureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03682BF21C876DAF0010CE0F /* DisclosureCell.swift */; };
 		03682BF51C8774890010CE0F /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03682BF41C8774890010CE0F /* SwitchCell.swift */; };
@@ -44,6 +45,7 @@
 /* Begin PBXFileReference section */
 		033E2D4C1C88952100CF2538 /* ConfigurableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurableCell.swift; sourceTree = "<group>"; };
 		033E2D4E1C88BDD600CF2538 /* ImplicitReuseIdCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImplicitReuseIdCell.swift; sourceTree = "<group>"; };
+		0362B0441C8A1A010088E91D /* TableViewConfiguratorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewConfiguratorSpec.swift; sourceTree = "<group>"; };
 		03682BF01C876DA00010CE0F /* BasicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicCell.swift; sourceTree = "<group>"; };
 		03682BF21C876DAF0010CE0F /* DisclosureCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisclosureCell.swift; sourceTree = "<group>"; };
 		03682BF41C8774890010CE0F /* SwitchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 				03E29C8E1C89FCBE008BCB78 /* ConstantRowConfigurationSpec.swift */,
 				03E29C8F1C89FCBE008BCB78 /* ModelRowConfigurationSpec.swift */,
 				03E29C901C89FCBE008BCB78 /* SectionConfigurationSpec.swift */,
+				0362B0441C8A1A010088E91D /* TableViewConfiguratorSpec.swift */,
 			);
 			path = Specs;
 			sourceTree = "<group>";
@@ -465,6 +468,7 @@
 				033E2D4F1C88BDD600CF2538 /* ImplicitReuseIdCell.swift in Sources */,
 				03E29C881C89E126008BCB78 /* Thing.swift in Sources */,
 				033E2D4D1C88952100CF2538 /* ConfigurableCell.swift in Sources */,
+				0362B0461C8A1A070088E91D /* TableViewConfiguratorSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

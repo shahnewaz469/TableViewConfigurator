@@ -11,12 +11,15 @@ import UIKit
 public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableViewDelegate {
 
     private var sectionConfigurations: [SectionConfiguration];
+    private var tableView: UITableView;
     
-    public override init() {
+    public init(tableView: UITableView) {
+        self.tableView = tableView;
         self.sectionConfigurations = [];
     }
     
-    public init(sectionConfigurations: [SectionConfiguration]) {
+    public init(tableView: UITableView, sectionConfigurations: [SectionConfiguration]) {
+        self.tableView = tableView;
         self.sectionConfigurations = sectionConfigurations;
     }
     
@@ -49,57 +52,81 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     }
     
     public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return self.sectionConfigurations.reduce(0) { (totalSections, sectionConfiguration) -> Int in
-            return totalSections + sectionConfiguration.numberOfSections();
+        if tableView === self.tableView {
+            return self.sectionConfigurations.reduce(0) { (totalSections, sectionConfiguration) -> Int in
+                return totalSections + sectionConfiguration.numberOfSections();
+            }
         }
+        
+        fatalError("Provided tableView doesn't match configured table view.");
     }
     
     public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return performSectionOperation(section, handler: { (sectionConfiguration, localizedSection) in
-            if let numberOfRows = sectionConfiguration.numberOfRowsInSection(localizedSection) {
-                return numberOfRows;
-            }
-            
-            fatalError("Could find numberOfRows for section \(section).");
-        });
+        if tableView === self.tableView {
+            return performSectionOperation(section, handler: { (sectionConfiguration, localizedSection) in
+                if let numberOfRows = sectionConfiguration.numberOfRowsInSection(localizedSection) {
+                    return numberOfRows;
+                }
+                
+                fatalError("Could find numberOfRows for section \(section).");
+            });
+        }
+        
+        fatalError("Provided tableView doesn't match configured table view.");
     }
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) in
-            if let cell = sectionConfiguration.cellForRow(indexPath.row, inTableView: tableView) {
-                return cell;
-            }
-            
-            fatalError("Couldn't dequeue cell at indexPath \(indexPath).");
-        });
+        if tableView === self.tableView {
+            return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) in
+                if let cell = sectionConfiguration.cellForRow(indexPath.row, inTableView: tableView) {
+                    return cell;
+                }
+                
+                fatalError("Couldn't dequeue cell at indexPath \(indexPath).");
+            });
+        }
+        
+        fatalError("Provided tableView doesn't match configured table view.");
     }
     
     public func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) -> CGFloat in
-            if let height = sectionConfiguration.heightForRow(indexPath.row) {
-                return height;
-            }
-            
-            fatalError("Couldn't calculate height at indexPath \(indexPath).");
-        });
+        if tableView === self.tableView {
+            return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) -> CGFloat in
+                if let height = sectionConfiguration.heightForRow(indexPath.row) {
+                    return height;
+                }
+                
+                fatalError("Couldn't calculate height at indexPath \(indexPath).");
+            });
+        }
+        
+        fatalError("Provided tableView doesn't match configured table view.");
     }
     
     public func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) -> CGFloat in
-            if let estimatedHeight = sectionConfiguration.estimatedHeightForRow(indexPath.row) {
-                return estimatedHeight;
-            }
-            
-            fatalError("Couldn't calculate estimatedHeight at indexPath \(indexPath).");
-        });
+        if tableView === self.tableView {
+            return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) -> CGFloat in
+                if let estimatedHeight = sectionConfiguration.estimatedHeightForRow(indexPath.row) {
+                    return estimatedHeight;
+                }
+                
+                fatalError("Couldn't calculate estimatedHeight at indexPath \(indexPath).");
+            });
+        }
+        
+        fatalError("Provided tableView doesn't match configured table view.");
     }
     
     public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) in
-            if sectionConfiguration.didSelectRow(indexPath.row) ?? true {
-                tableView.deselectRowAtIndexPath(indexPath, animated: true);
-            }
-        })
+        if tableView === self.tableView {
+            performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) in
+                if sectionConfiguration.didSelectRow(indexPath.row) ?? true {
+                    tableView.deselectRowAtIndexPath(indexPath, animated: true);
+                }
+            });
+        } else {
+            fatalError("Provided tableView doesn't match configured table view.");
+        }
     }
     
     private func performSectionOperation<T>(section: Int, handler: (sectionConfiguration: SectionConfiguration, localizedSection: Int) -> T) -> T {

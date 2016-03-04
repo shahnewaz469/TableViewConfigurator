@@ -87,7 +87,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                     .height(44.0)));
         }
         
-        self.configurator = TableViewConfigurator(sectionConfigurations: configurations);
+        self.configurator = TableViewConfigurator(tableView: tableView, sectionConfigurations: configurations);
     }
 
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {

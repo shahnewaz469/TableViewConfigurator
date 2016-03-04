@@ -120,53 +120,45 @@ class SectionConfigurationSpec: QuickSpec {
             
             describe("its select row behavior") {
                 context("for constant row configuration") {
-                    it("is correct when selected") {
-                        var selectionHandlerInvoked = false;
-                        
+                    var selectionHandlerInvoked: Bool!;
+                    
+                    beforeEach {
+                        selectionHandlerInvoked = false;
                         sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration
                             .selectionHandler({ () -> Bool in
                                 selectionHandlerInvoked = true; return true;
                             })]);
+                    }
+                    
+                    it("is correct when selected") {
                         sectionConfiguration.didSelectRow(3);
-                        
                         expect(selectionHandlerInvoked).to(beTrue());
                     }
                     
                     it("is correct when not selected") {
-                        var selectionHandlerInvoked = false;
-                        
-                        sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration
-                            .selectionHandler({ () -> Bool in
-                                selectionHandlerInvoked = true; return true;
-                            })]);
                         sectionConfiguration.didSelectRow(2);
-                        
                         expect(selectionHandlerInvoked).to(beFalse());
                     }
                 }
                 
                 context("for model row configuration") {
-                    it("is correct when selected") {
-                        var selectionHandlerInvoked = false;
-                        
+                    var selectionHandlerInvoked: Bool!;
+                    
+                    beforeEach {
+                        selectionHandlerInvoked = false;
                         sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration
                             .selectionHandler({ (model) -> Bool in
                                 selectionHandlerInvoked = true; return true;
                             }), constantRowConfiguration]);
+                    }
+                    
+                    it("is correct when selected") {
                         sectionConfiguration.didSelectRow(1);
-                        
                         expect(selectionHandlerInvoked).to(beTrue());
                     }
                     
                     it("is correct when not selected") {
-                        var selectionHandlerInvoked = false;
-                        
-                        sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration
-                            .selectionHandler({ (model) -> Bool in
-                                selectionHandlerInvoked = true; return true;
-                            }), constantRowConfiguration]);
                         sectionConfiguration.didSelectRow(3);
-                        
                         expect(selectionHandlerInvoked).to(beFalse());
                     }
                 }
