@@ -24,6 +24,8 @@ DISCUSS MAIN BENEFITS AND SHOW EXAMPLE
 
 At the bottom of the conceptual hierachy is the `RowConfiguration`. A `RowConfiguration` allows you to specify individual rows or groups of rows that should appear in your `UITableView`. The two flavors it currently comes in are `ConstantRowConfiguration` and `ModelRowConfiguration`.
 
+#### ConstantRowConfiguration
+
 A `ConstantRowConfiguration` represents a single row in your `UITableView`. All it takes to create one is an implementation of the `ConfigurableTableViewCell` protocol that is specified in the constructor of `ConstantRowConfiguration` via a generic type parameter.
 
 ```swift
@@ -96,6 +98,31 @@ let rowConfiguration = ConstantRowConfiguration<BasicCell>()
         return self.shouldHideRow;
     });
 ```
+
+#### ModelRowConfiguration
+
+A `ModelRowConfiguration` represents a group of rows that are defined by an array of some model object.
+
+#### SectionConfiguration
+
+The real power of `TableViewConfigurator` presents itself when you begin combining `RowConfiguration` instances into a `SectionConfiguration`. Instances of `RowConfiguration` can be grouped in any order you want, and `TableViewConfigurator` will make sure the correct results are generated for the parts of `UITableViewDataSource` and `UITableViewDelegate` that it supports.
+
+For example, suppose you wanted to create a `UITableView` section that was composed of a range of N elements sandwiched between two constant rows. Normally, this would be both annoying and error-prone. With `TableViewConfigurator`, it's trivial:
+
+```swift
+let people = [Person(firstName: "John", lastName: "Doe", age: 50),
+    Person(firstName: "Alex", lastName: "Great", age: 32),
+    Person(firstName: "Napoléon", lastName: "Bonaparte", age: 18)];
+    
+let section = SectionConfiguration(rowConfigurations:
+    [ConstantRowConfiguration<BasicCell>(),
+        ModelRowConfiguration<PersonCell, Person>(models: people),
+        ConstantRowConfiguration<BasicCell>()]);
+```
+
+#### Putting it all together with TableViewConfigurator
+
+Blah blah blah...
 
 ## Author
 
