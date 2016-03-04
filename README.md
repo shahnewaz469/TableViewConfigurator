@@ -116,7 +116,7 @@ pod "TableViewConfigurator"
 
 `TableViewConfigurator` is based around the concepts of `RowConfiguration` and `SectionConfiguration`.
 
-At the bottom of the conceptual hierachy is the `RowConfiguration`. A `RowConfiguration` allows you to specify individual rows or groups of rows that should appear in your `UITableView`. The two flavors it currently comes in are `ConstantRowConfiguration` and `ModelRowConfiguration`.
+At the bottom of the conceptual hierachy is the `RowConfiguration`. A `RowConfiguration` allows you to specify individual rows or groups of rows that should appear in your `UITableView`. It currently comes in two flavors: `ConstantRowConfiguration` and `ModelRowConfiguration`.
 
 #### ConstantRowConfiguration
 
