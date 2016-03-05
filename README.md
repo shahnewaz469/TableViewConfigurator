@@ -192,7 +192,7 @@ let rowConfiguration = ConstantRowConfiguration<BasicCell>()
 
 #### ModelRowConfiguration
 
-A `ModelRowConfiguration` represents a group of rows that are defined by an array of some model object. It has all the same configuration options as `ConstantRowConfiguration` but closure callbacks you define will take an additional `model` parameter that represents the model associated with the actual row in question. Additionally, it's constructor requires two generic type parameters. The first is an implementation of `ModelConfigurableTableViewCell` and the second is a plain old Swift model object.
+A `ModelRowConfiguration` represents a group of rows that are defined by an array of some model object. It has all the same configuration options as `ConstantRowConfiguration` but closure callbacks you define will take an additional `model` parameter that represents the model associated with the actual row in question. Additionally, it's constructor requires two generic type parameters. The first is an implementation of `ModelConfigurableTableViewCell` and the second is any Swift type you wish (e.g., a "model" object, a tuple, a Bool, etc.). It's constructor can also be passed a function that returns an up-to-date model array. This is useful in dynamic UIs.
 
 ```swift
 class PersonCell: UITableViewCell, ModelConfigurableTableViewCell {
@@ -213,6 +213,16 @@ class PersonCell: UITableViewCell, ModelConfigurableTableViewCell {
 
 `let rowConfiguration = ModelRowConfiguration<PersonCell, Person>(models: self.people);`
 
+`ModelRowConfiguration` adds a couple of additional "generator" attributes as well.
+
+##### .heightGenerator()
+
+You can specify a function that returns the most current height for a models row.
+
+##### .estimatedHeightGenerator()
+
+You can specify a function that returns the most current estimatedHeight for a models row.
+
 #### SectionConfiguration
 
 The real power of `TableViewConfigurator` presents itself when you begin combining `RowConfiguration` instances into a `SectionConfiguration`. Instances of `RowConfiguration` can be grouped in any order you want, and `TableViewConfigurator` will generate the correct results for the parts of `UITableViewDataSource` and `UITableViewDelegate` that it supports.
@@ -229,6 +239,16 @@ let section = SectionConfiguration(rowConfigurations:
         ModelRowConfiguration<PersonCell, Person>(models: people),
         ConstantRowConfiguration<BasicCell>()]);
 ```
+
+There are two additional configuration options available for `SectionConfiguration`
+
+##### .headerTitle()
+
+You can specify the String that should be used as the sections header title.
+
+##### .footerTitle()
+
+You can specify the String that should be used as the sections footer title.
 
 #### TableViewConfigurator
 
