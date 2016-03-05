@@ -192,7 +192,7 @@ let rowConfiguration = ConstantRowConfiguration<BasicCell>()
 
 #### ModelRowConfiguration
 
-A `ModelRowConfiguration` represents a group of rows that are defined by an array of some model object. It has all the same configuration options as `ConstantRowConfiguration` but closure callbacks you define will take an additional `model` parameter that represents the model associated with the actual row in question. Additionally, it's constructor requires two generic type parameters. The first is an implementation of `ModelConfigurableTableViewCell` and the second is any Swift type you wish (e.g., a "model" object, a tuple, a Bool, etc.). It's constructor can also be passed a function that returns an up-to-date model array. This is useful in dynamic UIs.
+A `ModelRowConfiguration` represents a group of rows that are defined by an array of some model type. It has all the same configuration options as `ConstantRowConfiguration` but closure callbacks you define will take an additional `model` parameter that represents the model associated with the actual row in question. Additionally, it's constructor requires two generic type parameters. The first is an implementation of `ModelConfigurableTableViewCell` and the second is any Swift type you wish (e.g., a "model" object, a tuple, a Bool, etc.). It's constructor can also be passed a function that returns an up-to-date model array. This is useful in dynamic UIs.
 
 ```swift
 class PersonCell: UITableViewCell, ModelConfigurableTableViewCell {
