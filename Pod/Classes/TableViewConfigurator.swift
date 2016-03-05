@@ -53,9 +53,27 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     
     public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         if tableView === self.tableView {
-            return self.sectionConfigurations.reduce(0) { (totalSections, sectionConfiguration) -> Int in
-                return totalSections + sectionConfiguration.numberOfSections();
-            }
+            return self.sectionConfigurations.count;
+        }
+        
+        fatalError("Provided tableView doesn't match configured table view.");
+    }
+    
+    public func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if tableView === self.tableView {
+            return performSectionOperation(section, handler: { (sectionConfiguration) -> String? in
+                return sectionConfiguration.titleForHeader();
+            })
+        }
+        
+        fatalError("Provided tableView doesn't match configured table view.");
+    }
+    
+    public func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        if tableView === self.tableView {
+            return performSectionOperation(section, handler: { (sectionConfiguration) -> String? in
+                return sectionConfiguration.titleForFooter();
+            })
         }
         
         fatalError("Provided tableView doesn't match configured table view.");
@@ -63,8 +81,8 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     
     public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView === self.tableView {
-            return performSectionOperation(section, handler: { (sectionConfiguration, localizedSection) in
-                if let numberOfRows = sectionConfiguration.numberOfRowsInSection(localizedSection) {
+            return performSectionOperation(section, handler: { (sectionConfiguration) in
+                if let numberOfRows = sectionConfiguration.numberOfRows() {
                     return numberOfRows;
                 }
                 
@@ -77,7 +95,7 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         if tableView === self.tableView {
-            return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) in
+            return performSectionOperation(indexPath.section, handler: { (sectionConfiguration) in
                 if let cell = sectionConfiguration.cellForRow(indexPath.row, inTableView: tableView) {
                     return cell;
                 }
@@ -91,7 +109,7 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     
     public func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if tableView === self.tableView {
-            return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) -> CGFloat in
+            return performSectionOperation(indexPath.section, handler: { (sectionConfiguration) -> CGFloat in
                 if let height = sectionConfiguration.heightForRow(indexPath.row) {
                     return height;
                 }
@@ -105,7 +123,7 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     
     public func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if tableView === self.tableView {
-            return performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) -> CGFloat in
+            return performSectionOperation(indexPath.section, handler: { (sectionConfiguration) -> CGFloat in
                 if let estimatedHeight = sectionConfiguration.estimatedHeightForRow(indexPath.row) {
                     return estimatedHeight;
                 }
@@ -119,7 +137,7 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     
     public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if tableView === self.tableView {
-            performSectionOperation(indexPath.section, handler: { (sectionConfiguration, localizedSection) in
+            performSectionOperation(indexPath.section, handler: { (sectionConfiguration) in
                 if sectionConfiguration.didSelectRow(indexPath.row) ?? true {
                     tableView.deselectRowAtIndexPath(indexPath, animated: true);
                 }
@@ -129,17 +147,9 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         }
     }
     
-    private func performSectionOperation<T>(section: Int, handler: (sectionConfiguration: SectionConfiguration, localizedSection: Int) -> T) -> T {
-        var sectionTotal = 0;
-        
-        for sectionConfiguration in self.sectionConfigurations {
-            let numberOfSections = sectionConfiguration.numberOfSections();
-            
-            if section < sectionTotal + numberOfSections {
-                return handler(sectionConfiguration: sectionConfiguration, localizedSection: section - sectionTotal);
-            }
-            
-            sectionTotal += numberOfSections;
+    private func performSectionOperation<T>(section: Int, handler: (sectionConfiguration: SectionConfiguration) -> T) -> T {
+        if section < self.sectionConfigurations.count {
+            return handler(sectionConfiguration: self.sectionConfigurations[section]);
         }
         
         fatalError("Couldn't resolve SectionConfiguration for section \(section).");

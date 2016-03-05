@@ -26,16 +26,16 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         Person(firstName: "Alex", lastName: "Great", age: 32),
         Person(firstName: "Napoléon", lastName: "Bonaparte", age: 18)];
     
-    private let animals = [[Animal(name: "American Bullfrog", scientificName: "Rana catesbeiana"), Animal(name: "Fire Salamander", scientificName: "Salamandra salamandra")],
-        [Animal(name: "Loggerhead Shrike", scientificName: "Lanius ludovicianus"), Animal(name: "Pileated Woodpecker", scientificName: "Dryocopus pileatus")],
-        [Animal(name: "Woodchuck", scientificName: "Marmota monax"), Animal(name: "Wolverine", scientificName: "Gulo gulo")]];
+    private let animals = [(scientificClass: "Amphibians", animals: [Animal(name: "American Bullfrog", scientificName: "Rana catesbeiana"), Animal(name: "Fire Salamander", scientificName: "Salamandra salamandra")]),
+        (scientificClass: "Birds", animals: [Animal(name: "Loggerhead Shrike", scientificName: "Lanius ludovicianus"), Animal(name: "Pileated Woodpecker", scientificName: "Dryocopus pileatus")]),
+        (scientificClass: "Mammals", animals: [Animal(name: "Woodchuck", scientificName: "Marmota monax"), Animal(name: "Wolverine", scientificName: "Gulo gulo")])];
     
     override func viewDidLoad() {
         super.viewDidLoad();
         
         let basicSection = SectionConfiguration(rowConfiguration:
             ConstantRowConfiguration<BasicCell>()
-                .height(44.0));
+                .height(44.0)).footerTitle("Basic Footer");
         
         let peopleRows = ModelRowConfiguration<PersonCell, Person>(models: self.people)
             .hideWhen({ (model) -> Bool in
@@ -64,7 +64,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                         }
                     }
                 })
-                .height(44.0), peopleRows, ConstantRowConfiguration<BasicCell>().height(44.0)]);
+                .height(44.0), peopleRows, ConstantRowConfiguration<BasicCell>().height(44.0)]).headerTitle("People");
         
         let disclosureSection = SectionConfiguration(rowConfiguration:
             ConstantRowConfiguration<DisclosureCell>()
@@ -76,9 +76,9 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         var configurations = [basicSection, peopleSection, disclosureSection];
 
-        for animalClass in animals {
+        for animalTuple in animals {
             configurations.append(SectionConfiguration(rowConfiguration:
-                ModelRowConfiguration<AnimalCell, Animal>(modelGenerator: { return animalClass })
+                ModelRowConfiguration<AnimalCell, Animal>(modelGenerator: { return animalTuple.animals })
                     .selectionHandler({ (model) -> Bool in
                         let alertController = UIAlertController(title: model.name, message: model.scientificName, preferredStyle: .Alert);
                         
@@ -87,7 +87,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                         
                         return true;
                     })
-                    .height(44.0)));
+                    .height(44.0)).headerTitle(animalTuple.scientificClass));
         }
         
         self.configurator = TableViewConfigurator(tableView: tableView, sectionConfigurations: configurations);
@@ -95,6 +95,14 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return self.configurator.numberOfSectionsInTableView(tableView);
+    }
+    
+    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return self.configurator.tableView(tableView, titleForHeaderInSection: section);
+    }
+    
+    func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        return self.configurator.tableView(tableView, titleForFooterInSection: section);
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

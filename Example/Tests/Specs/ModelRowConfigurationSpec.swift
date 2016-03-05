@@ -60,11 +60,29 @@ class ModelRowConfigurationSpec: QuickSpec {
                     expect(cell?.model).toNot(beNil());
                     expect(cell?.model?.name).to(equal("Frisbee"));
                 }
+                
+                it("is configured correctly when model is generated") {
+                    let generatedModelRowConfiguration = ModelRowConfiguration<ModelImplicitReuseIdCell, Thing>(modelGenerator: { () -> [Thing] in
+                        return self.things;
+                    })
+                    let cell = generatedModelRowConfiguration.cellForRow(2, inTableView: tableView) as? ModelImplicitReuseIdCell;
+                    
+                    expect(cell).toNot(beNil());
+                    expect(cell?.model).toNot(beNil());
+                    expect(cell?.model?.name).to(equal("Hatchback"));
+                }
             }
             
             describe("its height") {
                 it("is set correctly for existant row") {
                     expect(rowConfiguration.height(100.0).heightForRow(0))
+                        .to(equal(100.0));
+                }
+                
+                it("is set correctly for height generator") {
+                    expect(rowConfiguration.heightGenerator({ (model) -> CGFloat in
+                        return 100.0
+                    }).heightForRow(0))
                         .to(equal(100.0));
                 }
                 
@@ -77,6 +95,13 @@ class ModelRowConfigurationSpec: QuickSpec {
             describe("its estimated height") {
                 it("is set correctly for existant row") {
                     expect(rowConfiguration.estimatedHeight(200.0).estimatedHeightForRow(0))
+                        .to(equal(200.0));
+                }
+                
+                it("is set correctly for estimated height generator") {
+                    expect(rowConfiguration.estimatedHeightGenerator({ (model) -> CGFloat in
+                        return 200.0
+                    }).estimatedHeightForRow(0))
                         .to(equal(200.0));
                 }
                 

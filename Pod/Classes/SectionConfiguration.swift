@@ -11,6 +11,8 @@ import UIKit
 public class SectionConfiguration {
 
     private let rowConfigurations: [RowConfiguration];
+    private var headerTitle: String?;
+    private var footerTitle: String?;
     
     public init(rowConfigurations: [RowConfiguration]) {
         self.rowConfigurations = rowConfigurations;
@@ -18,6 +20,14 @@ public class SectionConfiguration {
     
     public init(rowConfiguration: RowConfiguration) {
         self.rowConfigurations = [rowConfiguration];
+    }
+    
+    public func headerTitle(headerTitle: String) -> Self {
+        self.headerTitle = headerTitle; return self;
+    }
+    
+    public func footerTitle(footerTitle: String) -> Self {
+        self.footerTitle = footerTitle; return self;
     }
     
     public func rowIndexSetForRowConfiguration(rowConfiguration: RowConfiguration) -> NSIndexSet? {
@@ -36,18 +46,18 @@ public class SectionConfiguration {
         return nil;
     }
     
-    public func numberOfSections() -> Int {
-        return 1;
+    public func titleForHeader() -> String? {
+        return self.headerTitle;
     }
     
-    public func numberOfRowsInSection(section: Int) -> Int? {
-        if section < numberOfSections() {
-            return self.rowConfigurations.reduce(0) { (totalRows, rowConfiguration) -> Int in
-                return totalRows + rowConfiguration.numberOfRows();
-            }
+    public func titleForFooter() -> String? {
+        return self.footerTitle;
+    }
+    
+    public func numberOfRows() -> Int? {
+        return self.rowConfigurations.reduce(0) { (totalRows, rowConfiguration) -> Int in
+            return totalRows + rowConfiguration.numberOfRows();
         }
-        
-        return nil;
     }
     
     public func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
