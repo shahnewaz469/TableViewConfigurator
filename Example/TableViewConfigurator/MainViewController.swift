@@ -41,7 +41,9 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             .hideWhen({ (model) -> Bool in
                 return self.hidePeople;
             })
-            .height(44.0);
+            .heightGenerator { (model) -> CGFloat in
+                return 44.0;
+        };
         
         let peopleSection = SectionConfiguration(rowConfigurations:
             [ConstantRowConfiguration<SwitchCell>()
@@ -76,7 +78,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
         for animalClass in animals {
             configurations.append(SectionConfiguration(rowConfiguration:
-                ModelRowConfiguration<AnimalCell, Animal>(models: animalClass)
+                ModelRowConfiguration<AnimalCell, Animal>(modelGenerator: { return animalClass })
                     .selectionHandler({ (model) -> Bool in
                         let alertController = UIAlertController(title: model.name, message: model.scientificName, preferredStyle: .Alert);
                         
