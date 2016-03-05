@@ -304,6 +304,14 @@ override func viewDidLoad() {
 func numberOfSectionsInTableView(tableView: UITableView) -> Int {
     return self.configurator.numberOfSectionsInTableView(tableView);
 }
+
+func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    return self.configurator.tableView(tableView, titleForHeaderInSection: section);
+}
+    
+func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+    return self.configurator.tableView(tableView, titleForFooterInSection: section);
+}
     
 func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return self.configurator.tableView(tableView, numberOfRowsInSection: section);
