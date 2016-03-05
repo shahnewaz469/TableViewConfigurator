@@ -33,7 +33,7 @@ func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexP
             
         ...
             
-    case scheduleSection:
+    case fooSection:
         switch indexPath.row {
                 
         case 0:
@@ -85,7 +85,7 @@ func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSInde
     case selectedItemSection:
         break;
             
-    case scheduleSection:
+    case fooSection:
         break;
             
     default:
