@@ -28,8 +28,8 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
         self.hideWhen = hideWhen; return self;
     }
     
-    override internal func numberOfRows() -> Int {
-        if let hideWhen = self.hideWhen {
+    override internal func numberOfRows(countHidden: Bool) -> Int {
+        if let hideWhen = self.hideWhen where !countHidden {
             return hideWhen() ? 0 : 1;
         }
         
@@ -37,7 +37,7 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
     }
     
     override internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
-        if row < numberOfRows() {
+        if row < numberOfRows(false) {
             let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier();
             
             if let reuseId = reuseId {
@@ -57,7 +57,7 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
     }
     
     override internal func didSelectRow(row: Int) -> Bool? {
-        if row < numberOfRows() {
+        if row < numberOfRows(false) {
             return self.selectionHandler?();
         }
         

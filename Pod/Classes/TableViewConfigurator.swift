@@ -35,9 +35,21 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         self.sectionConfigurations.removeAll(keepCapacity: true);
     }
     
-    public func indexPathsForRowConfiguration(rowConfiguration: RowConfiguration) -> [NSIndexPath]? {
+    public func visibleIndexPathsForRowConfiguration(rowConfiguration: RowConfiguration) -> [NSIndexPath]? {
+        return indexPathsForRowConfiguration(rowConfiguration, visible: true);
+    }
+    
+    public func hiddenIndexPathsForRowConfiguration(rowConfiguration: RowConfiguration) -> [NSIndexPath]? {
+        return indexPathsForRowConfiguration(rowConfiguration, visible: false);
+    }
+    
+    private func indexPathsForRowConfiguration(rowConfiguration: RowConfiguration, visible: Bool) -> [NSIndexPath]? {
         for i in 0 ..< self.sectionConfigurations.count {
-            if let rowIndices = self.sectionConfigurations[i].rowIndexSetForRowConfiguration(rowConfiguration) {
+            let sectionConfiguration = self.sectionConfigurations[i];
+            let rowIndices = visible ? sectionConfiguration.visibleIndexSetForRowConfiguration(rowConfiguration) :
+                sectionConfiguration.hiddenIndexSetForRowConfiguration(rowConfiguration);
+            
+            if let rowIndices = rowIndices {
                 var result = [NSIndexPath]();
                 
                 for index in rowIndices {

@@ -27,11 +27,11 @@ public class RowConfiguration {
         self.estimatedHeight = estimatedHeight; return self;
     }
     
-    internal func numberOfRows() -> Int { return 0; }
+    internal func numberOfRows(countHidden: Bool) -> Int { return 0; }
     internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? { return nil };
     
     internal func heightForRow(row: Int) -> CGFloat? {
-        if row < numberOfRows() {
+        if row < numberOfRows(false) {
             return self.height;
         }
         
@@ -39,7 +39,7 @@ public class RowConfiguration {
     }
     
     internal func estimatedHeightForRow(row: Int) -> CGFloat? {
-        if row < numberOfRows() {
+        if row < numberOfRows(false) {
             return self.estimatedHeight;
         }
         

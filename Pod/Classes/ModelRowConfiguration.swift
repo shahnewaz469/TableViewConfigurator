@@ -32,8 +32,8 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         self.hideWhen = hideWhen; return self;
     }
     
-    override internal func numberOfRows() -> Int {
-        if let hideWhen = self.hideWhen {
+    override internal func numberOfRows(countHidden: Bool) -> Int {
+        if let hideWhen = self.hideWhen where !countHidden {
             return self.models.reduce(0) { (totalRows, model) -> Int in
                 return totalRows + (hideWhen(model: model) ? 0 : 1);
             }
@@ -43,7 +43,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     }
     
     override internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
-        if row < numberOfRows() {
+        if row < numberOfRows(false) {
             let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier();
             
             if let reuseId = reuseId {
@@ -65,7 +65,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     }
     
     override internal func didSelectRow(row: Int) -> Bool? {
-        if row < numberOfRows() {
+        if row < numberOfRows(false) {
             return self.selectionHandler?(model: self.models[row]);
         }
         

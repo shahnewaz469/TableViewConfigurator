@@ -20,11 +20,19 @@ public class SectionConfiguration {
         self.rowConfigurations = [rowConfiguration];
     }
     
-    public func rowIndexSetForRowConfiguration(rowConfiguration: RowConfiguration) -> NSIndexSet? {
+    public func visibleIndexSetForRowConfiguration(rowConfiguration: RowConfiguration) -> NSIndexSet? {
+        return indexSetForRowConfiguration(rowConfiguration, visible: true);
+    }
+    
+    public func hiddenIndexSetForRowConfiguration(rowConfiguration: RowConfiguration) -> NSIndexSet? {
+        return indexSetForRowConfiguration(rowConfiguration, visible: false);
+    }
+    
+    private func indexSetForRowConfiguration(rowConfiguration: RowConfiguration, visible: Bool) -> NSIndexSet? {
         var currentIndex = 0;
         
         for candidate in self.rowConfigurations {
-            let numberOfRows = candidate.numberOfRows();
+            let numberOfRows = candidate.numberOfRows(visible);
             
             if rowConfiguration === candidate {
                 return NSIndexSet(indexesInRange: NSMakeRange(currentIndex, numberOfRows));
@@ -43,7 +51,7 @@ public class SectionConfiguration {
     public func numberOfRowsInSection(section: Int) -> Int? {
         if section < numberOfSections() {
             return self.rowConfigurations.reduce(0) { (totalRows, rowConfiguration) -> Int in
-                return totalRows + rowConfiguration.numberOfRows();
+                return totalRows + rowConfiguration.numberOfRows(false);
             }
         }
         
@@ -78,7 +86,7 @@ public class SectionConfiguration {
         var rowTotal = 0;
         
         for rowConfiguration in self.rowConfigurations {
-            let numberOfRows = rowConfiguration.numberOfRows();
+            let numberOfRows = rowConfiguration.numberOfRows(false);
             
             if row < rowTotal + numberOfRows {
                 return handler(rowConfiguration: rowConfiguration, localizedRow: row - rowTotal);
