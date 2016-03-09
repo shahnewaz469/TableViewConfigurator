@@ -3,7 +3,7 @@
 //  TableViewConfigurator
 //
 //  Created by John Volk on 3/3/16.
-//  Copyright © 2016 CocoaPods. All rights reserved.
+//  Copyright © 2016 John Volk. All rights reserved.
 //
 
 import Quick

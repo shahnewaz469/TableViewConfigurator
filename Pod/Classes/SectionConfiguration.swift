@@ -3,7 +3,7 @@
 //  Pods
 //
 //  Created by John Volk on 2/29/16.
-//
+//  Copyright © 2016 John Volk. All rights reserved.
 //
 
 import UIKit
@@ -11,6 +11,8 @@ import UIKit
 public class SectionConfiguration {
 
     private let rowConfigurations: [RowConfiguration];
+    private var headerTitle: String?;
+    private var footerTitle: String?;
     
     public init(rowConfigurations: [RowConfiguration]) {
         self.rowConfigurations = rowConfigurations;
@@ -20,22 +22,42 @@ public class SectionConfiguration {
         self.rowConfigurations = [rowConfiguration];
     }
     
-    public func visibleIndexSetForRowConfiguration(rowConfiguration: RowConfiguration) -> NSIndexSet? {
+    public func headerTitle(headerTitle: String) -> Self {
+        self.headerTitle = headerTitle; return self;
+    }
+    
+    public func footerTitle(footerTitle: String) -> Self {
+        self.footerTitle = footerTitle; return self;
+    }
+    
+    internal func visibleIndexSetForRowConfiguration(rowConfiguration: RowConfiguration) -> NSIndexSet? {
         return indexSetForRowConfiguration(rowConfiguration, visible: true);
     }
     
-    public func hiddenIndexSetForRowConfiguration(rowConfiguration: RowConfiguration) -> NSIndexSet? {
+    internal func hiddenIndexSetForRowConfiguration(rowConfiguration: RowConfiguration) -> NSIndexSet? {
         return indexSetForRowConfiguration(rowConfiguration, visible: false);
     }
     
     private func indexSetForRowConfiguration(rowConfiguration: RowConfiguration, visible: Bool) -> NSIndexSet? {
         var currentIndex = 0;
         
-        for candidate in self.rowConfigurations {
-            let numberOfRows = candidate.numberOfRows(visible);
+        for candidate in self.rowConfigurations { 
+            let numberOfRows = candidate.numberOfRows(true);
             
-            if rowConfiguration === candidate {
-                return NSIndexSet(indexesInRange: NSMakeRange(currentIndex, numberOfRows));
+            if rowConfiguration === candidate && numberOfRows > 0 {
+                let indices = NSMutableIndexSet();
+                
+                for i in 0 ..< numberOfRows {
+                    let rowVisible = rowConfiguration.rowIsVisible(i);
+                    
+                    if rowVisible && visible {
+                        indices.addIndex(i);
+                    } else if !rowVisible && !visible {
+                        indices.addIndex(i);
+                    }
+                }
+                
+                return indices;
             }
             
             currentIndex += numberOfRows;
@@ -44,39 +66,39 @@ public class SectionConfiguration {
         return nil;
     }
     
-    public func numberOfSections() -> Int {
-        return 1;
+    internal func titleForHeader() -> String? {
+        return self.headerTitle;
     }
     
-    public func numberOfRowsInSection(section: Int) -> Int? {
-        if section < numberOfSections() {
-            return self.rowConfigurations.reduce(0) { (totalRows, rowConfiguration) -> Int in
-                return totalRows + rowConfiguration.numberOfRows(false);
-            }
+    internal func titleForFooter() -> String? {
+        return self.footerTitle;
+    }
+    
+    internal func numberOfRows() -> Int? {
+        return self.rowConfigurations.reduce(0) { (totalRows, rowConfiguration) -> Int in
+            return totalRows + rowConfiguration.numberOfRows(true);
         }
-        
-        return nil;
     }
     
-    public func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
+    internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
         return performRowOperation(row, handler: { (rowConfiguration, localizedRow) -> UITableViewCell? in
             return rowConfiguration.cellForRow(localizedRow, inTableView: tableView);
         });
     }
     
-    public func heightForRow(row: Int) -> CGFloat? {
+    internal func heightForRow(row: Int) -> CGFloat? {
         return performRowOperation(row, handler: { (rowConfiguration, localizedRow) -> CGFloat? in
             return rowConfiguration.heightForRow(localizedRow);
         });
     }
     
-    public func estimatedHeightForRow(row: Int) -> CGFloat? {
+    internal func estimatedHeightForRow(row: Int) -> CGFloat? {
         return performRowOperation(row, handler: { (rowConfiguration, localizedRow) -> CGFloat? in
             return rowConfiguration.estimatedHeightForRow(localizedRow);
         });
     }
     
-    public func didSelectRow(row: Int) -> Bool? {
+    internal func didSelectRow(row: Int) -> Bool? {
         return performRowOperation(row, handler: { (rowConfiguration, localizedRow) -> Bool? in
             return rowConfiguration.didSelectRow(localizedRow);
         });

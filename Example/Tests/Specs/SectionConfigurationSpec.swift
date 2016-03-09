@@ -3,7 +3,7 @@
 //  TableViewConfigurator
 //
 //  Created by John Volk on 3/4/16.
-//  Copyright © 2016 CocoaPods. All rights reserved.
+//  Copyright © 2016 John Volk. All rights reserved.
 //
 
 import Quick
@@ -45,27 +45,13 @@ class SectionConfigurationSpec: QuickSpec {
                 }
             }
             
-            describe("its number of sections") {
-                beforeEach {
-                    sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration]);
-                }
-                
-                it("is correct") {
-                    expect(sectionConfiguration.numberOfSections()).to(equal(1));
-                }
-            }
-            
             describe("its number of rows") {
                 beforeEach {
                     sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration]);
                 }
                 
-                it("is correct for existant section") {
-                    expect(sectionConfiguration.numberOfRowsInSection(0)).to(equal(4));
-                }
-                
-                it("is nil for non-existant section") {
-                    expect(sectionConfiguration.numberOfRowsInSection(1)).to(beNil());
+                it("is correct") {
+                    expect(sectionConfiguration.numberOfRows()).to(equal(4));
                 }
             }
             
@@ -161,6 +147,26 @@ class SectionConfigurationSpec: QuickSpec {
                         sectionConfiguration.didSelectRow(3);
                         expect(selectionHandlerInvoked).to(beFalse());
                     }
+                }
+            }
+            
+            describe("its header title") {
+                beforeEach {
+                    sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration]).headerTitle("Foo Header");
+                }
+                
+                it("is correct") {
+                    expect(sectionConfiguration.titleForHeader()).to(equal("Foo Header"));
+                }
+            }
+            
+            describe("its footer title") {
+                beforeEach {
+                    sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration]).footerTitle("Bar Footer");
+                }
+                
+                it("is correct") {
+                    expect(sectionConfiguration.titleForFooter()).to(equal("Bar Footer"));
                 }
             }
         }
