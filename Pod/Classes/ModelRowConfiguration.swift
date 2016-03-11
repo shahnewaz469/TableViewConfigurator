@@ -52,13 +52,25 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     override internal func numberOfRows(countHidden: Bool) -> Int {
         let models = generateModels();
         
-        if let hideWhen = self.hideWhen {
+        if let hideWhen = self.hideWhen where !countHidden {
             return models.reduce(0) { (totalRows, model) -> Int in
                 return totalRows + (hideWhen(model: model) ? 0 : 1);
             }
         }
         
         return models.count;
+    }
+    
+    override func rowIsVisible(row: Int) -> Bool? {
+        if row < numberOfRows(true) {
+            if let hideWhen = self.hideWhen {
+                return !hideWhen(model: generateModels()[row]);
+            }
+            
+            return true;
+        }
+        
+        return nil;
     }
     
     override internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {

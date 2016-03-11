@@ -35,32 +35,36 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         self.sectionConfigurations.removeAll(keepCapacity: true);
     }
     
-    public func visibleIndexPathsForRowConfiguration(rowConfiguration: RowConfiguration) -> [NSIndexPath]? {
-        return indexPathsForRowConfiguration(rowConfiguration, visible: true);
-    }
-    
-    public func hiddenIndexPathsForRowConfiguration(rowConfiguration: RowConfiguration) -> [NSIndexPath]? {
-        return indexPathsForRowConfiguration(rowConfiguration, visible: false);
-    }
-    
-    private func indexPathsForRowConfiguration(rowConfiguration: RowConfiguration, visible: Bool) -> [NSIndexPath]? {
+    public func indexPathChangeSetAfterPerformingOperation(operation: () -> Void) -> (insertions: [NSIndexPath], deletions: [NSIndexPath]) {
+        let preVisibleIndices = self.sectionConfigurations.map { (sectionConfiguration) -> NSIndexSet in
+            return sectionConfiguration.visibleIndexSet();
+        }
+        
+        operation();
+        
+        var insertions = [NSIndexPath]();
+        var deletions = [NSIndexPath]();
+        
         for i in 0 ..< self.sectionConfigurations.count {
-            let sectionConfiguration = self.sectionConfigurations[i];
-            let rowIndices = visible ? sectionConfiguration.visibleIndexSetForRowConfiguration(rowConfiguration) :
-                sectionConfiguration.hiddenIndexSetForRowConfiguration(rowConfiguration);
+            var currentPosition = 0;
+            let preIndices = preVisibleIndices[i];
+            let postIndices = self.sectionConfigurations[i].visibleIndexSet();
+            let allIndices = NSMutableIndexSet(indexSet: preIndices);
             
-            if let rowIndices = rowIndices {
-                var result = [NSIndexPath]();
-                
-                for index in rowIndices {
-                    result.append(NSIndexPath(forRow: index, inSection: i));
+            allIndices.addIndexes(postIndices);
+            
+            for index in allIndices {
+                if !preIndices.containsIndex(index) {
+                    insertions.append(NSIndexPath(forRow: currentPosition, inSection: i));
+                } else if !postIndices.containsIndex(index) {
+                    deletions.append(NSIndexPath(forRow: currentPosition, inSection: i));
                 }
                 
-                return result;
+                currentPosition++;
             }
         }
         
-        return nil;
+        return (insertions: insertions, deletions: deletions);
     }
     
     public func numberOfSectionsInTableView(tableView: UITableView) -> Int {

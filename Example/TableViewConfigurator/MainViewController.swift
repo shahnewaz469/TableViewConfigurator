@@ -20,10 +20,12 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     private var configurator: TableViewConfigurator!;
     private var hidePeople = false;
+    private var hideJohns = false;
     private var hideDisclosure = false;
     
     private let people = [Person(firstName: "John", lastName: "Doe", age: 50),
         Person(firstName: "Alex", lastName: "Great", age: 32),
+        Person(firstName: "John", lastName: "Wayne", age: 45),
         Person(firstName: "Napoléon", lastName: "Bonaparte", age: 18)];
     
     private let animals = [(scientificClass: "Amphibians", animals: [Animal(name: "American Bullfrog", scientificName: "Rana catesbeiana"), Animal(name: "Fire Salamander", scientificName: "Salamandra salamandra")]),
@@ -39,7 +41,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         let peopleRows = ModelRowConfiguration<PersonCell, Person>(models: self.people)
             .hideWhen({ (model) -> Bool in
-                return self.hidePeople;
+                return (self.hideJohns && model.firstName == "John") || self.hidePeople;
             })
             .heightGenerator { (model) -> CGFloat in
                 return 44.0;
@@ -48,23 +50,32 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let peopleSection = SectionConfiguration(rowConfigurations:
             [ConstantRowConfiguration<SwitchCell>()
                 .additionalConfig({ (cell) -> Void in
-                    let hideIndexPaths = self.configurator.indexPathsForRowConfiguration(peopleRows);
-                    
-                    cell.hideLabel.text = "Hide People";
+                    cell.hideLabel.text = "Hide All People";
                     cell.hideSwitch.on = self.hidePeople;
                     cell.switchChangedHandler = { (on) -> Void in
-                        self.hidePeople = on;
+                        let changeSet = self.configurator.indexPathChangeSetAfterPerformingOperation({ self.hidePeople = on; });
                         
-                        if let indexPaths = hideIndexPaths {
-                            if on {
-                                self.tableView.deleteRowsAtIndexPaths(indexPaths, withRowAnimation: .Top);
-                            } else {
-                                self.tableView.insertRowsAtIndexPaths(indexPaths, withRowAnimation: .Top);
-                            }
-                        }
+                        self.tableView.beginUpdates();
+                        self.tableView.insertRowsAtIndexPaths(changeSet.insertions, withRowAnimation: .Top);
+                        self.tableView.deleteRowsAtIndexPaths(changeSet.deletions, withRowAnimation: .Top);
+                        self.tableView.endUpdates();
                     }
                 })
-                .height(44.0), peopleRows, ConstantRowConfiguration<BasicCell>().height(44.0)]).headerTitle("People");
+                .height(44.0),
+                ConstantRowConfiguration<SwitchCell>()
+                    .additionalConfig({ (cell) -> Void in
+                        cell.hideLabel.text = "Hide Johns";
+                        cell.hideSwitch.on = self.hideJohns;
+                        cell.switchChangedHandler = { (on) -> Void in
+                            let changeSet = self.configurator.indexPathChangeSetAfterPerformingOperation({ self.hideJohns = on; });
+                            
+                            self.tableView.beginUpdates();
+                            self.tableView.insertRowsAtIndexPaths(changeSet.insertions, withRowAnimation: .Top);
+                            self.tableView.deleteRowsAtIndexPaths(changeSet.deletions, withRowAnimation: .Top);
+                            self.tableView.endUpdates();
+                        }
+                    })
+                    .height(44.0), peopleRows, ConstantRowConfiguration<BasicCell>().height(44.0)]).headerTitle("People");
         
         let disclosureSection = SectionConfiguration(rowConfiguration:
             ConstantRowConfiguration<DisclosureCell>()

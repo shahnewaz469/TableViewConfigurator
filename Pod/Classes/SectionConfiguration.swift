@@ -10,9 +10,10 @@ import UIKit
 
 public class SectionConfiguration {
 
-    private let rowConfigurations: [RowConfiguration];
     private var headerTitle: String?;
     private var footerTitle: String?;
+    
+    public let rowConfigurations: [RowConfiguration];
     
     public init(rowConfigurations: [RowConfiguration]) {
         self.rowConfigurations = rowConfigurations;
@@ -30,40 +31,23 @@ public class SectionConfiguration {
         self.footerTitle = footerTitle; return self;
     }
     
-    internal func visibleIndexSetForRowConfiguration(rowConfiguration: RowConfiguration) -> NSIndexSet? {
-        return indexSetForRowConfiguration(rowConfiguration, visible: true);
-    }
-    
-    internal func hiddenIndexSetForRowConfiguration(rowConfiguration: RowConfiguration) -> NSIndexSet? {
-        return indexSetForRowConfiguration(rowConfiguration, visible: false);
-    }
-    
-    private func indexSetForRowConfiguration(rowConfiguration: RowConfiguration, visible: Bool) -> NSIndexSet? {
-        var currentIndex = 0;
+    internal func visibleIndexSet() -> NSIndexSet {
+        let result = NSMutableIndexSet();
+        var indexOffset = 0;
         
-        for candidate in self.rowConfigurations { 
-            let numberOfRows = candidate.numberOfRows(true);
+        for rowConfiguration in self.rowConfigurations {
+            let totalRows = rowConfiguration.numberOfRows(true);
             
-            if rowConfiguration === candidate && numberOfRows > 0 {
-                let indices = NSMutableIndexSet();
-                
-                for i in 0 ..< numberOfRows {
-                    let rowVisible = rowConfiguration.rowIsVisible(i);
-                    
-                    if rowVisible && visible {
-                        indices.addIndex(i);
-                    } else if !rowVisible && !visible {
-                        indices.addIndex(i);
-                    }
+            for i in 0 ..< totalRows {
+                if let rowVisible = rowConfiguration.rowIsVisible(i) where rowVisible {
+                    result.addIndex(i + indexOffset);
                 }
-                
-                return indices;
             }
             
-            currentIndex += numberOfRows;
+            indexOffset += totalRows;
         }
         
-        return nil;
+        return result;
     }
     
     internal func titleForHeader() -> String? {
@@ -76,7 +60,7 @@ public class SectionConfiguration {
     
     internal func numberOfRows() -> Int? {
         return self.rowConfigurations.reduce(0) { (totalRows, rowConfiguration) -> Int in
-            return totalRows + rowConfiguration.numberOfRows(true);
+            return totalRows + rowConfiguration.numberOfRows(false);
         }
     }
     

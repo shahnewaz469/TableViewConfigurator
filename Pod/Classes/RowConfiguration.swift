@@ -28,6 +28,9 @@ public class RowConfiguration {
     }
     
     internal func numberOfRows(countHidden: Bool) -> Int { return 0; }
+    
+    internal func rowIsVisible(row: Int) -> Bool? { return true; }
+    
     internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? { return nil };
     
     internal func heightForRow(row: Int) -> CGFloat? {
@@ -47,5 +50,4 @@ public class RowConfiguration {
     }
     
     internal func didSelectRow(row: Int) -> Bool? { return nil };
-    
 }

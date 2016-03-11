@@ -29,37 +29,16 @@ class SectionConfigurationSpec: QuickSpec {
                 tableView.registerClass(ModelImplicitReuseIdCell.self, forCellReuseIdentifier: ModelImplicitReuseIdCell.REUSE_ID);
                 constantRowConfiguration = ConstantRowConfiguration();
                 modelRowConfiguration = ModelRowConfiguration(models: self.things);
-            }
-            
-            describe("its row index set") {
-                beforeEach {
-                    sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration]);
-                }
-                
-                it("is correct for constant row configuration") {
-                    expect(sectionConfiguration.rowIndexSetForRowConfiguration(constantRowConfiguration)).to(equal(NSIndexSet(index: 3)));
-                }
-                
-                it("is correct for model row configuration") {
-                    expect(sectionConfiguration.rowIndexSetForRowConfiguration(modelRowConfiguration)).to(equal(NSIndexSet(indexesInRange: NSMakeRange(0, 3))));
-                }
+                sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration]);
             }
             
             describe("its number of rows") {
-                beforeEach {
-                    sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration]);
-                }
-                
                 it("is correct") {
                     expect(sectionConfiguration.numberOfRows()).to(equal(4));
                 }
             }
             
             describe("its produced cell") {
-                beforeEach {
-                    sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration]);
-                }
-                
                 it("is correct for constant row configuration") {
                     let cell = sectionConfiguration.cellForRow(3, inTableView: tableView) as? ImplicitReuseIdCell;
                     
@@ -77,29 +56,25 @@ class SectionConfigurationSpec: QuickSpec {
             }
             
             describe("its height") {
-                beforeEach {
-                    sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration.height(100.0), constantRowConfiguration.height(200.0)]);
-                }
-                
                 it("is correct for constant row configuration") {
+                    constantRowConfiguration.height(200.0);
                     expect(sectionConfiguration.heightForRow(3)).to(equal(200.0));
                 }
                 
                 it("is correct for model row configuration") {
+                    modelRowConfiguration.height(100.0)
                     expect(sectionConfiguration.heightForRow(1)).to(equal(100.0));
                 }
             }
             
             describe("its estimated height") {
-                beforeEach {
-                    sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration.estimatedHeight(100.0), constantRowConfiguration.estimatedHeight(200.0)]);
-                }
-                
                 it("is correct for constant row configuration") {
+                    constantRowConfiguration.estimatedHeight(200.0)
                     expect(sectionConfiguration.estimatedHeightForRow(3)).to(equal(200.0));
                 }
                 
                 it("is correct for model row configuration") {
+                    modelRowConfiguration.estimatedHeight(100.0)
                     expect(sectionConfiguration.estimatedHeightForRow(1)).to(equal(100.0));
                 }
             }
@@ -110,10 +85,9 @@ class SectionConfigurationSpec: QuickSpec {
                     
                     beforeEach {
                         selectionHandlerInvoked = false;
-                        sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration
-                            .selectionHandler({ () -> Bool in
-                                selectionHandlerInvoked = true; return true;
-                            })]);
+                        constantRowConfiguration.selectionHandler({ () -> Bool in
+                            selectionHandlerInvoked = true; return true;
+                        });
                     }
                     
                     it("is correct when selected") {
@@ -132,10 +106,9 @@ class SectionConfigurationSpec: QuickSpec {
                     
                     beforeEach {
                         selectionHandlerInvoked = false;
-                        sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration
-                            .selectionHandler({ (model) -> Bool in
-                                selectionHandlerInvoked = true; return true;
-                            }), constantRowConfiguration]);
+                        modelRowConfiguration.selectionHandler({ (model) -> Bool in
+                            selectionHandlerInvoked = true; return true;
+                        });
                     }
                     
                     it("is correct when selected") {
@@ -151,21 +124,15 @@ class SectionConfigurationSpec: QuickSpec {
             }
             
             describe("its header title") {
-                beforeEach {
-                    sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration]).headerTitle("Foo Header");
-                }
-                
                 it("is correct") {
+                    sectionConfiguration.headerTitle("Foo Header");
                     expect(sectionConfiguration.titleForHeader()).to(equal("Foo Header"));
                 }
             }
             
             describe("its footer title") {
-                beforeEach {
-                    sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration]).footerTitle("Bar Footer");
-                }
-                
                 it("is correct") {
+                    sectionConfiguration.footerTitle("Bar Footer");
                     expect(sectionConfiguration.titleForFooter()).to(equal("Bar Footer"));
                 }
             }

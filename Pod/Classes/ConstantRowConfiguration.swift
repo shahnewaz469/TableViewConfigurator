@@ -36,6 +36,18 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
         return 1;
     }
     
+    override func rowIsVisible(row: Int) -> Bool? {
+        if row < numberOfRows(true) {
+            if let hideWhen = self.hideWhen {
+                return !hideWhen();
+            }
+            
+            return true;
+        }
+        
+        return nil;
+    }
+    
     override internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
         if row < numberOfRows(false) {
             let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier();
