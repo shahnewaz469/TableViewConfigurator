@@ -271,20 +271,15 @@ override func viewDidLoad() {
     let peopleSection = SectionConfiguration(rowConfigurations:
         [ConstantRowConfiguration<SwitchCell>()
             .additionalConfig({ (cell) -> Void in
-                let hideIndexPaths = self.configurator.indexPathsForRowConfiguration(peopleRows);
-                    
                 cell.hideLabel.text = "Hide People";
                 cell.hideSwitch.on = self.hidePeople;
                 cell.switchChangedHandler = { (on) -> Void in
-                    self.hidePeople = on;
+                    let changeSet = self.configurator.indexPathChangeSetAfterPerformingOperation({ self.hidePeople = on; });
                         
-                    if let indexPaths = hideIndexPaths {
-                        if on {
-                            self.tableView.deleteRowsAtIndexPaths(indexPaths, withRowAnimation: .Top);
-                        } else {
-                            self.tableView.insertRowsAtIndexPaths(indexPaths, withRowAnimation: .Top);
-                        }
-                    }
+                    self.tableView.beginUpdates();
+                    self.tableView.insertRowsAtIndexPaths(changeSet.insertions, withRowAnimation: .Top);
+                    self.tableView.deleteRowsAtIndexPaths(changeSet.deletions, withRowAnimation: .Top);
+                    self.tableView.endUpdates();
                 }
             })
             .height(44.0), peopleRows, ConstantRowConfiguration<BasicCell>().height(44.0)]);
