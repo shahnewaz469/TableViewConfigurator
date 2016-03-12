@@ -38,6 +38,37 @@ class TableViewConfiguratorSpec: QuickSpec {
                 configurator = TableViewConfigurator(tableView: tableView, sectionConfigurations: [firstSectionConfiguration, secondSectionConfiguration]);
             }
             
+            describe("its index path change set") {
+                it("is correct") {
+                    var hideModels = false;
+                    var hideConstant = false;
+                    var changeSet = configurator.indexPathChangeSetAfterPerformingOperation({ });
+                    
+                    expect(changeSet.insertions).to(beEmpty());
+                    expect(changeSet.deletions).to(beEmpty());
+                    
+                    modelRowConfiguration.hideWhen({ (model) -> Bool in
+                        return hideModels;
+                    });
+                    changeSet = configurator.indexPathChangeSetAfterPerformingOperation({ hideModels = true });
+                    expect(changeSet.insertions).to(beEmpty());
+                    expect(changeSet.deletions).to(equal([NSIndexPath(forRow: 0, inSection: 0), NSIndexPath(forRow: 1, inSection: 0), NSIndexPath(forRow: 2, inSection: 0)]));
+                    
+                    constantRowConfiguration.hideWhen({ return hideConstant });
+                    changeSet = configurator.indexPathChangeSetAfterPerformingOperation({ hideConstant = true });
+                    expect(changeSet.insertions).to(beEmpty());
+                    expect(changeSet.deletions).to(equal([NSIndexPath(forRow: 0, inSection: 1)]));
+                    
+                    changeSet = configurator.indexPathChangeSetAfterPerformingOperation({ () -> Void in
+                        hideModels = false;
+                        hideConstant = false;
+                    });
+                    expect(changeSet.deletions).to(beEmpty());
+                    expect(changeSet.insertions).to(equal([NSIndexPath(forRow: 0, inSection: 0), NSIndexPath(forRow: 1, inSection: 0), NSIndexPath(forRow: 2, inSection: 0),
+                        NSIndexPath(forRow: 0, inSection: 1)]));
+                }
+            }
+            
             describe("its number of sections") {
                 it("is correct") {
                     expect(configurator.numberOfSectionsInTableView(tableView)).to(equal(2));

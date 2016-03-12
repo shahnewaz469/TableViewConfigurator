@@ -32,6 +32,23 @@ class SectionConfigurationSpec: QuickSpec {
                 sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration]);
             }
             
+            describe("its visible index set") {
+                it("is correct") {
+                    expect(sectionConfiguration.visibleIndexSet()).to(equal(NSIndexSet(indexesInRange: NSMakeRange(0, 4))));
+                    
+                    modelRowConfiguration.hideWhen({ return $0 === self.things[0] });
+                    expect(sectionConfiguration.visibleIndexSet()).to(equal(NSIndexSet(indexesInRange: NSMakeRange(1, 3))));
+                    
+                    constantRowConfiguration.hideWhen({ return true });
+                    expect(sectionConfiguration.visibleIndexSet()).to(equal(NSIndexSet(indexesInRange: NSMakeRange(1, 2))));
+                    
+                    modelRowConfiguration.hideWhen({ (model) -> Bool in
+                        return true;
+                    });
+                    expect(sectionConfiguration.visibleIndexSet()).to(beEmpty());
+                }
+            }
+            
             describe("its number of rows") {
                 it("is correct") {
                     expect(sectionConfiguration.numberOfRows()).to(equal(4));
