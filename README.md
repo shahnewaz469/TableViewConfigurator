@@ -325,6 +325,12 @@ func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSInde
 }
 ```
 
+As you can see in the above example, TableViewConfigurator also supports UITableView row insertion and deletion.
+
+##### .indexPathChangeSetAfterPerformingOperation()
+
+In order to support row insertion / deletion, all you need to do is setup your cells .hideWhen() handlers appropriately and then call `indexPathChangeSetAfterPerformingOperation()`. TableViewConfigurator will note changes in visibility before and after performing the operation you specify and will return those changes to you in the resulting tuple. All you have to do is pass those changes to your UITableView and your rows will animated appropriately.
+
 ## Author
 
 John Volk, john.t.volk@gmail.com
