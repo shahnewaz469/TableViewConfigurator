@@ -10,22 +10,22 @@ import UIKit
 
 public protocol ConfigurableTableViewCell {
     
-    func configure();
+    func configure()
     
 }
 
 public protocol ModelConfigurableTableViewCell {
 
-    typealias ModelType;
+    associatedtype ModelType
     
-    func configure(model: ModelType);
+    func configure(model: ModelType)
     
 }
 
 public extension UITableViewCell {
     
     public class func buildReuseIdentifier() -> String? {
-        return nil;
+        return nil
     }
     
 }
