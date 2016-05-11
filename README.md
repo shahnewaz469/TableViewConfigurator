@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/cocoapods/l/TableViewConfigurator.svg?style=flat)](http://cocoapods.org/pods/TableViewConfigurator)
 [![Platform](https://img.shields.io/cocoapods/p/TableViewConfigurator.svg?style=flat)](http://cocoapods.org/pods/TableViewConfigurator)
 
-When implementing UITableView-based UIs, it is very often the case that you end up with controller objects containing many lines of brittle and error-prone implementations of `UITableViewDataSource` and `UITableViewDelegate`.
+When implementing `UITableView`-based UIs, it is very often the case that you end up with controller objects containing many lines of brittle and error-prone implementations of `UITableViewDataSource` and `UITableViewDelegate`.
 
 For example:
 
@@ -137,7 +137,7 @@ At this point `rowConfiguration` is ready to be used and will have its `configur
 
 ##### .cellResuseId()
 
-By default, TableViewConfigurator will generate a reuse identifier for your cell class that is equal to the class name. If this isn't the behavior you want, you can either override `buildReuseIdentifier()` in your cell class, or specify the reuse identifier in your controller.
+By default, `TableViewConfigurator` will generate a reuse identifier for your cell class that is equal to the class name. If this isn't the behavior you want, you can either override `buildReuseIdentifier()` in your cell class, or specify the reuse identifier in your controller.
 
 `let rowConfiguration = ConstantRowConfiguration<BasicCell>().cellReuseId("someReuseId");`
 
@@ -188,7 +188,7 @@ let rowConfiguration = ConstantRowConfiguration<BasicCell>()
 
 #### ModelRowConfiguration
 
-A `ModelRowConfiguration` represents a group of rows that are defined by an array of some model type. It has all the same configuration options as `ConstantRowConfiguration` but closure callbacks you define will take an additional `model` parameter that represents the model associated with the actual row in question. Additionally, it's constructor requires two generic type parameters. The first is an implementation of `ModelConfigurableTableViewCell` and the second is any Swift type you wish (e.g., a "model" object, a tuple, a Bool, etc.). It's constructor can also be passed a function that returns an up-to-date model array. This is useful in dynamic UIs.
+A `ModelRowConfiguration` represents a group of rows that are defined by an array of some model type. It has all the same configuration options as `ConstantRowConfiguration` but closure callbacks you define will take an additional `model` parameter that represents the model associated with the actual row in question. Additionally, it's constructor requires two generic type parameters. The first is an implementation of `ModelConfigurableTableViewCell` and the second is any Swift type you wish (e.g., a "model" object, a tuple, a `Bool`, etc.). It's constructor can also be passed a function that returns an up-to-date model array. This is useful in dynamic UIs.
 
 ```swift
 class PersonCell: UITableViewCell, ModelConfigurableTableViewCell {
@@ -317,7 +317,7 @@ func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSInde
 }
 ```
 
-As you can see in the above example, TableViewConfigurator also supports UITableView row insertion and deletion.
+As you can see in the above example, `TableViewConfigurator` also supports UITableView row insertion and deletion.
 
 ##### .indexPathChangeSetAfterPerformingOperation()
 
@@ -325,11 +325,11 @@ In order to support row insertion / deletion, all you need to do is setup your c
 
 ##### indexPathsForRowConfiguration()
 
-`TableViewConfigurator` also provides the `indexPathsForRowConfiguration()` method so you can access the actual NSIndexPath(s) for a `RowConfiguration`. This is useful for (among other things) calling `reloadRowsAtIndexPaths()` on your UITableView to force your cells to reload from their models or constant configuration.
+`TableViewConfigurator` also provides the `indexPathsForRowConfiguration()` method so you can access the actual `NSIndexPath`(s) for a `RowConfiguration`. This is useful for (among other things) calling `reloadRowsAtIndexPaths()` on your `UITableView` to force your cells to reload from their models or constant configuration.
 
 ##### refreshRowConfiguration()
 
-Sometimes you may want to refresh the contents of a currently visible cell without forcing a complete reload of the cell. For example, if your cell contained a UITextField, performing a reload (which destroys and replaces the existing cell) would cause the text field to lose focus. To address this, `TableViewConfigurator` provides the `refreshRowConfiguration()` method which searches the table for any existant cells tied to a `RowConfiguration` and non-destructively refreshes them from their model or constant configuration. Any offscreen cells will of course be updated when they become visible and `UITableView` queries it's delegate.
+Sometimes you may want to refresh the contents of a currently visible cell without forcing a complete reload of the cell. For example, if your cell contained a `UITextField`, performing a reload (which destroys and replaces the existing cell) would cause the text field to lose focus. To address this, `TableViewConfigurator` provides the `refreshRowConfiguration()` method which searches the table for any existant cells tied to a `RowConfiguration` and non-destructively refreshes them from their model or constant configuration. Any offscreen cells will of course be updated when they become visible and `UITableView` queries it's delegate.
 
 ## Author
 
