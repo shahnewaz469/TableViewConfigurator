@@ -125,10 +125,6 @@ import TableViewConfigurator
 
 class BasicCell: UITableViewCell, ConfigurableTableViewCell {
 
-    override class func buildReuseIdentifier() -> String? {
-        return "basicCell";
-    }
-    
     func configure() {
         self.textLabel?.text = "Basic Cell"
     }
@@ -141,7 +137,7 @@ At this point `rowConfiguration` is ready to be used and will have its `configur
 
 ##### .cellResuseId()
 
-You can specify the reuse identifier that should be used for the cell in your controller rather than in your `ConfigurableTableViewCell` implementation.
+By default, TableViewConfigurator will generate a reuse identifier for your cell class that is equal to the class name. If this isn't the behavior you want, you can either override `buildReuseIdentifier()` in your cell class, or specify the reuse identifier in your controller.
 
 `let rowConfiguration = ConstantRowConfiguration<BasicCell>().cellReuseId("someReuseId");`
 
@@ -199,11 +195,7 @@ class PersonCell: UITableViewCell, ModelConfigurableTableViewCell {
     
     @IBOutlet var nameLabel: UILabel!;
     @IBOutlet var ageLabel: UILabel!;
-    
-    override class func buildReuseIdentifier() -> String? {
-        return "personCell";
-    }
-    
+
     func configure(model: Person) {
         self.nameLabel.text = "\(model.firstName) \(model.lastName)";
         self.ageLabel.text = "Age \(model.age)";
