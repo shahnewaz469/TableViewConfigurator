@@ -40,7 +40,6 @@
 		5289D7499BA4A5ED209DD55FB819254F /* NMBExceptionCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = CBC9A93F83F96271A3BBC4D2B6BED0E0 /* NMBExceptionCapture.m */; };
 		54CE3FBBD31744EFA8B0A8EADB09F50C /* NMBStringify.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2E5538EB699C57A0643DF6515FBE04 /* NMBStringify.m */; };
 		56CA153033917F08CCDD22E94806C873 /* MatchError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A9D738A2B165D70243CF1844E20B1B /* MatchError.swift */; };
-		58526DCD1CE2882E00A6663B /* ConfigurableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58526DCC1CE2882E00A6663B /* ConfigurableViewController.swift */; };
 		59A4C06B57864AA9BBFAE0B762DAE871 /* BeLessThan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C37372AF95C4E6F583060321FCDE1BB /* BeLessThan.swift */; };
 		59AFC17D744CDEED360B4DF8876295BF /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 261CA1548110AA834362A034ED7C9690 /* Errors.swift */; };
 		5A4AC5619A05687E5EB0A4BBDC8AF154 /* AllPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EC9793BB7C7974D3163BBA5D7947EA0 /* AllPass.swift */; };
@@ -183,7 +182,6 @@
 		517B4ABCB7B0955107498B34A1A36808 /* Stringers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Stringers.swift; path = Sources/Nimble/Utils/Stringers.swift; sourceTree = "<group>"; };
 		5222A5D2C507DCEB82FA120E830B112F /* TableViewConfigurator.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = TableViewConfigurator.modulemap; sourceTree = "<group>"; };
 		5583616EEE527A70D440EAF59BBDAD7F /* CurrentTestCaseTracker.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = CurrentTestCaseTracker.h; path = Sources/Nimble/Adapters/ObjectiveC/CurrentTestCaseTracker.h; sourceTree = "<group>"; };
-		58526DCC1CE2882E00A6663B /* ConfigurableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurableViewController.swift; sourceTree = "<group>"; };
 		59D56FDCD8F8F41325D44BD2DA260CA9 /* BeIdenticalTo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BeIdenticalTo.swift; path = Sources/Nimble/Matchers/BeIdenticalTo.swift; sourceTree = "<group>"; };
 		5A06EA8909E996609DAE2D3409867E2C /* BeEmpty.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BeEmpty.swift; path = Sources/Nimble/Matchers/BeEmpty.swift; sourceTree = "<group>"; };
 		5A9D2DA02A0B0DFB80D869AA895F8D7B /* Quick-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Quick-prefix.pch"; sourceTree = "<group>"; };
@@ -462,7 +460,6 @@
 			isa = PBXGroup;
 			children = (
 				28E40D7DA2D101557452C5BC076D1B7B /* ConfigurableTableViewCell.swift */,
-				58526DCC1CE2882E00A6663B /* ConfigurableViewController.swift */,
 				B8D4877CAF166401F745350888C059FB /* ConstantRowConfiguration.swift */,
 				94D66E24ED4CC0B7645DAA9EC9C01297 /* ModelRowConfiguration.swift */,
 				D20B53D8422043EAEC36ECBE7DB3698B /* RowConfiguration.swift */,
@@ -854,7 +851,6 @@
 			files = (
 				09FB1F934C3D4CC6673FA36953FDD91B /* ConfigurableTableViewCell.swift in Sources */,
 				78CE7DC42459210ABCB37D3E4F35D300 /* ConstantRowConfiguration.swift in Sources */,
-				58526DCD1CE2882E00A6663B /* ConfigurableViewController.swift in Sources */,
 				24331D09C7725C710C48F4E2F2C935F6 /* ModelRowConfiguration.swift in Sources */,
 				33604386C6AEB151B6AF8E6283654BF0 /* RowConfiguration.swift in Sources */,
 				291E7B63D71709FC351E21D9D421C1A0 /* SectionConfiguration.swift in Sources */,

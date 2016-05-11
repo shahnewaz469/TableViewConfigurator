@@ -21,6 +21,7 @@ class MainViewController: UIViewController {
     private var hidePeople = false
     private var hideJohns = false
     private var hideDisclosure = false
+    private var configurator: TableViewConfigurator!
     
     private let people = [Person(firstName: "John", lastName: "Doe", age: 50),
         Person(firstName: "Alex", lastName: "Great", age: 32),
@@ -46,7 +47,7 @@ class MainViewController: UIViewController {
                     cell.textLabel!.text = "Reset Text"
                 })
                 .selectionHandler({ () -> Bool in
-                    self.configurator!.refreshRowConfiguration(textRow)
+                    self.configurator.refreshRowConfiguration(textRow)
                     return true
                 })
                 .height(44.0)]).headerTitle("Refreshable UITextField")
@@ -65,7 +66,7 @@ class MainViewController: UIViewController {
                     cell.hideLabel.text = "Hide All People"
                     cell.hideSwitch.on = self.hidePeople
                     cell.switchChangedHandler = { (on) -> Void in
-                        let changeSet = self.configurator!.indexPathChangeSetAfterPerformingOperation({ self.hidePeople = on; })
+                        let changeSet = self.configurator.indexPathChangeSetAfterPerformingOperation({ self.hidePeople = on; })
                         
                         self.tableView.beginUpdates()
                         self.tableView.insertRowsAtIndexPaths(changeSet.insertions, withRowAnimation: .Top)
@@ -79,7 +80,7 @@ class MainViewController: UIViewController {
                         cell.hideLabel.text = "Hide Johns"
                         cell.hideSwitch.on = self.hideJohns
                         cell.switchChangedHandler = { (on) -> Void in
-                            let changeSet = self.configurator!.indexPathChangeSetAfterPerformingOperation({ self.hideJohns = on })
+                            let changeSet = self.configurator.indexPathChangeSetAfterPerformingOperation({ self.hideJohns = on })
                             
                             self.tableView.beginUpdates()
                             self.tableView.insertRowsAtIndexPaths(changeSet.insertions, withRowAnimation: .Top)
@@ -94,7 +95,7 @@ class MainViewController: UIViewController {
                     })
                     .selectionHandler({ () -> Bool in
                         self.people.forEach({ $0.incrementAge() })
-                        self.tableView.reloadRowsAtIndexPaths(self.configurator!.indexPathsForRowConfiguration(peopleRows),
+                        self.tableView.reloadRowsAtIndexPaths(self.configurator.indexPathsForRowConfiguration(peopleRows),
                             withRowAnimation: .Automatic)
                         
                         return true
@@ -126,6 +127,34 @@ class MainViewController: UIViewController {
         }
         
         self.configurator = TableViewConfigurator(tableView: tableView, sectionConfigurations: configurations)
+    }
+    
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return self.configurator.numberOfSectionsInTableView(tableView)
+    }
+    
+    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return self.configurator.tableView(tableView, titleForHeaderInSection: section)
+    }
+    
+    func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        return self.configurator.tableView(tableView, titleForFooterInSection: section)
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.configurator.tableView(tableView, numberOfRowsInSection: section)
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        return self.configurator.tableView(tableView, cellForRowAtIndexPath: indexPath)
+    }
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return self.configurator.tableView(tableView, heightForRowAtIndexPath: indexPath)
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        self.configurator.tableView(tableView, didSelectRowAtIndexPath: indexPath)
     }
 }
 
