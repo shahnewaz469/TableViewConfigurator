@@ -321,7 +321,15 @@ As you can see in the above example, TableViewConfigurator also supports UITable
 
 ##### .indexPathChangeSetAfterPerformingOperation()
 
-In order to support row insertion / deletion, all you need to do is setup your cells .hideWhen() handlers appropriately and then call `indexPathChangeSetAfterPerformingOperation()`. TableViewConfigurator will note changes in visibility before and after performing the operation you specify and will return those changes to you in the resulting tuple. All you have to do is pass those changes to your UITableView and your rows will animated appropriately.
+In order to support row insertion / deletion, all you need to do is setup your cells .hideWhen() handlers appropriately and then call `indexPathChangeSetAfterPerformingOperation()`. `TableViewConfigurator` will note changes in visibility before and after performing the operation you specify and will return those changes to you in the resulting tuple. All you have to do is pass those changes to your UITableView and your rows will animated appropriately.
+
+##### indexPathsForRowConfiguration()
+
+`TableViewConfigurator` also provides the `indexPathsForRowConfiguration()` method so you can access the actual NSIndexPath(s) for a `RowConfiguration`. This is useful for (among other things) calling `reloadRowsAtIndexPaths()` on your UITableView to force your cells to reload from their models or constant configuration.
+
+##### refreshRowConfiguration()
+
+Sometimes you may want to refresh the contents of a currently visible cell without forcing a complete reload of the cell. For example, if your cell contained a UITextField, performing a reload (which destroys and replaces the existing cell) would cause the text field to lose focus. To address this, `TableViewConfigurator` provides the `refreshRowConfiguration()` method which searches the table for any existant cells tied to a `RowConfiguration` and non-destructively refreshes them from their model or constant configuration. Any offscreen cells will of course be updated when they become visible and `UITableView` queries it's delegate.
 
 ## Author
 
