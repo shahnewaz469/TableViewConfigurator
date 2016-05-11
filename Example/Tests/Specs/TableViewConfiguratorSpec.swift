@@ -20,7 +20,7 @@ class TableViewConfiguratorSpec: QuickSpec {
     
     override func spec() {
         describe("a table view configurator") {
-            var tableView: UITableView!;
+            var tableView: UITableViewMock!;
             var constantRowConfiguration: ConstantRowConfiguration<ImplicitReuseIdCell>!;
             var modelRowConfiguration: ModelRowConfiguration<ModelImplicitReuseIdCell, Thing>!;
             var firstSectionConfiguration: SectionConfiguration!;
@@ -28,7 +28,7 @@ class TableViewConfiguratorSpec: QuickSpec {
             var configurator: TableViewConfigurator!;
             
             beforeEach {
-                tableView = UITableView();
+                tableView = UITableViewMock();
                 tableView.registerClass(ImplicitReuseIdCell.self, forCellReuseIdentifier: ImplicitReuseIdCell.buildReuseIdentifier());
                 tableView.registerClass(ModelImplicitReuseIdCell.self, forCellReuseIdentifier: ModelImplicitReuseIdCell.buildReuseIdentifier());
                 modelRowConfiguration = ModelRowConfiguration(models: self.things);
@@ -36,6 +36,23 @@ class TableViewConfiguratorSpec: QuickSpec {
                 firstSectionConfiguration = SectionConfiguration(rowConfiguration: modelRowConfiguration);
                 secondSectionConfiguration = SectionConfiguration(rowConfiguration: constantRowConfiguration);
                 configurator = TableViewConfigurator(tableView: tableView, sectionConfigurations: [firstSectionConfiguration, secondSectionConfiguration]);
+            }
+            
+            describe("its index paths for row configuration") {
+                it("is correct") {
+                    expect(configurator.indexPathsForRowConfiguration(modelRowConfiguration))
+                        .to(equal([NSIndexPath(forRow: 0, inSection: 0), NSIndexPath(forRow: 1, inSection: 0), NSIndexPath(forRow: 2, inSection: 0)]))
+                    expect(configurator.indexPathsForRowConfiguration(constantRowConfiguration))
+                        .to(equal([NSIndexPath(forRow: 0, inSection: 1)]))
+                    
+                    modelRowConfiguration.hideWhen({ $0 === self.things[2] })
+                    expect(configurator.indexPathsForRowConfiguration(modelRowConfiguration))
+                        .to(equal([NSIndexPath(forRow: 0, inSection: 0), NSIndexPath(forRow: 1, inSection: 0)]))
+                    
+                    constantRowConfiguration.hideWhen({ return true })
+                    expect(configurator.indexPathsForRowConfiguration(constantRowConfiguration))
+                        .to(beEmpty())
+                }
             }
             
             describe("its index path change set") {
@@ -92,6 +109,34 @@ class TableViewConfiguratorSpec: QuickSpec {
                 
                 it("is correct for model row section") {
                     expect(configurator.tableView(tableView, cellForRowAtIndexPath: NSIndexPath(forRow: 1, inSection: 0))).to(beAnInstanceOf(ModelImplicitReuseIdCell));
+                }
+                
+                it("is refreshed for constant row section") {
+                    let indexPath = NSIndexPath(forRow: 0, inSection: 1)
+                    let cell = configurator.tableView(tableView, cellForRowAtIndexPath: indexPath) as? ImplicitReuseIdCell
+                    
+                    expect(cell?.configured).to(beTrue())
+                    
+                    cell?.configured = false
+                    expect(cell?.configured).to(beFalse())
+                    
+                    tableView.storeCell(cell!, forIndexPath: indexPath)
+                    configurator.refreshRowConfiguration(constantRowConfiguration)
+                    expect(cell?.configured).to(beTrue())
+                }
+                
+                it("is refreshed for model row section") {
+                    let indexPath = NSIndexPath(forRow: 1, inSection: 0)
+                    let cell = configurator.tableView(tableView, cellForRowAtIndexPath: indexPath) as? ModelImplicitReuseIdCell
+                    
+                    expect(cell?.model).toNot(beNil())
+                    
+                    cell?.model = nil
+                    expect(cell?.model).to(beNil())
+                    
+                    tableView.storeCell(cell!, forIndexPath: indexPath)
+                    configurator.refreshRowConfiguration(modelRowConfiguration)
+                    expect(cell?.model).toNot(beNil())
                 }
             }
             

@@ -17,12 +17,12 @@ class ModelRowConfigurationSpec: QuickSpec {
     
     override func spec() {
         describe("a model row configuration") {
-            var tableView: UITableView!;
+            var tableView: UITableViewMock!;
             var rowConfiguration: ModelRowConfiguration<ModelConfigurableCell, Thing>!;
             var implicitIdRowConfiguration: ModelRowConfiguration<ModelImplicitReuseIdCell, Thing>!;
             
             beforeEach {
-                tableView = UITableView();
+                tableView = UITableViewMock();
                 tableView.registerClass(ModelConfigurableCell.self, forCellReuseIdentifier: ModelRowConfigurationSpec.MODEL_CONFIGURABLE_CELL_REUSE_ID);
                 tableView.registerClass(ModelImplicitReuseIdCell.self, forCellReuseIdentifier: ModelImplicitReuseIdCell.buildReuseIdentifier());
                 rowConfiguration = ModelRowConfiguration(models: self.things);
@@ -70,6 +70,20 @@ class ModelRowConfigurationSpec: QuickSpec {
                     expect(cell).toNot(beNil());
                     expect(cell?.model).toNot(beNil());
                     expect(cell?.model?.name).to(equal("Hatchback"));
+                }
+                
+                it("is refreshed") {
+                    let indexPath = NSIndexPath(forRow: 1, inSection: 0)
+                    let cell = implicitIdRowConfiguration.cellForRow(indexPath.row, inTableView: tableView) as? ModelImplicitReuseIdCell;
+                    
+                    expect(cell?.model).toNot(beNil());
+                    
+                    cell?.model = nil
+                    expect(cell?.model).to(beNil())
+                    
+                    tableView.storeCell(cell!, forIndexPath: indexPath)
+                    implicitIdRowConfiguration.refreshCellForRow(indexPath.row, withIndexPath: indexPath, inTableView: tableView)
+                    expect(cell?.model).toNot(beNil())
                 }
             }
             

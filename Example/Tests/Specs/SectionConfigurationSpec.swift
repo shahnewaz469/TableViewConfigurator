@@ -18,13 +18,13 @@ class SectionConfigurationSpec: QuickSpec {
     
     override func spec() {
         describe("a section configuration") {
-            var tableView: UITableView!;
+            var tableView: UITableViewMock!;
             var constantRowConfiguration: ConstantRowConfiguration<ImplicitReuseIdCell>!;
             var modelRowConfiguration: ModelRowConfiguration<ModelImplicitReuseIdCell, Thing>!;
             var sectionConfiguration: SectionConfiguration!;
             
             beforeEach {
-                tableView = UITableView();
+                tableView = UITableViewMock();
                 tableView.registerClass(ImplicitReuseIdCell.self, forCellReuseIdentifier: ImplicitReuseIdCell.buildReuseIdentifier());
                 tableView.registerClass(ModelImplicitReuseIdCell.self, forCellReuseIdentifier: ModelImplicitReuseIdCell.buildReuseIdentifier());
                 constantRowConfiguration = ConstantRowConfiguration();
@@ -32,11 +32,25 @@ class SectionConfigurationSpec: QuickSpec {
                 sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration]);
             }
             
+            describe("its index set for row configuration") {
+                it("is correct") {
+                    expect(sectionConfiguration.indexSetForRowConfiguration(modelRowConfiguration)).to(equal(NSIndexSet(indexesInRange: NSMakeRange(0, 3))))
+                    expect(sectionConfiguration.indexSetForRowConfiguration(constantRowConfiguration)).to(equal(NSIndexSet(indexesInRange: NSMakeRange(3, 1))))
+                    
+                    modelRowConfiguration.hideWhen({ $0 === self.things[2] })
+                    expect(sectionConfiguration.indexSetForRowConfiguration(modelRowConfiguration)).to(equal(NSIndexSet(indexesInRange: NSMakeRange(0, 2))))
+                    expect(sectionConfiguration.indexSetForRowConfiguration(constantRowConfiguration)).to(equal(NSIndexSet(indexesInRange: NSMakeRange(2, 1))))
+                    
+                    constantRowConfiguration.hideWhen({ return true })
+                    expect(sectionConfiguration.indexSetForRowConfiguration(constantRowConfiguration)).to(beEmpty())
+                }
+            }
+            
             describe("its visible index set") {
                 it("is correct") {
                     expect(sectionConfiguration.visibleIndexSet()).to(equal(NSIndexSet(indexesInRange: NSMakeRange(0, 4))));
                     
-                    modelRowConfiguration.hideWhen({ return $0 === self.things[0] });
+                    modelRowConfiguration.hideWhen({ $0 === self.things[0] });
                     expect(sectionConfiguration.visibleIndexSet()).to(equal(NSIndexSet(indexesInRange: NSMakeRange(1, 3))));
                     
                     constantRowConfiguration.hideWhen({ return true });
@@ -69,6 +83,34 @@ class SectionConfigurationSpec: QuickSpec {
                     expect(cell).toNot(beNil());
                     expect(cell?.model).toNot(beNil());
                     expect(cell?.model?.name).to(equal("Cloud"));
+                }
+                
+                it("is refreshed for constant row configuration") {
+                    let indexPath = NSIndexPath(forRow: 3, inSection: 0)
+                    let cell = sectionConfiguration.cellForRow(indexPath.row, inTableView: tableView) as? ImplicitReuseIdCell;
+                    
+                    expect(cell?.configured).to(beTrue());
+                    
+                    cell?.configured = false
+                    expect(cell?.configured).to(beFalse());
+                    
+                    tableView.storeCell(cell!, forIndexPath: indexPath)
+                    sectionConfiguration.refreshRowConfiguration(constantRowConfiguration, withSection: indexPath.section, inTableView: tableView)
+                    expect(cell?.configured).to(beTrue());
+                }
+                
+                it("is refreshed for model row configuration") {
+                    let indexPath = NSIndexPath(forRow: 1, inSection: 0)
+                    let cell = sectionConfiguration.cellForRow(indexPath.row, inTableView: tableView) as? ModelImplicitReuseIdCell;
+                    
+                    expect(cell?.model).toNot(beNil());
+                    
+                    cell?.model = nil
+                    expect(cell?.model).to(beNil());
+                    
+                    tableView.storeCell(cell!, forIndexPath: indexPath)
+                    sectionConfiguration.refreshRowConfiguration(modelRowConfiguration, withSection: indexPath.section, inTableView: tableView)
+                    expect(cell?.model).toNot(beNil());
                 }
             }
             

@@ -25,6 +25,7 @@
 		03E29C931C89FCBE008BCB78 /* SectionConfigurationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E29C901C89FCBE008BCB78 /* SectionConfigurationSpec.swift */; };
 		4FE2066EA1042F79EFD118DE /* Pods_TableViewConfigurator_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB73CE35359F52C1F88AE848 /* Pods_TableViewConfigurator_Tests.framework */; };
 		58526DCF1CE38BAB00A6663B /* TextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58526DCE1CE38BAB00A6663B /* TextCell.swift */; };
+		58526DD21CE3A8BA00A6663B /* UITableViewMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58526DD11CE3A8BA00A6663B /* UITableViewMock.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* MainViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -62,6 +63,7 @@
 		03E29C901C89FCBE008BCB78 /* SectionConfigurationSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionConfigurationSpec.swift; sourceTree = "<group>"; };
 		548FF247CFDDED8256DCA405 /* Pods-TableViewConfigurator_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TableViewConfigurator_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TableViewConfigurator_Example/Pods-TableViewConfigurator_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		58526DCE1CE38BAB00A6663B /* TextCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextCell.swift; sourceTree = "<group>"; };
+		58526DD11CE3A8BA00A6663B /* UITableViewMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITableViewMock.swift; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* TableViewConfigurator_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableViewConfigurator_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -173,6 +175,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		58526DD01CE3A88200A6663B /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				58526DD11CE3A8BA00A6663B /* UITableViewMock.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
@@ -222,6 +232,7 @@
 			isa = PBXGroup;
 			children = (
 				033E2D4B1C88950300CF2538 /* Cells */,
+				58526DD01CE3A88200A6663B /* Mocks */,
 				03E29C841C89E0CC008BCB78 /* Models */,
 				03E29C8D1C89FCBE008BCB78 /* Specs */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
@@ -465,6 +476,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				03E29C831C89E075008BCB78 /* ModelConfigurableCell.swift in Sources */,
+				58526DD21CE3A8BA00A6663B /* UITableViewMock.swift in Sources */,
 				03E29C931C89FCBE008BCB78 /* SectionConfigurationSpec.swift in Sources */,
 				03E29C8A1C89E2B6008BCB78 /* ModelImplicitReuseIdCell.swift in Sources */,
 				03E29C921C89FCBE008BCB78 /* ModelRowConfigurationSpec.swift in Sources */,

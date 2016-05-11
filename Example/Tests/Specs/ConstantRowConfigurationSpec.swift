@@ -16,12 +16,12 @@ class ConstantRowConfigurationSpec: QuickSpec {
     
     override func spec() {
         describe("a constant row configuration") {
-            var tableView: UITableView!;
+            var tableView: UITableViewMock!;
             var rowConfiguration: ConstantRowConfiguration<ConfigurableCell>!;
             var implicitIdRowConfiguration: ConstantRowConfiguration<ImplicitReuseIdCell>!;
             
             beforeEach {
-                tableView = UITableView();
+                tableView = UITableViewMock();
                 tableView.registerClass(ConfigurableCell.self, forCellReuseIdentifier: ConstantRowConfigurationSpec.CONFIGURABLE_CELL_REUSE_ID);
                 tableView.registerClass(ImplicitReuseIdCell.self, forCellReuseIdentifier: ImplicitReuseIdCell.buildReuseIdentifier());
                 rowConfiguration = ConstantRowConfiguration();
@@ -57,6 +57,20 @@ class ConstantRowConfigurationSpec: QuickSpec {
                     
                     expect(cell).toNot(beNil());
                     expect(cell?.configured).to(beTrue());
+                }
+                
+                it("is refreshed") {
+                    let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+                    let cell = implicitIdRowConfiguration.cellForRow(indexPath.row, inTableView: tableView) as? ImplicitReuseIdCell;
+                    
+                    expect(cell?.configured).to(beTrue());
+                    
+                    cell?.configured = false
+                    expect(cell?.configured).to(beFalse())
+                    
+                    tableView.storeCell(cell!, forIndexPath: indexPath)
+                    implicitIdRowConfiguration.refreshCellForRow(indexPath.row, withIndexPath: indexPath, inTableView: tableView)
+                    expect(cell?.configured).to(beTrue())
                 }
             }
             
