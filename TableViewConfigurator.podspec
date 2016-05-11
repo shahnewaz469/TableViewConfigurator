@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "TableViewConfigurator"
-  s.version          = "1.2.0"
+  s.version          = "1.3.0"
   s.summary          = "A declarative approach to UITableView configuration resulting in thinner and more robust controllers."
   s.description      = <<-DESC
                         * More declarative and easier to read approach to UITableView-based UI construction.
