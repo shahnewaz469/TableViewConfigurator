@@ -25,8 +25,8 @@ class SectionConfigurationSpec: QuickSpec {
             
             beforeEach {
                 tableView = UITableView();
-                tableView.registerClass(ImplicitReuseIdCell.self, forCellReuseIdentifier: ImplicitReuseIdCell.REUSE_ID);
-                tableView.registerClass(ModelImplicitReuseIdCell.self, forCellReuseIdentifier: ModelImplicitReuseIdCell.REUSE_ID);
+                tableView.registerClass(ImplicitReuseIdCell.self, forCellReuseIdentifier: ImplicitReuseIdCell.buildReuseIdentifier());
+                tableView.registerClass(ModelImplicitReuseIdCell.self, forCellReuseIdentifier: ModelImplicitReuseIdCell.buildReuseIdentifier());
                 constantRowConfiguration = ConstantRowConfiguration();
                 modelRowConfiguration = ModelRowConfiguration(models: self.things);
                 sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration]);

@@ -24,7 +24,7 @@ class ModelRowConfigurationSpec: QuickSpec {
             beforeEach {
                 tableView = UITableView();
                 tableView.registerClass(ModelConfigurableCell.self, forCellReuseIdentifier: ModelRowConfigurationSpec.MODEL_CONFIGURABLE_CELL_REUSE_ID);
-                tableView.registerClass(ModelImplicitReuseIdCell.self, forCellReuseIdentifier: ModelImplicitReuseIdCell.REUSE_ID);
+                tableView.registerClass(ModelImplicitReuseIdCell.self, forCellReuseIdentifier: ModelImplicitReuseIdCell.buildReuseIdentifier());
                 rowConfiguration = ModelRowConfiguration(models: self.things);
                 implicitIdRowConfiguration = ModelRowConfiguration(models: self.things);
             }

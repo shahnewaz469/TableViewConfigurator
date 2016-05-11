@@ -10,10 +10,6 @@ import UIKit
 import TableViewConfigurator
 
 class DisclosureCell: UITableViewCell, ConfigurableTableViewCell {
-
-    override class func buildReuseIdentifier() -> String? {
-        return "disclosureCell";
-    }
     
     func configure() {
         self.textLabel?.text = "Disclosure Cell";

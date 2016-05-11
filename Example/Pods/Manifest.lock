@@ -1,11 +1,11 @@
 PODS:
-  - Nimble (3.0.0)
-  - Quick (0.8.0)
-  - TableViewConfigurator (0.1.0)
+  - Nimble (4.0.1)
+  - Quick (0.9.2)
+  - TableViewConfigurator (1.2.0)
 
 DEPENDENCIES:
-  - Nimble (= 3.0.0)
-  - Quick (~> 0.8.0)
+  - Nimble (~> 4.0)
+  - Quick (~> 0.9)
   - TableViewConfigurator (from `../`)
 
 EXTERNAL SOURCES:
@@ -13,8 +13,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Nimble: 4c353d43735b38b545cbb4cb91504588eb5de926
-  Quick: 563d0f6ec5f72e394645adb377708639b7dd38ab
-  TableViewConfigurator: 0617643cbbb47ec393f507c29cb36d25d5715702
+  Nimble: 0f3c8b8b084cda391209c3c5efbb48bedeeb920a
+  Quick: 18d057bc66451eedd5d1c8dc99ba2a5db6e60226
+  TableViewConfigurator: 49ae028119df22655590ed6ce4f1908fde92ca20
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: c89b0864a4e739b49185856a285463f9e57b3025
+
+COCOAPODS: 1.0.0

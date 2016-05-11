@@ -12,11 +12,15 @@ class Person {
 
     let firstName: String;
     let lastName: String;
-    let age: Int;
+    var age: Int;
     
     init(firstName: String, lastName: String, age: Int) {
         self.firstName = firstName;
         self.lastName = lastName;
         self.age = age;
+    }
+    
+    func incrementAge() {
+        self.age += 1
     }
 }

@@ -14,10 +14,6 @@ class PersonCell: UITableViewCell, ModelConfigurableTableViewCell {
     @IBOutlet var nameLabel: UILabel!;
     @IBOutlet var ageLabel: UILabel!;
     
-    override class func buildReuseIdentifier() -> String? {
-        return "personCell";
-    }
-    
     func configure(model: Person) {
         self.nameLabel.text = "\(model.firstName) \(model.lastName)";
         self.ageLabel.text = "Age \(model.age)";

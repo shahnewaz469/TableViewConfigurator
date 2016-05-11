@@ -15,10 +15,6 @@ class SwitchCell: UITableViewCell, ConfigurableTableViewCell {
     @IBOutlet var hideSwitch: UISwitch!;
     
     var switchChangedHandler: ((on: Bool) -> Void)!;
-
-    override class func buildReuseIdentifier() -> String? {
-        return "switchCell";
-    }
     
     func configure() {
         self.hideLabel.text = "Hide";

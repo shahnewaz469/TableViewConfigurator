@@ -14,10 +14,6 @@ class AnimalCell: UITableViewCell, ModelConfigurableTableViewCell {
     @IBOutlet var nameLabel: UILabel!;
     @IBOutlet var scientificNameLabel: UILabel!;
     
-    override class func buildReuseIdentifier() -> String? {
-        return "animalCell";
-    }
-    
     func configure(model: Animal) {
         self.nameLabel.text = model.name
         self.scientificNameLabel.text = model.scientificName;

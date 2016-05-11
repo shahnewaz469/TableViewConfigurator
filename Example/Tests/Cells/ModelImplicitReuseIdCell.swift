@@ -10,9 +10,4 @@ import UIKit
 
 class ModelImplicitReuseIdCell: ModelConfigurableCell {
 
-    static let REUSE_ID = "modelImplicitReuseIdCell";
-    
-    override class func buildReuseIdentifier() -> String? {
-        return ModelImplicitReuseIdCell.REUSE_ID;
-    }
 }

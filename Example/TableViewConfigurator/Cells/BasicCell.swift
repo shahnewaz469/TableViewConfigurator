@@ -10,10 +10,6 @@ import UIKit
 import TableViewConfigurator
 
 class BasicCell: UITableViewCell, ConfigurableTableViewCell {
-
-    override class func buildReuseIdentifier() -> String? {
-        return "basicCell";
-    }
     
     func configure() {
         self.textLabel?.text = "Basic Cell"

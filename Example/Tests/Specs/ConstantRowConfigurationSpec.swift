@@ -23,7 +23,7 @@ class ConstantRowConfigurationSpec: QuickSpec {
             beforeEach {
                 tableView = UITableView();
                 tableView.registerClass(ConfigurableCell.self, forCellReuseIdentifier: ConstantRowConfigurationSpec.CONFIGURABLE_CELL_REUSE_ID);
-                tableView.registerClass(ImplicitReuseIdCell.self, forCellReuseIdentifier: ImplicitReuseIdCell.REUSE_ID);
+                tableView.registerClass(ImplicitReuseIdCell.self, forCellReuseIdentifier: ImplicitReuseIdCell.buildReuseIdentifier());
                 rowConfiguration = ConstantRowConfiguration();
                 implicitIdRowConfiguration = ConstantRowConfiguration();
             }
