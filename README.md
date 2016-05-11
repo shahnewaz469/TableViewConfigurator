@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/cocoapods/l/TableViewConfigurator.svg?style=flat)](http://cocoapods.org/pods/TableViewConfigurator)
 [![Platform](https://img.shields.io/cocoapods/p/TableViewConfigurator.svg?style=flat)](http://cocoapods.org/pods/TableViewConfigurator)
 
-When implementing `UITableView`-based UIs, it is very often the case that you end up with controller objects containing many lines of brittle and error-prone implementations of `UITableViewDataSource` and `UITableViewDelegate`.
+When implementing `UITableView` UIs, it is very often the case that you end up with controller objects containing many lines of brittle and error-prone implementations of `UITableViewDataSource` and `UITableViewDelegate`.
 
 For example:
 
@@ -325,7 +325,7 @@ In order to support row insertion / deletion, all you need to do is setup your c
 
 ##### indexPathsForRowConfiguration()
 
-`TableViewConfigurator` also provides the `indexPathsForRowConfiguration()` method so you can access the actual `NSIndexPath`(s) for a `RowConfiguration`. This is useful for (among other things) calling `reloadRowsAtIndexPaths()` on your `UITableView` to force your cells to reload from their models or constant configuration.
+`TableViewConfigurator` also provides the `indexPathsForRowConfiguration()` method so you can access the actual `NSIndexPath` array for a `RowConfiguration`. This is useful for (among other things) calling `reloadRowsAtIndexPaths()` on your `UITableView` to force your cells to reload from their models or constant configuration.
 
 ##### refreshRowConfiguration()
 
