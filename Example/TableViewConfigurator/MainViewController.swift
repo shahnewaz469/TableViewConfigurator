@@ -58,7 +58,7 @@ class MainViewController: UIViewController {
             })
             .heightGenerator { (model) -> CGFloat in
                 return 44.0
-        };
+        }
         
         let peopleSection = SectionConfiguration(rowConfigurations:
             [ConstantRowConfiguration<SwitchCell>()
@@ -66,7 +66,7 @@ class MainViewController: UIViewController {
                     cell.hideLabel.text = "Hide All People"
                     cell.hideSwitch.on = self.hidePeople
                     cell.switchChangedHandler = { (on) -> Void in
-                        let changeSet = self.configurator.indexPathChangeSetAfterPerformingOperation({ self.hidePeople = on; })
+                        let changeSet = self.configurator.indexPathChangeSetAfterPerformingOperation({ self.hidePeople = on })
                         
                         self.tableView.beginUpdates()
                         self.tableView.insertRowsAtIndexPaths(changeSet.insertions, withRowAnimation: .Top)

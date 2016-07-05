@@ -10,14 +10,14 @@ import Foundation
 
 class Person {
 
-    let firstName: String;
-    let lastName: String;
-    var age: Int;
+    let firstName: String
+    let lastName: String
+    var age: Int
     
     init(firstName: String, lastName: String, age: Int) {
-        self.firstName = firstName;
-        self.lastName = lastName;
-        self.age = age;
+        self.firstName = firstName
+        self.lastName = lastName
+        self.age = age
     }
     
     func incrementAge() {

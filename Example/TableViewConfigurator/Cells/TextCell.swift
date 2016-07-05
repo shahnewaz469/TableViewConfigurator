@@ -10,7 +10,7 @@ import TableViewConfigurator
 
 class TextCell: UITableViewCell, ConfigurableTableViewCell {
     
-    @IBOutlet var textField: UITextField!;
+    @IBOutlet var textField: UITextField!
     
     func configure() {
         self.textField.text = ""

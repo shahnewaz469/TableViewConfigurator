@@ -12,7 +12,7 @@ import TableViewConfigurator
 class DisclosureCell: UITableViewCell, ConfigurableTableViewCell {
     
     func configure() {
-        self.textLabel?.text = "Disclosure Cell";
-        self.accessoryType = .DisclosureIndicator;
+        self.textLabel?.text = "Disclosure Cell"
+        self.accessoryType = .DisclosureIndicator
     }
 }
