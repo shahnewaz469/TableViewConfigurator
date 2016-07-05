@@ -11,11 +11,11 @@ import TableViewConfigurator
 
 class AnimalCell: UITableViewCell, ModelConfigurableTableViewCell {
     
-    @IBOutlet var nameLabel: UILabel!;
-    @IBOutlet var scientificNameLabel: UILabel!;
+    @IBOutlet var nameLabel: UILabel!
+    @IBOutlet var scientificNameLabel: UILabel!
     
     func configure(model: Animal) {
         self.nameLabel.text = model.name
-        self.scientificNameLabel.text = model.scientificName;
+        self.scientificNameLabel.text = model.scientificName
     }
 }

@@ -13,15 +13,15 @@ func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> In
     switch section {
             
     case selectedItemSection:
-        return 1;
+        return 1
             
     case fooSection:
-        return self.showFoo ? 4 : 1;
+        return self.showFoo ? 4 : 1
             
     default:
-        let thingCount = self.thingCollections[section - 1].things.count;
+        let thingCount = self.thingCollections[section - 1].things.count
             
-        return thingCount == 0 ? 1 : thingCount;
+        return thingCount == 0 ? 1 : thingCount
             
     }
 }
@@ -54,12 +54,12 @@ func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexP
                 
         default:
                 
-            break;
+            break
                 
         }
             
     default:
-        let things = self.thingCollections[indexPath.section - 1].things;
+        let things = self.thingCollections[indexPath.section - 1].things
             
         if things.count > 0 {
             ...
@@ -70,7 +70,7 @@ func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexP
 }
     
 func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-    let section = indexPath.section;
+    let section = indexPath.section
         
     if section != selectedItemSection || (section == selectedItemSection && self.selectedItem == nil) {
         ...
@@ -83,20 +83,20 @@ func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSInde
     switch indexPath.section {
             
     case selectedItemSection:
-        break;
+        break
             
     case fooSection:
-        break;
+        break
             
     default:
-        let things = self.thingCollections[indexPath.section - 1].things;
+        let things = self.thingCollections[indexPath.section - 1].things
             
         if things.count > 0 {
-            self.performSegueWithIdentifier("showThings", sender: self);
+            self.performSegueWithIdentifier("showThings", sender: self)
         }
     }
         
-    tableView.deselectRowAtIndexPath(indexPath, animated: true);
+    tableView.deselectRowAtIndexPath(indexPath, animated: true)
 }
 ```
 
@@ -131,7 +131,7 @@ class BasicCell: UITableViewCell, ConfigurableTableViewCell {
 }
 ```
 
-`let rowConfiguration = ConstantRowConfiguration<BasicCell>();`
+`let rowConfiguration = ConstantRowConfiguration<BasicCell>()`
 
 At this point `rowConfiguration` is ready to be used and will have its `configure()` method called when appropriate. But, there are several different configurations that can be applied before use.
 
@@ -139,15 +139,15 @@ At this point `rowConfiguration` is ready to be used and will have its `configur
 
 By default, `TableViewConfigurator` will generate a reuse identifier for your cell class that is equal to the class name. If this isn't the behavior you want, you can either override `buildReuseIdentifier()` in your cell class, or specify the reuse identifier in your controller.
 
-`let rowConfiguration = ConstantRowConfiguration<BasicCell>().cellReuseId("someReuseId");`
+`let rowConfiguration = ConstantRowConfiguration<BasicCell>().cellReuseId("someReuseId")`
 
 ##### .height() / .estimatedHeight()
 
 You can specify the height or estimated height of the cell depending on the sizing method you're using.
 
 ```swift
-let rowConfiguration = ConstantRowConfiguration<BasicCell>().height(44.0);
-let anotherConfiguration = ConstantRowConfiguration<BasicCell>().estimatedHeight(44.0);
+let rowConfiguration = ConstantRowConfiguration<BasicCell>().height(44.0)
+let anotherConfiguration = ConstantRowConfiguration<BasicCell>().estimatedHeight(44.0)
 ```
 
 ##### .additionalConfig()
@@ -157,8 +157,8 @@ You can specify additional configuration that should happen on the cell in your 
 ```swift
 let rowConfiguration = ConstantRowConfiguration<BasicCell>()
     .additionalConfig({ (cell) -> Void in
-        cell.accessoryType = self.someControllerFlag ? .DisclosureIndicator : .None;
-    });
+        cell.accessoryType = self.someControllerFlag ? .DisclosureIndicator : .None
+    })
 ```
 
 ##### .selectionHandler()
@@ -168,9 +168,9 @@ You can specify code that should be called in your controller context when the r
 ```swift
 let rowConfiguration = ConstantRowConfiguration<BasicCell>()
     .selectionHandler({ () -> Bool in
-        self.performSegueWithIdentifier("someSegue", sender: self);
-        return true;
-    });
+        self.performSegueWithIdentifier("someSegue", sender: self)
+        return true
+    })
 ```
 
 The return value of the selection handler determines whether or not the row is deselected.
@@ -182,8 +182,8 @@ Finally, you can specify a closure that indicates when the row in the `ConstantR
 ```swift
 let rowConfiguration = ConstantRowConfiguration<BasicCell>()
     .hideWhen({ () -> Bool in
-        return self.shouldHideRow;
-    });
+        return self.shouldHideRow
+    })
 ```
 
 #### ModelRowConfiguration
@@ -193,17 +193,17 @@ A `ModelRowConfiguration` represents a group of rows that are defined by an arra
 ```swift
 class PersonCell: UITableViewCell, ModelConfigurableTableViewCell {
     
-    @IBOutlet var nameLabel: UILabel!;
-    @IBOutlet var ageLabel: UILabel!;
+    @IBOutlet var nameLabel: UILabel!
+    @IBOutlet var ageLabel: UILabel!
 
     func configure(model: Person) {
-        self.nameLabel.text = "\(model.firstName) \(model.lastName)";
-        self.ageLabel.text = "Age \(model.age)";
+        self.nameLabel.text = "\(model.firstName) \(model.lastName)"
+        self.ageLabel.text = "Age \(model.age)"
     }
 }
 ```
 
-`let rowConfiguration = ModelRowConfiguration<PersonCell, Person>(models: self.people);`
+`let rowConfiguration = ModelRowConfiguration<PersonCell, Person>(models: self.people)`
 
 `ModelRowConfiguration` adds a couple of additional "generator" attributes as well.
 
@@ -224,12 +224,12 @@ For example, suppose you wanted to create a `UITableView` section that was compo
 ```swift
 let people = [Person(firstName: "John", lastName: "Doe", age: 50),
     Person(firstName: "Alex", lastName: "Great", age: 32),
-    Person(firstName: "Napoléon", lastName: "Bonaparte", age: 18)];
+    Person(firstName: "Napoléon", lastName: "Bonaparte", age: 18)]
     
 let section = SectionConfiguration(rowConfigurations:
     [ConstantRowConfiguration<BasicCell>(),
         ModelRowConfiguration<PersonCell, Person>(models: people),
-        ConstantRowConfiguration<BasicCell>()]);
+        ConstantRowConfiguration<BasicCell>()])
 ```
 
 There are two additional configuration options available for `SectionConfiguration`
@@ -248,72 +248,72 @@ Once you've created your `RowConfiguration` and `SectionConfiguration` instances
 
 ```swift
 override func viewDidLoad() {
-    super.viewDidLoad();
+    super.viewDidLoad()
         
     let basicSection = SectionConfiguration(rowConfiguration:
         ConstantRowConfiguration<BasicCell>()
-            .height(44.0));
+            .height(44.0))
         
     let peopleRows = ModelRowConfiguration<PersonCell, Person>(models: self.people)
         .hideWhen({ (model) -> Bool in
-            return self.hidePeople;
+            return self.hidePeople
         })
-        .height(44.0);
+        .height(44.0)
         
     let peopleSection = SectionConfiguration(rowConfigurations:
         [ConstantRowConfiguration<SwitchCell>()
             .additionalConfig({ (cell) -> Void in
-                cell.hideLabel.text = "Hide People";
-                cell.hideSwitch.on = self.hidePeople;
+                cell.hideLabel.text = "Hide People"
+                cell.hideSwitch.on = self.hidePeople
                 cell.switchChangedHandler = { (on) -> Void in
-                    let changeSet = self.configurator.indexPathChangeSetAfterPerformingOperation({ self.hidePeople = on; });
+                    let changeSet = self.configurator.indexPathChangeSetAfterPerformingOperation({ self.hidePeople = on });
                         
-                    self.tableView.beginUpdates();
-                    self.tableView.insertRowsAtIndexPaths(changeSet.insertions, withRowAnimation: .Top);
-                    self.tableView.deleteRowsAtIndexPaths(changeSet.deletions, withRowAnimation: .Top);
-                    self.tableView.endUpdates();
+                    self.tableView.beginUpdates()
+                    self.tableView.insertRowsAtIndexPaths(changeSet.insertions, withRowAnimation: .Top)
+                    self.tableView.deleteRowsAtIndexPaths(changeSet.deletions, withRowAnimation: .Top)
+                    self.tableView.endUpdates()
                 }
             })
-            .height(44.0), peopleRows, ConstantRowConfiguration<BasicCell>().height(44.0)]);
+            .height(44.0), peopleRows, ConstantRowConfiguration<BasicCell>().height(44.0)])
         
     let disclosureSection = SectionConfiguration(rowConfiguration:
         ConstantRowConfiguration<DisclosureCell>()
             .selectionHandler({ () -> Bool in
-                self.performSegueWithIdentifier("showDetails", sender: self);
-                return true;
+                self.performSegueWithIdentifier("showDetails", sender: self)
+                return true
             })
-            .height(44.0));
+            .height(44.0))
         
     self.configurator = TableViewConfigurator(tableView: tableView, sectionConfigurations:
-        [basicSection, peopleSection, disclosureSection]);
+        [basicSection, peopleSection, disclosureSection])
 }
 
 func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-    return self.configurator.numberOfSectionsInTableView(tableView);
+    return self.configurator.numberOfSectionsInTableView(tableView)
 }
 
 func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-    return self.configurator.tableView(tableView, titleForHeaderInSection: section);
+    return self.configurator.tableView(tableView, titleForHeaderInSection: section)
 }
     
 func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-    return self.configurator.tableView(tableView, titleForFooterInSection: section);
+    return self.configurator.tableView(tableView, titleForFooterInSection: section)
 }
     
 func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return self.configurator.tableView(tableView, numberOfRowsInSection: section);
+    return self.configurator.tableView(tableView, numberOfRowsInSection: section)
 }
     
 func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-    return self.configurator.tableView(tableView, cellForRowAtIndexPath: indexPath);
+    return self.configurator.tableView(tableView, cellForRowAtIndexPath: indexPath)
 }
     
 func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-    return self.configurator.tableView(tableView, heightForRowAtIndexPath: indexPath);
+    return self.configurator.tableView(tableView, heightForRowAtIndexPath: indexPath)
 }
     
 func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-    self.configurator.tableView(tableView, didSelectRowAtIndexPath: indexPath);
+    self.configurator.tableView(tableView, didSelectRowAtIndexPath: indexPath)
 }
 ```
 

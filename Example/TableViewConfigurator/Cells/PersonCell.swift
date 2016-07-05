@@ -11,11 +11,11 @@ import TableViewConfigurator
 
 class PersonCell: UITableViewCell, ModelConfigurableTableViewCell {
     
-    @IBOutlet var nameLabel: UILabel!;
-    @IBOutlet var ageLabel: UILabel!;
+    @IBOutlet var nameLabel: UILabel!
+    @IBOutlet var ageLabel: UILabel!
     
     func configure(model: Person) {
-        self.nameLabel.text = "\(model.firstName) \(model.lastName)";
-        self.ageLabel.text = "Age \(model.age)";
+        self.nameLabel.text = "\(model.firstName) \(model.lastName)"
+        self.ageLabel.text = "Age \(model.age)"
     }
 }

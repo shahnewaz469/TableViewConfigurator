@@ -57,7 +57,7 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
             }
         }
         
-        return nil;
+        return nil
     }
     
     override func refreshCellForRow(row: Int, withIndexPath indexPath: NSIndexPath, inTableView tableView: UITableView) {

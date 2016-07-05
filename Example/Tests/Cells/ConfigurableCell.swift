@@ -11,18 +11,18 @@ import TableViewConfigurator
 
 class ConfigurableCell: UITableViewCell, ConfigurableTableViewCell {
 
-    var configured = false;
-    var additionallyConfigured = false;
+    var configured = false
+    var additionallyConfigured = false
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier);
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
 
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder);
+        super.init(coder: aDecoder)
     }
     
     func configure() {
-        self.configured = true;
+        self.configured = true
     }
 }

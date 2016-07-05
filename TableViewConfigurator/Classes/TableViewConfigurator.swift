@@ -50,8 +50,8 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     }
     
     public func indexPathChangeSetAfterPerformingOperation(operation: () -> Void) -> (insertions: [NSIndexPath], deletions: [NSIndexPath]) {
-        let preVisibleIndices = self.sectionConfigurations.map { (sectionConfiguration) -> NSIndexSet in
-            return sectionConfiguration.visibleIndexSet()
+        let preVisibilityMap = self.sectionConfigurations.map { (sectionConfiguration) -> [[Int: Bool]] in
+            return sectionConfiguration.visibilityMap()
         }
         
         operation()
@@ -60,21 +60,34 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         var deletions = [NSIndexPath]()
         
         for (i, sectionConfiguration) in self.sectionConfigurations.enumerate() {
-            var currentPosition = 0
-            let preIndices = preVisibleIndices[i]
-            let postIndices = sectionConfiguration.visibleIndexSet()
-            let allIndices = NSMutableIndexSet(indexSet: preIndices)
+            var deletionIndexOffset = 0
+            var insertionIndexOffet = 0
+            let preSectionVisibility = preVisibilityMap[i]
+            let postSectionVisibility = sectionConfiguration.visibilityMap()
             
-            allIndices.addIndexes(postIndices)
-            
-            for index in allIndices {
-                if !preIndices.containsIndex(index) {
-                    insertions.append(NSIndexPath(forRow: currentPosition, inSection: i))
-                } else if !postIndices.containsIndex(index) {
-                    deletions.append(NSIndexPath(forRow: currentPosition, inSection: i))
-                }
+            for (j, preRowConfigVisibility) in preSectionVisibility.enumerate() {
+                let postRowConfigVisibility = postSectionVisibility[j]
+                let indexCount = max(preRowConfigVisibility.count, postRowConfigVisibility.count)
                 
-                currentPosition += 1
+                for index in 0 ..< indexCount {
+                    switch (preRowConfigVisibility[index], postRowConfigVisibility[index]) {
+                        
+                    case let (.Some(pre), .Some(post)) where pre == true && post == true:
+                        insertionIndexOffet += 1
+                        deletionIndexOffset += 1
+                        
+                    case let (.Some(pre), _) where pre == true:
+                        deletions.append(NSIndexPath(forRow: deletionIndexOffset, inSection: i))
+                        deletionIndexOffset += 1
+                        
+                    case let (_, .Some(post)) where post == true:
+                        insertions.append(NSIndexPath(forRow: insertionIndexOffet, inSection: i))
+                        insertionIndexOffet += 1
+                        
+                    default: ()
+                        
+                    }
+                }
             }
         }
         

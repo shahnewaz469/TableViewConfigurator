@@ -52,20 +52,18 @@ public class SectionConfiguration {
         return result
     }
     
-    internal func visibleIndexSet() -> NSIndexSet {
-        let result = NSMutableIndexSet()
-        var rowTotal = 0
+    internal func visibilityMap() -> [[Int: Bool]] {
+        var result = [[Int: Bool]]()
         
-        for rowConfiguration in self.rowConfigurations {
-            let numberOfRows = rowConfiguration.numberOfRows(true)
+        for configuration in self.rowConfigurations {
+            var visibilityMap = [Int: Bool]()
+            let numberOfRows = configuration.numberOfRows(true)
             
             for i in 0 ..< numberOfRows {
-                if let rowVisible = rowConfiguration.rowIsVisible(i) where rowVisible {
-                    result.addIndex(i + rowTotal)
-                }
+                visibilityMap[i] = configuration.rowIsVisible(i)!
             }
             
-            rowTotal += numberOfRows
+            result.append(visibilityMap)
         }
         
         return result

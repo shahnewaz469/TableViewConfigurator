@@ -12,26 +12,26 @@ import Nimble
 
 class ConstantRowConfigurationSpec: QuickSpec {
     
-    private static let CONFIGURABLE_CELL_REUSE_ID = "configurableCell";
+    private static let CONFIGURABLE_CELL_REUSE_ID = "configurableCell"
     
     override func spec() {
         describe("a constant row configuration") {
-            var tableView: UITableViewMock!;
-            var rowConfiguration: ConstantRowConfiguration<ConfigurableCell>!;
-            var implicitIdRowConfiguration: ConstantRowConfiguration<ImplicitReuseIdCell>!;
+            var tableView: UITableViewMock!
+            var rowConfiguration: ConstantRowConfiguration<ConfigurableCell>!
+            var implicitIdRowConfiguration: ConstantRowConfiguration<ImplicitReuseIdCell>!
             
             beforeEach {
-                tableView = UITableViewMock();
-                tableView.registerClass(ConfigurableCell.self, forCellReuseIdentifier: ConstantRowConfigurationSpec.CONFIGURABLE_CELL_REUSE_ID);
-                tableView.registerClass(ImplicitReuseIdCell.self, forCellReuseIdentifier: ImplicitReuseIdCell.buildReuseIdentifier());
-                rowConfiguration = ConstantRowConfiguration();
-                implicitIdRowConfiguration = ConstantRowConfiguration();
+                tableView = UITableViewMock()
+                tableView.registerClass(ConfigurableCell.self, forCellReuseIdentifier: ConstantRowConfigurationSpec.CONFIGURABLE_CELL_REUSE_ID)
+                tableView.registerClass(ImplicitReuseIdCell.self, forCellReuseIdentifier: ImplicitReuseIdCell.buildReuseIdentifier())
+                rowConfiguration = ConstantRowConfiguration()
+                implicitIdRowConfiguration = ConstantRowConfiguration()
             }
             
             describe("its cell reuse id") {
                 it("is set correctly when explicitly defined") {
                     expect(rowConfiguration.cellReuseId(ConstantRowConfigurationSpec.CONFIGURABLE_CELL_REUSE_ID).cellReuseId)
-                        .to(equal(ConstantRowConfigurationSpec.CONFIGURABLE_CELL_REUSE_ID));
+                        .to(equal(ConstantRowConfigurationSpec.CONFIGURABLE_CELL_REUSE_ID))
                 }
             }
             
@@ -39,31 +39,31 @@ class ConstantRowConfigurationSpec: QuickSpec {
                 it("is the correct type when cellReuseId explicitly defined") {
                     let cell = rowConfiguration
                         .cellReuseId(ConstantRowConfigurationSpec.CONFIGURABLE_CELL_REUSE_ID)
-                        .cellForRow(0, inTableView: tableView);
+                        .cellForRow(0, inTableView: tableView)
                     
-                    expect(cell).to(beAnInstanceOf(ConfigurableCell));
+                    expect(cell).to(beAnInstanceOf(ConfigurableCell))
                 }
                 
                 it("is the correct type when cellReuseId implicitly defined") {
-                    expect(implicitIdRowConfiguration.cellForRow(0, inTableView: tableView)).to(beAnInstanceOf(ImplicitReuseIdCell));
+                    expect(implicitIdRowConfiguration.cellForRow(0, inTableView: tableView)).to(beAnInstanceOf(ImplicitReuseIdCell))
                 }
                 
                 it("is nil when asking for non-existant row") {
-                    expect(implicitIdRowConfiguration.cellForRow(1, inTableView: tableView)).to(beNil());
+                    expect(implicitIdRowConfiguration.cellForRow(1, inTableView: tableView)).to(beNil())
                 }
                 
                 it("is configured") {
-                    let cell = implicitIdRowConfiguration.cellForRow(0, inTableView: tableView) as? ImplicitReuseIdCell;
+                    let cell = implicitIdRowConfiguration.cellForRow(0, inTableView: tableView) as? ImplicitReuseIdCell
                     
-                    expect(cell).toNot(beNil());
-                    expect(cell?.configured).to(beTrue());
+                    expect(cell).toNot(beNil())
+                    expect(cell?.configured).to(beTrue())
                 }
                 
                 it("is refreshed") {
                     let indexPath = NSIndexPath(forRow: 0, inSection: 0)
-                    let cell = implicitIdRowConfiguration.cellForRow(indexPath.row, inTableView: tableView) as? ImplicitReuseIdCell;
+                    let cell = implicitIdRowConfiguration.cellForRow(indexPath.row, inTableView: tableView) as? ImplicitReuseIdCell
                     
-                    expect(cell?.configured).to(beTrue());
+                    expect(cell?.configured).to(beTrue())
                     
                     cell?.configured = false
                     expect(cell?.configured).to(beFalse())
@@ -77,87 +77,85 @@ class ConstantRowConfigurationSpec: QuickSpec {
             describe("its height") {
                 it("is set correctly for existant row") {
                     expect(rowConfiguration.height(100.0).heightForRow(0))
-                        .to(equal(100.0));
+                        .to(equal(100.0))
                 }
                 
                 it("is nil when asking for non-existant row") {
                     expect(rowConfiguration.height(100.0).heightForRow(1))
-                        .to(beNil());
+                        .to(beNil())
                 }
             }
             
             describe("its estimated height") {
                 it("is set correctly for existant row") {
                     expect(rowConfiguration.estimatedHeight(200.0).estimatedHeightForRow(0))
-                        .to(equal(200.0));
+                        .to(equal(200.0))
                 }
                 
                 it("is nil when asking for non-existant row") {
                     expect(rowConfiguration.estimatedHeight(100.0).estimatedHeightForRow(1))
-                        .to(beNil());
+                        .to(beNil())
                 }
             }
             
             describe("its visible row count") {
                 it("is correct when visible") {
-                    expect(rowConfiguration.numberOfRows(false)).to(equal(1));
+                    expect(rowConfiguration.numberOfRows(false)).to(equal(1))
                 }
                 
                 it("is correct when hidden") {
-                    expect(rowConfiguration.hideWhen({ return true; }).numberOfRows(false)).to(equal(0));
+                    expect(rowConfiguration.hideWhen({ return true }).numberOfRows(false)).to(equal(0))
                 }
             }
             
             describe("its total row count") {
                 it("is correct when visible") {
-                    expect(rowConfiguration.numberOfRows(true)).to(equal(1));
+                    expect(rowConfiguration.numberOfRows(true)).to(equal(1))
                 }
                 
                 it("is correct when hidden") {
-                    expect(rowConfiguration.hideWhen({ return true; }).numberOfRows(true)).to(equal(1));
+                    expect(rowConfiguration.hideWhen({ return true }).numberOfRows(true)).to(equal(1))
                 }
             }
             
             describe("its row visibility") {
                 it("is correct when visible") {
-                    expect(rowConfiguration.rowIsVisible(0)).to(beTrue());
+                    expect(rowConfiguration.rowIsVisible(0)).to(beTrue())
                 }
             
                 it("is correct when hidden") {
-                    expect(rowConfiguration.hideWhen({ return true; }).rowIsVisible(0)).to(beFalse());
+                    expect(rowConfiguration.hideWhen({ return true }).rowIsVisible(0)).to(beFalse())
                 }
                 
                 it("is nil when asking for non-existant row") {
-                    expect(rowConfiguration.rowIsVisible(3)).to(beNil());
+                    expect(rowConfiguration.rowIsVisible(3)).to(beNil())
                 }
             }
             
             describe("its selection handler") {
                 it("is invoked when selected") {
-                    var selectionHandlerInvoked = false;
+                    var selectionHandlerInvoked = false
                     
-                    rowConfiguration.selectionHandler({ selectionHandlerInvoked = true; return true; }).didSelectRow(0);
-                    
-                    expect(selectionHandlerInvoked).to(beTrue());
+                    rowConfiguration.selectionHandler({ selectionHandlerInvoked = true; return true }).didSelectRow(0)
+                    expect(selectionHandlerInvoked).to(beTrue())
                 }
                 
                 it("is not invoked when selecting non-existant row") {
-                    var selectionHandlerInvoked = false;
+                    var selectionHandlerInvoked = false
                     
-                    rowConfiguration.selectionHandler({ selectionHandlerInvoked = true; return true; }).didSelectRow(1);
-                    
-                    expect(selectionHandlerInvoked).to(beFalse());
+                    rowConfiguration.selectionHandler({ selectionHandlerInvoked = true; return true }).didSelectRow(1)
+                    expect(selectionHandlerInvoked).to(beFalse())
                 }
             }
             
             describe("its additional config") {
                 it("is applied when retrieving a cell") {
                     let cell = implicitIdRowConfiguration
-                        .additionalConfig({ $0.additionallyConfigured = true; })
-                        .cellForRow(0, inTableView: tableView) as? ImplicitReuseIdCell;
+                        .additionalConfig({ $0.additionallyConfigured = true })
+                        .cellForRow(0, inTableView: tableView) as? ImplicitReuseIdCell
                     
-                    expect(cell).toNot(beNil());
-                    expect(cell?.additionallyConfigured).to(beTrue());
+                    expect(cell).toNot(beNil())
+                    expect(cell?.additionallyConfigured).to(beTrue())
                 }
             }
         }

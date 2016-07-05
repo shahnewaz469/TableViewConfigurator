@@ -10,11 +10,11 @@ import Foundation
 
 class Animal {
 
-    let name: String;
-    let scientificName: String;
+    let name: String
+    let scientificName: String
     
     init(name: String, scientificName: String) {
-        self.name = name;
-        self.scientificName = scientificName;
+        self.name = name
+        self.scientificName = scientificName
     }
 }
