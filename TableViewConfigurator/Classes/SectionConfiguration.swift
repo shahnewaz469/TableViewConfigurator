@@ -69,6 +69,12 @@ public class SectionConfiguration {
         return result
     }
     
+    internal func refreshAllRowConfigurationsWithSection(section: Int, inTableView tableView: UITableView) {
+        for rowConfiguration in self.rowConfigurations {
+            refreshRowConfiguration(rowConfiguration, withSection: section, inTableView: tableView)
+        }
+    }
+    
     internal func refreshRowConfiguration(rowConfiguration: RowConfiguration, withSection section: Int, inTableView tableView: UITableView) {
         for index in indexSetForRowConfiguration(rowConfiguration) {
             performRowOperation(index, handler: { (rowConfiguration, localizedRow) -> Void in

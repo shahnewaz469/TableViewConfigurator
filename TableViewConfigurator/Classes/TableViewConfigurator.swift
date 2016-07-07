@@ -94,6 +94,12 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         return (insertions: insertions, deletions: deletions)
     }
     
+    public func refreshAllRowConfigurations() {
+        for (i, sectionConfiguration) in self.sectionConfigurations.enumerate() {
+            sectionConfiguration.refreshAllRowConfigurationsWithSection(i, inTableView: self.tableView)
+        }
+    }
+    
     public func refreshRowConfiguration(rowConfiguration: RowConfiguration) {
         for (i, sectionConfiguration) in self.sectionConfigurations.enumerate() {
             sectionConfiguration.refreshRowConfiguration(rowConfiguration, withSection: i, inTableView: self.tableView)
