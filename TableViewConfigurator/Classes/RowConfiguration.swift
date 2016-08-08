@@ -54,5 +54,5 @@ public class RowConfiguration {
         return nil
     }
     
-    internal func didSelectRow(row: Int) -> Bool? { return nil };
+    internal func didSelectRow(row: Int) { };
 }

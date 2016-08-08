@@ -11,7 +11,7 @@ import UIKit
 public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where CellType: UITableViewCell>: RowConfiguration {
     
     private var additionalConfig: ((cell: CellType) -> Void)?
-    private var selectionHandler: (() -> Bool)?
+    private var selectionHandler: (() -> Void)?
     private var hideWhen: (() -> Bool)?
     
     public override init() { }
@@ -20,7 +20,7 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
         self.additionalConfig = additionalConfig; return self
     }
     
-    public func selectionHandler(selectionHandler: () -> Bool) -> Self {
+    public func selectionHandler(selectionHandler: () -> Void) -> Self {
         self.selectionHandler = selectionHandler; return self
     }
     
@@ -78,11 +78,9 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
         return cell
     }
     
-    override internal func didSelectRow(row: Int) -> Bool? {
+    override internal func didSelectRow(row: Int) {
         if row < numberOfRows(false) {
-            return self.selectionHandler?()
+            self.selectionHandler?()
         }
-        
-        return nil
     }
 }

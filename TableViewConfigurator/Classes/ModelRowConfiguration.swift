@@ -16,7 +16,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     private var heightGenerator: ((model: ModelType) -> CGFloat)?
     private var estimatedHeightGenerator: ((model: ModelType) -> CGFloat)?
     private var additionalConfig: ((cell: CellType, model: ModelType) -> Void)?
-    private var selectionHandler: ((model: ModelType) -> Bool)?
+    private var selectionHandler: ((model: ModelType) -> Void)?
     private var hideWhen: ((model: ModelType) -> Bool)?
     
     public init(models: [ModelType]) {
@@ -44,7 +44,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         return self
     }
     
-    public func selectionHandler(selectionHandler: (model: ModelType) -> Bool) -> Self {
+    public func selectionHandler(selectionHandler: (model: ModelType) -> Void) -> Self {
         self.selectionHandler = selectionHandler
         return self
     }
@@ -126,12 +126,10 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         return super.estimatedHeightForRow(row)
     }
     
-    override internal func didSelectRow(row: Int) -> Bool? {
+    override internal func didSelectRow(row: Int) {
         if row < numberOfRows(false) {
-            return self.selectionHandler?(model: selectModelForRow(row))
+            self.selectionHandler?(model: selectModelForRow(row))
         }
-        
-        return nil
     }
     
     private func selectModelForRow(row: Int) -> ModelType {

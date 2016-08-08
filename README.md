@@ -167,13 +167,8 @@ You can specify code that should be called in your controller context when the r
 
 ```swift
 let rowConfiguration = ConstantRowConfiguration<BasicCell>()
-    .selectionHandler({ () -> Bool in
-        self.performSegueWithIdentifier("someSegue", sender: self)
-        return true
-    })
+    .selectionHandler({ self.performSegueWithIdentifier("someSegue", sender: self) })
 ```
-
-The return value of the selection handler determines whether or not the row is deselected.
 
 ##### .hideWhen()
 
@@ -266,12 +261,7 @@ override func viewDidLoad() {
                 cell.hideLabel.text = "Hide People"
                 cell.hideSwitch.on = self.hidePeople
                 cell.switchChangedHandler = { (on) -> Void in
-                    let changeSet = self.configurator.indexPathChangeSetAfterPerformingOperation({ self.hidePeople = on });
-                        
-                    self.tableView.beginUpdates()
-                    self.tableView.insertRowsAtIndexPaths(changeSet.insertions, withRowAnimation: .Top)
-                    self.tableView.deleteRowsAtIndexPaths(changeSet.deletions, withRowAnimation: .Top)
-                    self.tableView.endUpdates()
+                    self.configurator.animateChangeSet(self.configurator.changeSetAfterPerformingOperation({ self.hidePeople = on }))
                 }
             })
             .height(44.0), peopleRows, ConstantRowConfiguration<BasicCell>().height(44.0)])
@@ -319,9 +309,9 @@ func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSInde
 
 As you can see in the above example, `TableViewConfigurator` also supports UITableView row insertion and deletion.
 
-##### .indexPathChangeSetAfterPerformingOperation()
+##### .changeSetAfterPerformingOperation() / .animateChangeSet()
 
-In order to support row insertion / deletion, all you need to do is setup your cells .hideWhen() handlers appropriately and then call `indexPathChangeSetAfterPerformingOperation()`. `TableViewConfigurator` will note changes in visibility before and after performing the operation you specify and will return those changes to you in the resulting tuple. All you have to do is pass those changes to your UITableView and your rows will animated appropriately.
+In order to support row and section insertion / deletion, all you need to do is setup your cells .hideWhen() handlers appropriately and then call `changeSetAfterPerformingOperation()`. `TableViewConfigurator` will note changes in visibility before and after performing the operation you specify and will return those changes to you in the resulting tuple. All you have to do is pass those changes to `animatedChangeSet()` or your `UITableView` directly and your rows / sections will animated appropriately.
 
 ##### .indexPathsForRowConfiguration()
 

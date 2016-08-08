@@ -136,14 +136,14 @@ class ConstantRowConfigurationSpec: QuickSpec {
                 it("is invoked when selected") {
                     var selectionHandlerInvoked = false
                     
-                    rowConfiguration.selectionHandler({ selectionHandlerInvoked = true; return true }).didSelectRow(0)
+                    rowConfiguration.selectionHandler({ selectionHandlerInvoked = true }).didSelectRow(0)
                     expect(selectionHandlerInvoked).to(beTrue())
                 }
                 
                 it("is not invoked when selecting non-existant row") {
                     var selectionHandlerInvoked = false
                     
-                    rowConfiguration.selectionHandler({ selectionHandlerInvoked = true; return true }).didSelectRow(1)
+                    rowConfiguration.selectionHandler({ selectionHandlerInvoked = true }).didSelectRow(1)
                     expect(selectionHandlerInvoked).to(beFalse())
                 }
             }

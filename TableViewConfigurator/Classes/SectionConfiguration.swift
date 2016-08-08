@@ -116,9 +116,9 @@ public class SectionConfiguration {
         })
     }
     
-    internal func didSelectRow(row: Int) -> Bool? {
-        return performRowOperation(row, handler: { (rowConfiguration, localizedRow) -> Bool? in
-            return rowConfiguration.didSelectRow(localizedRow)
+    internal func didSelectRow(row: Int) {
+        return performRowOperation(row, handler: { (rowConfiguration, localizedRow) -> Void in
+            rowConfiguration.didSelectRow(localizedRow)
         })
     }
     
