@@ -20,7 +20,7 @@ class MainViewController: UIViewController {
     
     private var hidePeople = false
     private var hideJohns = false
-    private var hideDisclosure = false
+    private var hideAnimals = false
     private var configurator: TableViewConfigurator!
     
     private let people = [Person(firstName: "John", lastName: "Doe", age: 50),
@@ -102,6 +102,7 @@ class MainViewController: UIViewController {
                     })
                     .height(44.0)]).headerTitle("People")
         
+        
         let disclosureSection = SectionConfiguration(rowConfiguration:
             ConstantRowConfiguration<DisclosureCell>()
                 .selectionHandler({ () -> Bool in
@@ -123,8 +124,30 @@ class MainViewController: UIViewController {
                         
                         return true
                     })
+                    .hideWhen({ (model) -> Bool in
+                        return self.hideAnimals
+                    })
                     .height(44.0)).headerTitle(animalTuple.scientificClass))
         }
+        
+        configurations.append(SectionConfiguration(rowConfiguration:
+            ConstantRowConfiguration<BasicCell>()
+                .additionalConfig({ (cell) in
+                    cell.textLabel!.text = "Toggle Animal Sections"
+                })
+                .selectionHandler({ () -> Bool in
+                    let changeSet = self.configurator.indexPathChangeSetAfterPerformingOperation({
+                        self.hideAnimals = !self.hideAnimals
+                    })
+                    
+                    self.tableView.beginUpdates()
+                    self.tableView.insertRowsAtIndexPaths(changeSet.insertions, withRowAnimation: .Automatic)
+                    self.tableView.deleteRowsAtIndexPaths(changeSet.deletions, withRowAnimation: .Automatic)
+                    self.tableView.endUpdates()
+                    
+                    return true
+                })
+                .height(44.0)))
         
         self.configurator = TableViewConfigurator(tableView: tableView, sectionConfigurations: configurations)
     }

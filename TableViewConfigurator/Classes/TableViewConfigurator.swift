@@ -49,49 +49,64 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         return result
     }
     
-    public func indexPathChangeSetAfterPerformingOperation(operation: () -> Void) -> (insertions: [NSIndexPath], deletions: [NSIndexPath]) {
-        let preVisibilityMap = self.sectionConfigurations.map { (sectionConfiguration) -> [[Int: Bool]] in
-            return sectionConfiguration.visibilityMap()
-        }
-        
-        operation()
-        
-        var insertions = [NSIndexPath]()
-        var deletions = [NSIndexPath]()
-        
-        for (i, sectionConfiguration) in self.sectionConfigurations.enumerate() {
-            var deletionIndexOffset = 0
-            var insertionIndexOffet = 0
-            let preSectionVisibility = preVisibilityMap[i]
-            let postSectionVisibility = sectionConfiguration.visibilityMap()
+    public func indexPathChangeSetAfterPerformingOperation(operation: () -> Void) ->
+        (rowInsertions: [NSIndexPath], rowDeletions: [NSIndexPath], sectionInsertions: NSIndexSet, sectionDeletions: NSIndexSet) {
+            let preVisibilityMap = self.sectionConfigurations.map { (sectionConfiguration) -> [[Int: Bool]] in
+                return sectionConfiguration.visibilityMap()
+            }
             
-            for (j, preRowConfigVisibility) in preSectionVisibility.enumerate() {
-                let postRowConfigVisibility = postSectionVisibility[j]
-                let indexCount = max(preRowConfigVisibility.count, postRowConfigVisibility.count)
+            operation()
+            
+            var rowInsertions = [NSIndexPath]()
+            var rowDeletions = [NSIndexPath]()
+            var sectionInsertions = NSMutableIndexSet()
+            var sectionDeletions = NSMutableIndexSet()
+            
+            for (i, sectionConfiguration) in self.sectionConfigurations.enumerate() {
+                var deletionIndexOffset = 0
+                var insertionIndexOffet = 0
+                let preSectionVisibility = preVisibilityMap[i]
+                let postSectionVisibility = sectionConfiguration.visibilityMap()
+                let preVisible = preSectionVisibility.reduce(false, combine: { (visible, visibilityMap) -> Bool in
+                    return visible || visibilityMap.values.reduce(false, combine: { return $0 || $1 })
+                })
+                let postVisible = postSectionVisibility.reduce(false, combine: { (visible, visibilityMap) -> Bool in
+                    return visible || visibilityMap.values.reduce(false, combine: { return $0 || $1 })
+                })
                 
-                for index in 0 ..< indexCount {
-                    switch (preRowConfigVisibility[index], postRowConfigVisibility[index]) {
+                if preVisible && postVisible {
+                    for (j, preRowConfigVisibility) in preSectionVisibility.enumerate() {
+                        let postRowConfigVisibility = postSectionVisibility[j]
+                        let indexCount = max(preRowConfigVisibility.count, postRowConfigVisibility.count)
                         
-                    case let (.Some(pre), .Some(post)) where pre == true && post == true:
-                        insertionIndexOffet += 1
-                        deletionIndexOffset += 1
-                        
-                    case let (.Some(pre), _) where pre == true:
-                        deletions.append(NSIndexPath(forRow: deletionIndexOffset, inSection: i))
-                        deletionIndexOffset += 1
-                        
-                    case let (_, .Some(post)) where post == true:
-                        insertions.append(NSIndexPath(forRow: insertionIndexOffet, inSection: i))
-                        insertionIndexOffet += 1
-                        
-                    default: ()
-                        
+                        for index in 0 ..< indexCount {
+                            switch (preRowConfigVisibility[index], postRowConfigVisibility[index]) {
+                                
+                            case let (.Some(pre), .Some(post)) where pre == true && post == true:
+                                insertionIndexOffet += 1
+                                deletionIndexOffset += 1
+                                
+                            case let (.Some(pre), _) where pre == true:
+                                rowDeletions.append(NSIndexPath(forRow: deletionIndexOffset, inSection: i))
+                                deletionIndexOffset += 1
+                                
+                            case let (_, .Some(post)) where post == true:
+                                rowInsertions.append(NSIndexPath(forRow: insertionIndexOffet, inSection: i))
+                                insertionIndexOffet += 1
+                                
+                            default: ()
+                                
+                            }
+                        }
                     }
+                } else if preVisible {
+                    sectionDeletions.addIndex(i)
+                } else if postVisible {
+                    sectionInsertions.addIndex(i)
                 }
             }
-        }
-        
-        return (insertions: insertions, deletions: deletions)
+            
+            return (rowInsertions: rowInsertions, rowDeletions: rowDeletions, sectionInsertions: sectionInsertions, sectionDeletions: sectionDeletions)
     }
     
     public func refreshAllRowConfigurations() {
@@ -108,7 +123,10 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     
     public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         if tableView === self.tableView {
-            return self.sectionConfigurations.count
+            let result = self.sectionConfigurations.reduce(0, combine: { (total, sectionConfiguration) -> Int in
+                return sectionConfiguration.numberOfRows() > 0 ? total + 1 : total
+            })
+            return result
         }
         
         fatalError("Provided tableView doesn't match configured table view.")
