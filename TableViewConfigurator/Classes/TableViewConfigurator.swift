@@ -60,8 +60,8 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
             
             var rowInsertions = [NSIndexPath]()
             var rowDeletions = [NSIndexPath]()
-            var sectionInsertions = NSMutableIndexSet()
-            var sectionDeletions = NSMutableIndexSet()
+            let sectionInsertions = NSMutableIndexSet()
+            let sectionDeletions = NSMutableIndexSet()
             
             for (i, sectionConfiguration) in self.sectionConfigurations.enumerate() {
                 var deletionIndexOffset = 0
