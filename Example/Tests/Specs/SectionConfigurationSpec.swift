@@ -144,9 +144,7 @@ class SectionConfigurationSpec: QuickSpec {
                     
                     beforeEach {
                         selectionHandlerInvoked = false
-                        constantRowConfiguration.selectionHandler({ () -> Bool in
-                            selectionHandlerInvoked = true; return true
-                        })
+                        constantRowConfiguration.selectionHandler({ selectionHandlerInvoked = true })
                     }
                     
                     it("is correct when selected") {
@@ -165,8 +163,8 @@ class SectionConfigurationSpec: QuickSpec {
                     
                     beforeEach {
                         selectionHandlerInvoked = false
-                        modelRowConfiguration.selectionHandler({ (model) -> Bool in
-                            selectionHandlerInvoked = true; return true
+                        modelRowConfiguration.selectionHandler({ (model) -> Void in
+                            selectionHandlerInvoked = true
                         })
                     }
                     

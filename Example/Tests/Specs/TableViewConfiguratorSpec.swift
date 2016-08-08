@@ -61,28 +61,35 @@ class TableViewConfiguratorSpec: QuickSpec {
                     var hideConstant = false
                     var changeSet = configurator.indexPathChangeSetAfterPerformingOperation({ })
                     
-                    expect(changeSet.insertions).to(beEmpty())
-                    expect(changeSet.deletions).to(beEmpty())
+                    expect(changeSet.rowInsertions).to(beEmpty())
+                    expect(changeSet.rowDeletions).to(beEmpty())
+                    expect(changeSet.sectionInsertions).to(equal(NSIndexSet()))
+                    expect(changeSet.sectionDeletions).to(equal(NSIndexSet()))
                     
                     modelRowConfiguration.hideWhen({ (model) -> Bool in
-                        return hideModels
+                        return hideModels && model.name == "Chair"
                     })
                     changeSet = configurator.indexPathChangeSetAfterPerformingOperation({ hideModels = true })
-                    expect(changeSet.insertions).to(beEmpty())
-                    expect(changeSet.deletions).to(equal([NSIndexPath(forRow: 0, inSection: 0), NSIndexPath(forRow: 1, inSection: 0), NSIndexPath(forRow: 2, inSection: 0)]))
+                    expect(changeSet.rowInsertions).to(beEmpty())
+                    expect(changeSet.rowDeletions).to(equal([NSIndexPath(forRow: 1, inSection: 0)]))
+                    expect(changeSet.sectionInsertions).to(equal(NSIndexSet()))
+                    expect(changeSet.sectionDeletions).to(equal(NSIndexSet()))
                     
                     constantRowConfiguration.hideWhen({ return hideConstant })
                     changeSet = configurator.indexPathChangeSetAfterPerformingOperation({ hideConstant = true })
-                    expect(changeSet.insertions).to(beEmpty())
-                    expect(changeSet.deletions).to(equal([NSIndexPath(forRow: 0, inSection: 1)]))
+                    expect(changeSet.rowInsertions).to(beEmpty())
+                    expect(changeSet.rowDeletions).to(beEmpty())
+                    expect(changeSet.sectionInsertions).to(equal(NSIndexSet()))
+                    expect(changeSet.sectionDeletions).to(equal(NSIndexSet(index: 1)))
                     
                     changeSet = configurator.indexPathChangeSetAfterPerformingOperation({ () -> Void in
                         hideModels = false
                         hideConstant = false
                     })
-                    expect(changeSet.deletions).to(beEmpty())
-                    expect(changeSet.insertions).to(equal([NSIndexPath(forRow: 0, inSection: 0), NSIndexPath(forRow: 1, inSection: 0), NSIndexPath(forRow: 2, inSection: 0),
-                        NSIndexPath(forRow: 0, inSection: 1)]))
+                    expect(changeSet.rowDeletions).to(beEmpty())
+                    expect(changeSet.rowInsertions).to(equal([NSIndexPath(forRow: 1, inSection: 0)]))
+                    expect(changeSet.sectionInsertions).to(equal(NSIndexSet(index: 1)))
+                    expect(changeSet.sectionDeletions).to(equal(NSIndexSet()))
                 }
             }
             
@@ -171,9 +178,9 @@ class TableViewConfiguratorSpec: QuickSpec {
                 beforeEach {
                     constantRowSelected = false
                     modelRowSelected = false
-                    constantRowConfiguration.selectionHandler({ constantRowSelected = true; return true })
-                    modelRowConfiguration.selectionHandler({ (model) -> Bool in
-                        modelRowSelected = true; return true
+                    constantRowConfiguration.selectionHandler({ constantRowSelected = true })
+                    modelRowConfiguration.selectionHandler({ (model) -> Void in
+                        modelRowSelected = true
                     })
                 }
                 

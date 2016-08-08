@@ -171,8 +171,8 @@ class ModelRowConfigurationSpec: QuickSpec {
                 it("is invoked when selected") {
                     var selectionHandlerInvoked = false
                     
-                    rowConfiguration.selectionHandler({ (model) -> Bool in
-                        selectionHandlerInvoked = true; return true
+                    rowConfiguration.selectionHandler({ (model) -> Void in
+                        selectionHandlerInvoked = true
                     }).didSelectRow(2)
                     
                     expect(selectionHandlerInvoked).to(beTrue())
@@ -181,8 +181,8 @@ class ModelRowConfigurationSpec: QuickSpec {
                 it("is not invoked when selecting non-existant row") {
                     var selectionHandlerInvoked = false
                     
-                    rowConfiguration.selectionHandler({ (model) -> Bool in
-                        selectionHandlerInvoked = true; return true
+                    rowConfiguration.selectionHandler({ (model) -> Void in
+                        selectionHandlerInvoked = true
                     }).didSelectRow(5)
                     
                     expect(selectionHandlerInvoked).to(beFalse())

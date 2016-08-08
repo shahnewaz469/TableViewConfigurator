@@ -8,6 +8,8 @@
 
 import UIKit
 
+public typealias TableViewChangeSet = (rowInsertions: [NSIndexPath], rowDeletions: [NSIndexPath], sectionInsertions: NSIndexSet, sectionDeletions: NSIndexSet)
+
 public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableViewDelegate {
 
     private var sectionConfigurations: [SectionConfiguration]
@@ -49,8 +51,7 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         return result
     }
     
-    public func indexPathChangeSetAfterPerformingOperation(operation: () -> Void) ->
-        (rowInsertions: [NSIndexPath], rowDeletions: [NSIndexPath], sectionInsertions: NSIndexSet, sectionDeletions: NSIndexSet) {
+    public func indexPathChangeSetAfterPerformingOperation(operation: () -> Void) -> TableViewChangeSet {
             let preVisibilityMap = self.sectionConfigurations.map { (sectionConfiguration) -> [[Int: Bool]] in
                 return sectionConfiguration.visibilityMap()
             }
@@ -106,7 +107,20 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
                 }
             }
             
-            return (rowInsertions: rowInsertions, rowDeletions: rowDeletions, sectionInsertions: sectionInsertions, sectionDeletions: sectionDeletions)
+            return TableViewChangeSet(rowInsertions: rowInsertions, rowDeletions: rowDeletions, sectionInsertions: sectionInsertions, sectionDeletions: sectionDeletions)
+    }
+    
+    public func animateChangeSet(changeSet: TableViewChangeSet,
+                                 insertRowAnimation: UITableViewRowAnimation = .Automatic,
+                                 deleteRowAnimation: UITableViewRowAnimation = .Automatic,
+                                 insertSectionAnimation: UITableViewRowAnimation = .Automatic,
+                                 deleteSectionAnimation: UITableViewRowAnimation = .Automatic) {
+        self.tableView.beginUpdates()
+        self.tableView.insertRowsAtIndexPaths(changeSet.rowInsertions, withRowAnimation: insertRowAnimation)
+        self.tableView.deleteRowsAtIndexPaths(changeSet.rowDeletions, withRowAnimation: deleteRowAnimation)
+        self.tableView.insertSections(changeSet.sectionInsertions, withRowAnimation: insertSectionAnimation)
+        self.tableView.deleteSections(changeSet.sectionDeletions, withRowAnimation: deleteSectionAnimation)
+        self.tableView.endUpdates()
     }
     
     public func refreshAllRowConfigurations() {
@@ -211,9 +225,7 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if tableView === self.tableView {
             performSectionOperation(indexPath.section, handler: { (sectionConfiguration) in
-                if sectionConfiguration.didSelectRow(indexPath.row) ?? true {
-                    tableView.deselectRowAtIndexPath(indexPath, animated: true)
-                }
+                sectionConfiguration.didSelectRow(indexPath.row)
             })
         } else {
             fatalError("Provided tableView doesn't match configured table view.")
@@ -221,8 +233,16 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     }
     
     private func performSectionOperation<T>(section: Int, handler: (sectionConfiguration: SectionConfiguration) -> T) -> T {
-        if section < self.sectionConfigurations.count {
-            return handler(sectionConfiguration: self.sectionConfigurations[section])
+        var sectionTotal = 0
+        
+        for sectionConfiguration in self.sectionConfigurations {
+            if sectionConfiguration.numberOfRows() > 0 {
+                if section == sectionTotal {
+                    return handler(sectionConfiguration: sectionConfiguration)
+                }
+                
+                sectionTotal += 1
+            }
         }
         
         fatalError("Couldn't resolve SectionConfiguration for section \(section).")
