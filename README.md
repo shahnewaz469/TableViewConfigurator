@@ -261,12 +261,7 @@ override func viewDidLoad() {
                 cell.hideLabel.text = "Hide People"
                 cell.hideSwitch.on = self.hidePeople
                 cell.switchChangedHandler = { (on) -> Void in
-                    let changeSet = self.configurator.indexPathChangeSetAfterPerformingOperation({ self.hidePeople = on });
-                        
-                    self.tableView.beginUpdates()
-                    self.tableView.insertRowsAtIndexPaths(changeSet.insertions, withRowAnimation: .Top)
-                    self.tableView.deleteRowsAtIndexPaths(changeSet.deletions, withRowAnimation: .Top)
-                    self.tableView.endUpdates()
+                    self.configurator.animateChangeSet(self.configurator.changeSetAfterPerformingOperation({ self.hidePeople = on }))
                 }
             })
             .height(44.0), peopleRows, ConstantRowConfiguration<BasicCell>().height(44.0)])
