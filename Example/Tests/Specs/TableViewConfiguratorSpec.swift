@@ -59,7 +59,7 @@ class TableViewConfiguratorSpec: QuickSpec {
                 it("is correct") {
                     var hideModels = false
                     var hideConstant = false
-                    var changeSet = configurator.indexPathChangeSetAfterPerformingOperation({ })
+                    var changeSet = configurator.changeSetAfterPerformingOperation({ })
                     
                     expect(changeSet.rowInsertions).to(beEmpty())
                     expect(changeSet.rowDeletions).to(beEmpty())
@@ -69,20 +69,20 @@ class TableViewConfiguratorSpec: QuickSpec {
                     modelRowConfiguration.hideWhen({ (model) -> Bool in
                         return hideModels && model.name == "Chair"
                     })
-                    changeSet = configurator.indexPathChangeSetAfterPerformingOperation({ hideModels = true })
+                    changeSet = configurator.changeSetAfterPerformingOperation({ hideModels = true })
                     expect(changeSet.rowInsertions).to(beEmpty())
                     expect(changeSet.rowDeletions).to(equal([NSIndexPath(forRow: 1, inSection: 0)]))
                     expect(changeSet.sectionInsertions).to(equal(NSIndexSet()))
                     expect(changeSet.sectionDeletions).to(equal(NSIndexSet()))
                     
                     constantRowConfiguration.hideWhen({ return hideConstant })
-                    changeSet = configurator.indexPathChangeSetAfterPerformingOperation({ hideConstant = true })
+                    changeSet = configurator.changeSetAfterPerformingOperation({ hideConstant = true })
                     expect(changeSet.rowInsertions).to(beEmpty())
                     expect(changeSet.rowDeletions).to(beEmpty())
                     expect(changeSet.sectionInsertions).to(equal(NSIndexSet()))
                     expect(changeSet.sectionDeletions).to(equal(NSIndexSet(index: 1)))
                     
-                    changeSet = configurator.indexPathChangeSetAfterPerformingOperation({ () -> Void in
+                    changeSet = configurator.changeSetAfterPerformingOperation({ () -> Void in
                         hideModels = false
                         hideConstant = false
                     })

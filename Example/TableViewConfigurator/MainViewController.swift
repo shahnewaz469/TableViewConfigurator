@@ -63,12 +63,8 @@ class MainViewController: UIViewController {
                     cell.hideLabel.text = "Hide All People"
                     cell.hideSwitch.on = self.hidePeople
                     cell.switchChangedHandler = { (on) -> Void in
-                        let changeSet = self.configurator.indexPathChangeSetAfterPerformingOperation({ self.hidePeople = on })
-                        
-                        self.tableView.beginUpdates()
-                        self.tableView.insertRowsAtIndexPaths(changeSet.rowInsertions, withRowAnimation: .Top)
-                        self.tableView.deleteRowsAtIndexPaths(changeSet.rowDeletions, withRowAnimation: .Top)
-                        self.tableView.endUpdates()
+                        self.configurator.animateChangeSet(self.configurator.changeSetAfterPerformingOperation({ self.hidePeople = on }),
+                            insertRowAnimation: .Top, deleteRowAnimation: .Top)
                     }
                 })
                 .height(44.0),
@@ -77,12 +73,8 @@ class MainViewController: UIViewController {
                         cell.hideLabel.text = "Hide Johns"
                         cell.hideSwitch.on = self.hideJohns
                         cell.switchChangedHandler = { (on) -> Void in
-                            let changeSet = self.configurator.indexPathChangeSetAfterPerformingOperation({ self.hideJohns = on })
-                            
-                            self.tableView.beginUpdates()
-                            self.tableView.insertRowsAtIndexPaths(changeSet.rowInsertions, withRowAnimation: .Top)
-                            self.tableView.deleteRowsAtIndexPaths(changeSet.rowDeletions, withRowAnimation: .Top)
-                            self.tableView.endUpdates()
+                            self.configurator.animateChangeSet(self.configurator.changeSetAfterPerformingOperation({ self.hideJohns = on }),
+                                insertRowAnimation: .Top, deleteRowAnimation: .Top)
                         }
                     })
                     .height(44.0), peopleRows,
@@ -128,7 +120,7 @@ class MainViewController: UIViewController {
                     cell.textLabel!.text = "Toggle Animal Sections"
                 })
                 .selectionHandler({
-                    self.configurator.animateChangeSet(self.configurator.indexPathChangeSetAfterPerformingOperation({
+                    self.configurator.animateChangeSet(self.configurator.changeSetAfterPerformingOperation({
                         self.hideAnimals = !self.hideAnimals
                     }))
                 })

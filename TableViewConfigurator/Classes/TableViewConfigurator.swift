@@ -51,7 +51,7 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         return result
     }
     
-    public func indexPathChangeSetAfterPerformingOperation(operation: () -> Void) -> TableViewChangeSet {
+    public func changeSetAfterPerformingOperation(operation: () -> Void) -> TableViewChangeSet {
             let preVisibilityMap = self.sectionConfigurations.map { (sectionConfiguration) -> [[Int: Bool]] in
                 return sectionConfiguration.visibilityMap()
             }
