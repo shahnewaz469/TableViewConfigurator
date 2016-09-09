@@ -128,7 +128,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.configurator = TableViewConfigurator(tableView: tableView, sectionConfigurations: configurations)
     }
     
-    func numberOfSections(in: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return self.configurator.numberOfSections(in: tableView)
     }
     
