@@ -135,7 +135,7 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         }
     }
     
-    public func numberOfSections(in: UITableView) -> Int {
+    public func numberOfSections(in tableView: UITableView) -> Int {
         if tableView === self.tableView {
             let result = self.sectionConfigurations.reduce(0, { (total, sectionConfiguration) -> Int in
                 return sectionConfiguration.numberOfRows() > 0 ? total + 1 : total
