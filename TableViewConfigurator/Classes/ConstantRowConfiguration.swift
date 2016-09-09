@@ -10,26 +10,26 @@ import UIKit
 
 public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where CellType: UITableViewCell>: RowConfiguration {
     
-    private var additionalConfig: ((cell: CellType) -> Void)?
+    private var additionalConfig: ((_ cell: CellType) -> Void)?
     private var selectionHandler: (() -> Void)?
     private var hideWhen: (() -> Bool)?
     
     public override init() { }
     
-    public func additionalConfig(additionalConfig: (cell: CellType) -> Void) -> Self {
+    public func additionalConfig(_ additionalConfig: @escaping (_ cell: CellType) -> Void) -> Self {
         self.additionalConfig = additionalConfig; return self
     }
     
-    public func selectionHandler(selectionHandler: () -> Void) -> Self {
+    public func selectionHandler(_ selectionHandler: @escaping () -> Void) -> Self {
         self.selectionHandler = selectionHandler; return self
     }
     
-    public func hideWhen(hideWhen: () -> Bool) -> Self {
+    public func hideWhen(_ hideWhen: @escaping () -> Bool) -> Self {
         self.hideWhen = hideWhen; return self
     }
     
     override internal func numberOfRows(countHidden: Bool) -> Int {
-        if let hideWhen = self.hideWhen where !countHidden {
+        if let hideWhen = self.hideWhen, !countHidden {
             return hideWhen() ? 0 : 1
         }
         
@@ -37,7 +37,7 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
     }
     
     override func rowIsVisible(row: Int) -> Bool? {
-        if row < numberOfRows(true) {
+        if row < numberOfRows(countHidden: true) {
             if let hideWhen = self.hideWhen {
                 return !hideWhen()
             }
@@ -48,38 +48,39 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
         return nil
     }
     
-    override func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
-        if row < numberOfRows(false) {
+    override func cellFor(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
+        if row < numberOfRows(countHidden: false) {
             let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier()
             
-            if let cell = tableView.dequeueReusableCellWithIdentifier(reuseId) as? CellType {
-                return configureCell(cell)
+            if let cell = tableView.dequeueReusableCell(withIdentifier: reuseId) as? CellType {
+                return configure(cell: cell)
             }
         }
         
         return nil
     }
     
-    override func refreshCellForRow(row: Int, withIndexPath indexPath: NSIndexPath, inTableView tableView: UITableView) {
-        if row < numberOfRows(false) {
-            if let cell = tableView.cellForRowAtIndexPath(indexPath) as? CellType {
-                configureCell(cell)
+    override func refreshCellFor(row: Int, withIndexPath indexPath: IndexPath, inTableView tableView: UITableView) {
+        if row < numberOfRows(countHidden: false) {
+            tableView.cellForRow(at: indexPath)
+            if let cell = tableView.cellForRow(at: indexPath) as? CellType {
+                configure(cell: cell)
             }
         }
     }
     
-    private func configureCell(cell: CellType) -> CellType {
+    private func configure(cell: CellType) -> CellType {
         cell.configure()
         
         if let additionalConfig = self.additionalConfig {
-            additionalConfig(cell: cell)
+            additionalConfig(cell)
         }
         
         return cell
     }
     
-    override internal func didSelectRow(row: Int) {
-        if row < numberOfRows(false) {
+    override internal func didSelect(row: Int) {
+        if row < numberOfRows(countHidden: false) {
             self.selectionHandler?()
         }
     }

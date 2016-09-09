@@ -14,13 +14,13 @@ class SwitchCell: UITableViewCell, ConfigurableTableViewCell {
     @IBOutlet var hideLabel: UILabel!
     @IBOutlet var hideSwitch: UISwitch!
     
-    var switchChangedHandler: ((on: Bool) -> Void)!
+    var switchChangedHandler: ((_ on: Bool) -> Void)!
     
     func configure() {
         self.hideLabel.text = "Hide"
     }
     
-    @IBAction func switchValueChanged(sender: AnyObject) {
-        self.switchChangedHandler(on: self.hideSwitch.on)
+    @IBAction func switchValueChanged(_ sender: AnyObject) {
+        self.switchChangedHandler(self.hideSwitch.isOn)
     }
 }

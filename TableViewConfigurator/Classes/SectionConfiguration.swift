@@ -22,27 +22,27 @@ public class SectionConfiguration {
         self.rowConfigurations = [rowConfiguration]
     }
     
-    public func headerTitle(headerTitle: String) -> Self {
+    public func headerTitle(_ headerTitle: String) -> Self {
         self.headerTitle = headerTitle
         return self
     }
     
-    public func footerTitle(footerTitle: String) -> Self {
+    public func footerTitle(_ footerTitle: String) -> Self {
         self.footerTitle = footerTitle
         return self
     }
     
     
-    internal func indexSetForRowConfiguration(rowConfiguration: RowConfiguration) -> NSIndexSet {
-        let result = NSMutableIndexSet()
+    internal func indexSetFor(rowConfiguration: RowConfiguration) -> IndexSet {
+        var result = IndexSet()
         var rowTotal = 0
         
         for candidateConfiguration in self.rowConfigurations {
-            let numberOfRows = candidateConfiguration.numberOfRows(false)
+            let numberOfRows = candidateConfiguration.numberOfRows(countHidden: false)
             
             if candidateConfiguration === rowConfiguration {
                 for i in 0 ..< numberOfRows {
-                    result.addIndex(i + rowTotal)
+                    result.insert(i + rowTotal)
                 }
             }
             
@@ -57,10 +57,10 @@ public class SectionConfiguration {
         
         for configuration in self.rowConfigurations {
             var visibilityMap = [Int: Bool]()
-            let numberOfRows = configuration.numberOfRows(true)
+            let numberOfRows = configuration.numberOfRows(countHidden: true)
             
             for i in 0 ..< numberOfRows {
-                visibilityMap[i] = configuration.rowIsVisible(i)!
+                visibilityMap[i] = configuration.rowIsVisible(row: i)!
             }
             
             result.append(visibilityMap)
@@ -69,17 +69,17 @@ public class SectionConfiguration {
         return result
     }
     
-    internal func refreshAllRowConfigurationsWithSection(section: Int, inTableView tableView: UITableView) {
+    internal func refreshAllRowConfigurationsWith(section: Int, inTableView tableView: UITableView) {
         for rowConfiguration in self.rowConfigurations {
-            refreshRowConfiguration(rowConfiguration, withSection: section, inTableView: tableView)
+            refresh(rowConfiguration: rowConfiguration, withSection: section, inTableView: tableView)
         }
     }
     
-    internal func refreshRowConfiguration(rowConfiguration: RowConfiguration, withSection section: Int, inTableView tableView: UITableView) {
-        for index in indexSetForRowConfiguration(rowConfiguration) {
-            performRowOperation(index, handler: { (rowConfiguration, localizedRow) -> Void in
-                rowConfiguration.refreshCellForRow(localizedRow,
-                    withIndexPath: NSIndexPath(forRow: index, inSection: section), inTableView: tableView)
+    internal func refresh(rowConfiguration: RowConfiguration, withSection section: Int, inTableView tableView: UITableView) {
+        for index in indexSetFor(rowConfiguration: rowConfiguration) {
+            performOperationFor(row: index, handler: { (rowConfiguration, localizedRow) -> Void in
+                rowConfiguration.refreshCellFor(row: localizedRow,
+                    withIndexPath: IndexPath(row: index, section: section), inTableView: tableView)
             })
         }
     }
@@ -92,44 +92,44 @@ public class SectionConfiguration {
         return self.footerTitle
     }
     
-    internal func numberOfRows() -> Int? {
+    internal func numberOfRows() -> Int {
         return self.rowConfigurations.reduce(0) { (totalRows, rowConfiguration) -> Int in
-            return totalRows + rowConfiguration.numberOfRows(false)
+            return totalRows + rowConfiguration.numberOfRows(countHidden: false)
         }
     }
     
-    internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
-        return performRowOperation(row, handler: { (rowConfiguration, localizedRow) -> UITableViewCell? in
-            return rowConfiguration.cellForRow(localizedRow, inTableView: tableView)
+    internal func cellFor(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
+        return performOperationFor(row: row, handler: { (rowConfiguration, localizedRow) -> UITableViewCell? in
+            return rowConfiguration.cellFor(row: localizedRow, inTableView: tableView)
         })
     }
     
-    internal func heightForRow(row: Int) -> CGFloat? {
-        return performRowOperation(row, handler: { (rowConfiguration, localizedRow) -> CGFloat? in
-            return rowConfiguration.heightForRow(localizedRow)
+    internal func heightFor(row: Int) -> CGFloat? {
+        return performOperationFor(row: row, handler: { (rowConfiguration, localizedRow) -> CGFloat? in
+            return rowConfiguration.heightFor(row: localizedRow)
         })
     }
     
-    internal func estimatedHeightForRow(row: Int) -> CGFloat? {
-        return performRowOperation(row, handler: { (rowConfiguration, localizedRow) -> CGFloat? in
-            return rowConfiguration.estimatedHeightForRow(localizedRow)
+    internal func estimatedHeightFor(row: Int) -> CGFloat? {
+        return performOperationFor(row: row, handler: { (rowConfiguration, localizedRow) -> CGFloat? in
+            return rowConfiguration.estimatedHeightFor(row: localizedRow)
         })
     }
     
-    internal func didSelectRow(row: Int) {
-        return performRowOperation(row, handler: { (rowConfiguration, localizedRow) -> Void in
-            rowConfiguration.didSelectRow(localizedRow)
+    internal func didSelect(row: Int) {
+        return performOperationFor(row: row, handler: { (rowConfiguration, localizedRow) -> Void in
+            rowConfiguration.didSelect(row: localizedRow)
         })
     }
     
-    private func performRowOperation<T>(row: Int, handler: (rowConfiguration: RowConfiguration, localizedRow: Int) -> T) -> T {
+    private func performOperationFor<T>(row: Int, handler: (RowConfiguration, Int) -> T) -> T {
         var rowTotal = 0
         
         for rowConfiguration in self.rowConfigurations {
-            let numberOfRows = rowConfiguration.numberOfRows(false)
+            let numberOfRows = rowConfiguration.numberOfRows(countHidden: false)
             
             if row < rowTotal + numberOfRows {
-                return handler(rowConfiguration: rowConfiguration, localizedRow: row - rowTotal)
+                return handler(rowConfiguration, row - rowTotal)
             }
             
             rowTotal += numberOfRows

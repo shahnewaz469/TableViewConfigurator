@@ -10,13 +10,13 @@ import UIKit
 
 class UITableViewMock: UITableView {
 
-    private var cells = [NSIndexPath: UITableViewCell]()
+    private var cells = [IndexPath: UITableViewCell]()
     
-    func storeCell(cell: UITableViewCell, forIndexPath indexPath: NSIndexPath) {
+    func storeCell(_ cell: UITableViewCell, forIndexPath indexPath: IndexPath) {
         cells[indexPath] = cell
     }
     
-    override func cellForRowAtIndexPath(indexPath: NSIndexPath) -> UITableViewCell? {
-        return cells[indexPath]
+    override func cellForRow(at: IndexPath) -> UITableViewCell? {
+        return cells[at]
     }
 }

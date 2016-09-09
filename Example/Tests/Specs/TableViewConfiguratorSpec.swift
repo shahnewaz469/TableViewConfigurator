@@ -29,8 +29,8 @@ class TableViewConfiguratorSpec: QuickSpec {
             
             beforeEach {
                 tableView = UITableViewMock()
-                tableView.registerClass(ImplicitReuseIdCell.self, forCellReuseIdentifier: ImplicitReuseIdCell.buildReuseIdentifier())
-                tableView.registerClass(ModelImplicitReuseIdCell.self, forCellReuseIdentifier: ModelImplicitReuseIdCell.buildReuseIdentifier())
+                tableView.register(ImplicitReuseIdCell.self, forCellReuseIdentifier: ImplicitReuseIdCell.buildReuseIdentifier())
+                tableView.register(ModelImplicitReuseIdCell.self, forCellReuseIdentifier: ModelImplicitReuseIdCell.buildReuseIdentifier())
                 modelRowConfiguration = ModelRowConfiguration(models: self.things)
                 constantRowConfiguration = ConstantRowConfiguration()
                 firstSectionConfiguration = SectionConfiguration(rowConfiguration: modelRowConfiguration)
@@ -40,17 +40,17 @@ class TableViewConfiguratorSpec: QuickSpec {
             
             describe("its index paths for row configuration") {
                 it("is correct") {
-                    expect(configurator.indexPathsForRowConfiguration(modelRowConfiguration))
-                        .to(equal([NSIndexPath(forRow: 0, inSection: 0), NSIndexPath(forRow: 1, inSection: 0), NSIndexPath(forRow: 2, inSection: 0)]))
-                    expect(configurator.indexPathsForRowConfiguration(constantRowConfiguration))
-                        .to(equal([NSIndexPath(forRow: 0, inSection: 1)]))
+                    expect(configurator.indexPathsFor(rowConfiguration: modelRowConfiguration))
+                        .to(equal([IndexPath(row: 0, section: 0), IndexPath(row: 1, section: 0), IndexPath(row: 2, section: 0)]))
+                    expect(configurator.indexPathsFor(rowConfiguration: constantRowConfiguration))
+                        .to(equal([IndexPath(row: 0, section: 1)]))
                     
-                    modelRowConfiguration.hideWhen({ $0 === self.things[2] })
-                    expect(configurator.indexPathsForRowConfiguration(modelRowConfiguration))
-                        .to(equal([NSIndexPath(forRow: 0, inSection: 0), NSIndexPath(forRow: 1, inSection: 0)]))
+                    _ = modelRowConfiguration.hideWhen({ $0 === self.things[2] })
+                    expect(configurator.indexPathsFor(rowConfiguration: modelRowConfiguration))
+                        .to(equal([IndexPath(row: 0, section: 0), IndexPath(row: 1, section: 0)]))
                     
-                    constantRowConfiguration.hideWhen({ return true })
-                    expect(configurator.indexPathsForRowConfiguration(constantRowConfiguration))
+                    _ = constantRowConfiguration.hideWhen({ return true })
+                    expect(configurator.indexPathsFor(rowConfiguration: constantRowConfiguration))
                         .to(beEmpty())
                 }
             }
@@ -63,39 +63,39 @@ class TableViewConfiguratorSpec: QuickSpec {
                     
                     expect(changeSet.rowInsertions).to(beEmpty())
                     expect(changeSet.rowDeletions).to(beEmpty())
-                    expect(changeSet.sectionInsertions).to(equal(NSIndexSet()))
-                    expect(changeSet.sectionDeletions).to(equal(NSIndexSet()))
+                    expect(changeSet.sectionInsertions).to(equal(IndexSet()))
+                    expect(changeSet.sectionDeletions).to(equal(IndexSet()))
                     
-                    modelRowConfiguration.hideWhen({ (model) -> Bool in
+                    _ = modelRowConfiguration.hideWhen({ (model) -> Bool in
                         return hideModels && model.name == "Chair"
                     })
                     changeSet = configurator.changeSetAfterPerformingOperation({ hideModels = true })
                     expect(changeSet.rowInsertions).to(beEmpty())
-                    expect(changeSet.rowDeletions).to(equal([NSIndexPath(forRow: 1, inSection: 0)]))
-                    expect(changeSet.sectionInsertions).to(equal(NSIndexSet()))
-                    expect(changeSet.sectionDeletions).to(equal(NSIndexSet()))
+                    expect(changeSet.rowDeletions).to(equal([IndexPath(row: 1, section: 0)]))
+                    expect(changeSet.sectionInsertions).to(equal(IndexSet()))
+                    expect(changeSet.sectionDeletions).to(equal(IndexSet()))
                     
-                    constantRowConfiguration.hideWhen({ return hideConstant })
+                    _ = constantRowConfiguration.hideWhen({ return hideConstant })
                     changeSet = configurator.changeSetAfterPerformingOperation({ hideConstant = true })
                     expect(changeSet.rowInsertions).to(beEmpty())
                     expect(changeSet.rowDeletions).to(beEmpty())
-                    expect(changeSet.sectionInsertions).to(equal(NSIndexSet()))
-                    expect(changeSet.sectionDeletions).to(equal(NSIndexSet(index: 1)))
+                    expect(changeSet.sectionInsertions).to(equal(IndexSet()))
+                    expect(changeSet.sectionDeletions).to(equal(IndexSet(integer: 1)))
                     
                     changeSet = configurator.changeSetAfterPerformingOperation({ () -> Void in
                         hideModels = false
                         hideConstant = false
                     })
                     expect(changeSet.rowDeletions).to(beEmpty())
-                    expect(changeSet.rowInsertions).to(equal([NSIndexPath(forRow: 1, inSection: 0)]))
-                    expect(changeSet.sectionInsertions).to(equal(NSIndexSet(index: 1)))
-                    expect(changeSet.sectionDeletions).to(equal(NSIndexSet()))
+                    expect(changeSet.rowInsertions).to(equal([IndexPath(row: 1, section: 0)]))
+                    expect(changeSet.sectionInsertions).to(equal(IndexSet(integer: 1)))
+                    expect(changeSet.sectionDeletions).to(equal(IndexSet()))
                 }
             }
             
             describe("its number of sections") {
                 it("is correct") {
-                    expect(configurator.numberOfSectionsInTableView(tableView)).to(equal(2))
+                    expect(configurator.numberOfSections(in: tableView)).to(equal(2))
                 }
             }
             
@@ -111,16 +111,16 @@ class TableViewConfiguratorSpec: QuickSpec {
             
             describe("its produced cell") {
                 it("is correct for constant row section") {
-                    expect(configurator.tableView(tableView, cellForRowAtIndexPath: NSIndexPath(forRow: 0, inSection: 1))).to(beAnInstanceOf(ImplicitReuseIdCell))
+                    expect(configurator.tableView(tableView, cellForRowAt: IndexPath(row: 0, section: 1))).to(beAnInstanceOf(ImplicitReuseIdCell.self))
                 }
                 
                 it("is correct for model row section") {
-                    expect(configurator.tableView(tableView, cellForRowAtIndexPath: NSIndexPath(forRow: 1, inSection: 0))).to(beAnInstanceOf(ModelImplicitReuseIdCell))
+                    expect(configurator.tableView(tableView, cellForRowAt: IndexPath(row: 1, section: 0))).to(beAnInstanceOf(ModelImplicitReuseIdCell.self))
                 }
                 
                 it("is refreshed for constant row section") {
-                    let indexPath = NSIndexPath(forRow: 0, inSection: 1)
-                    let cell = configurator.tableView(tableView, cellForRowAtIndexPath: indexPath) as? ImplicitReuseIdCell
+                    let indexPath = IndexPath(row: 0, section: 1)
+                    let cell = configurator.tableView(tableView, cellForRowAt: indexPath) as? ImplicitReuseIdCell
                     
                     expect(cell?.configured).to(beTrue())
                     
@@ -128,13 +128,13 @@ class TableViewConfiguratorSpec: QuickSpec {
                     expect(cell?.configured).to(beFalse())
                     
                     tableView.storeCell(cell!, forIndexPath: indexPath)
-                    configurator.refreshRowConfiguration(constantRowConfiguration)
+                    configurator.refresh(rowConfiguration: constantRowConfiguration)
                     expect(cell?.configured).to(beTrue())
                 }
                 
                 it("is refreshed for model row section") {
-                    let indexPath = NSIndexPath(forRow: 1, inSection: 0)
-                    let cell = configurator.tableView(tableView, cellForRowAtIndexPath: indexPath) as? ModelImplicitReuseIdCell
+                    let indexPath = IndexPath(row: 1, section: 0)
+                    let cell = configurator.tableView(tableView, cellForRowAt: indexPath) as? ModelImplicitReuseIdCell
                     
                     expect(cell?.model).toNot(beNil())
                     
@@ -142,32 +142,32 @@ class TableViewConfiguratorSpec: QuickSpec {
                     expect(cell?.model).to(beNil())
                     
                     tableView.storeCell(cell!, forIndexPath: indexPath)
-                    configurator.refreshRowConfiguration(modelRowConfiguration)
+                    configurator.refresh(rowConfiguration: modelRowConfiguration)
                     expect(cell?.model).toNot(beNil())
                 }
             }
             
             describe("its height") {
                 it("is correct for constant row section") {
-                    constantRowConfiguration.height(100.0)
-                    expect(configurator.tableView(tableView, heightForRowAtIndexPath: NSIndexPath(forRow: 0, inSection: 1))).to(equal(100.0))
+                    _ = constantRowConfiguration.height(100.0)
+                    expect(configurator.tableView(tableView, heightForRowAt: IndexPath(row: 0, section: 1))).to(equal(100.0))
                 }
                 
                 it("is correct for model row section") {
-                    modelRowConfiguration.height(200.0)
-                    expect(configurator.tableView(tableView, heightForRowAtIndexPath: NSIndexPath(forRow: 2, inSection: 0))).to(equal(200.0))
+                    _ = modelRowConfiguration.height(200.0)
+                    expect(configurator.tableView(tableView, heightForRowAt: IndexPath(row: 2, section: 0))).to(equal(200.0))
                 }
             }
             
             describe("its estimated height") {
                 it("is correct for constant row section") {
-                    constantRowConfiguration.estimatedHeight(100.0)
-                    expect(configurator.tableView(tableView, estimatedHeightForRowAtIndexPath: NSIndexPath(forRow: 0, inSection: 1))).to(equal(100.0))
+                    _ = constantRowConfiguration.estimatedHeight(100.0)
+                    expect(configurator.tableView(tableView, estimatedHeightForRowAt: IndexPath(row: 0, section: 1))).to(equal(100.0))
                 }
                 
                 it("is correct for model row section") {
-                    modelRowConfiguration.estimatedHeight(200.0)
-                    expect(configurator.tableView(tableView, estimatedHeightForRowAtIndexPath: NSIndexPath(forRow: 2, inSection: 0))).to(equal(200.0))
+                    _ = modelRowConfiguration.estimatedHeight(200.0)
+                    expect(configurator.tableView(tableView, estimatedHeightForRowAt: IndexPath(row: 2, section: 0))).to(equal(200.0))
                 }
             }
             
@@ -178,20 +178,20 @@ class TableViewConfiguratorSpec: QuickSpec {
                 beforeEach {
                     constantRowSelected = false
                     modelRowSelected = false
-                    constantRowConfiguration.selectionHandler({ constantRowSelected = true })
-                    modelRowConfiguration.selectionHandler({ (model) -> Void in
+                    _ = constantRowConfiguration.selectionHandler({ constantRowSelected = true })
+                    _ = modelRowConfiguration.selectionHandler({ (model) -> Void in
                         modelRowSelected = true
                     })
                 }
                 
                 it("is correct for constant row section") {
-                    configurator.tableView(tableView, didSelectRowAtIndexPath: NSIndexPath(forRow: 0, inSection: 1))
+                    configurator.tableView(tableView, didSelectRowAt: IndexPath(row: 0, section: 1))
                     expect(constantRowSelected).to(beTrue())
                     expect(modelRowSelected).to(beFalse())
                 }
                 
                 it("is correct for model row section") {
-                    configurator.tableView(tableView, didSelectRowAtIndexPath: NSIndexPath(forRow: 2, inSection: 0))
+                    configurator.tableView(tableView, didSelectRowAt: IndexPath(row: 2, section: 0))
                     expect(constantRowSelected).to(beFalse())
                     expect(modelRowSelected).to(beTrue())
                 }

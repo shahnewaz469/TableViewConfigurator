@@ -8,7 +8,7 @@
 
 import UIKit
 
-public typealias TableViewChangeSet = (rowInsertions: [NSIndexPath], rowDeletions: [NSIndexPath], sectionInsertions: NSIndexSet, sectionDeletions: NSIndexSet)
+public typealias TableViewChangeSet = (rowInsertions: [IndexPath], rowDeletions: [IndexPath], sectionInsertions: IndexSet, sectionDeletions: IndexSet)
 
 public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableViewDelegate {
 
@@ -30,114 +30,114 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     }
     
     public func insertConfiguration(sectionConfiguration: SectionConfiguration, atIndex index: Int) {
-        self.sectionConfigurations.insert(sectionConfiguration, atIndex: index)
+        self.sectionConfigurations.insert(sectionConfiguration, at: index)
     }
     
     public func removeAllConfigurations() {
-        self.sectionConfigurations.removeAll(keepCapacity: true)
+        self.sectionConfigurations.removeAll(keepingCapacity: true)
     }
     
-    public func indexPathsForRowConfiguration(rowConfiguration: RowConfiguration) -> [NSIndexPath] {
-        var result = [NSIndexPath]()
+    public func indexPathsFor(rowConfiguration: RowConfiguration) -> [IndexPath] {
+        var result = [IndexPath]()
         
-        for (i, sectionConfiguration) in self.sectionConfigurations.enumerate() {
-            let indices = sectionConfiguration.indexSetForRowConfiguration(rowConfiguration)
+        for (i, sectionConfiguration) in self.sectionConfigurations.enumerated() {
+            let indices = sectionConfiguration.indexSetFor(rowConfiguration: rowConfiguration)
                 
             for index in indices {
-                result.append(NSIndexPath(forRow: index, inSection: i))
+                result.append(IndexPath(row: index, section: i))
             }
         }
         
         return result
     }
     
-    public func changeSetAfterPerformingOperation(operation: () -> Void) -> TableViewChangeSet {
-            let preVisibilityMap = self.sectionConfigurations.map { (sectionConfiguration) -> [[Int: Bool]] in
-                return sectionConfiguration.visibilityMap()
-            }
+    public func changeSetAfterPerformingOperation(_ operation: () -> Void) -> TableViewChangeSet {
+        let preVisibilityMap = self.sectionConfigurations.map { (sectionConfiguration) -> [[Int: Bool]] in
+            return sectionConfiguration.visibilityMap()
+        }
+        
+        operation()
+        
+        var rowInsertions = [IndexPath]()
+        var rowDeletions = [IndexPath]()
+        var sectionInsertions = IndexSet()
+        var sectionDeletions = IndexSet()
+        
+        for (i, sectionConfiguration) in self.sectionConfigurations.enumerated() {
+            var deletionIndexOffset = 0
+            var insertionIndexOffet = 0
+            let preSectionVisibility = preVisibilityMap[i]
+            let postSectionVisibility = sectionConfiguration.visibilityMap()
+            let preVisible = preSectionVisibility.reduce(false, { (visible, visibilityMap) -> Bool in
+                return visible || visibilityMap.values.reduce(false, { return $0 || $1 })
+            })
+            let postVisible = postSectionVisibility.reduce(false, { (visible, visibilityMap) -> Bool in
+                return visible || visibilityMap.values.reduce(false, { return $0 || $1 })
+            })
             
-            operation()
-            
-            var rowInsertions = [NSIndexPath]()
-            var rowDeletions = [NSIndexPath]()
-            let sectionInsertions = NSMutableIndexSet()
-            let sectionDeletions = NSMutableIndexSet()
-            
-            for (i, sectionConfiguration) in self.sectionConfigurations.enumerate() {
-                var deletionIndexOffset = 0
-                var insertionIndexOffet = 0
-                let preSectionVisibility = preVisibilityMap[i]
-                let postSectionVisibility = sectionConfiguration.visibilityMap()
-                let preVisible = preSectionVisibility.reduce(false, combine: { (visible, visibilityMap) -> Bool in
-                    return visible || visibilityMap.values.reduce(false, combine: { return $0 || $1 })
-                })
-                let postVisible = postSectionVisibility.reduce(false, combine: { (visible, visibilityMap) -> Bool in
-                    return visible || visibilityMap.values.reduce(false, combine: { return $0 || $1 })
-                })
-                
-                if preVisible && postVisible {
-                    for (j, preRowConfigVisibility) in preSectionVisibility.enumerate() {
-                        let postRowConfigVisibility = postSectionVisibility[j]
-                        let indexCount = max(preRowConfigVisibility.count, postRowConfigVisibility.count)
-                        
-                        for index in 0 ..< indexCount {
-                            switch (preRowConfigVisibility[index], postRowConfigVisibility[index]) {
-                                
-                            case let (.Some(pre), .Some(post)) where pre == true && post == true:
-                                insertionIndexOffet += 1
-                                deletionIndexOffset += 1
-                                
-                            case let (.Some(pre), _) where pre == true:
-                                rowDeletions.append(NSIndexPath(forRow: deletionIndexOffset, inSection: i))
-                                deletionIndexOffset += 1
-                                
-                            case let (_, .Some(post)) where post == true:
-                                rowInsertions.append(NSIndexPath(forRow: insertionIndexOffet, inSection: i))
-                                insertionIndexOffet += 1
-                                
-                            default: ()
-                                
-                            }
+            if preVisible && postVisible {
+                for (j, preRowConfigVisibility) in preSectionVisibility.enumerated() {
+                    let postRowConfigVisibility = postSectionVisibility[j]
+                    let indexCount = max(preRowConfigVisibility.count, postRowConfigVisibility.count)
+                    
+                    for index in 0 ..< indexCount {
+                        switch (preRowConfigVisibility[index], postRowConfigVisibility[index]) {
+                            
+                        case let (.some(pre), .some(post)) where pre == true && post == true:
+                            insertionIndexOffet += 1
+                            deletionIndexOffset += 1
+                            
+                        case let (.some(pre), _) where pre == true:
+                            rowDeletions.append(IndexPath(row: deletionIndexOffset, section: i))
+                            deletionIndexOffset += 1
+                            
+                        case let (_, .some(post)) where post == true:
+                            rowInsertions.append(IndexPath(row: insertionIndexOffet, section: i))
+                            insertionIndexOffet += 1
+                            
+                        default: ()
+                            
                         }
                     }
-                } else if preVisible {
-                    sectionDeletions.addIndex(i)
-                } else if postVisible {
-                    sectionInsertions.addIndex(i)
                 }
+            } else if preVisible {
+                sectionDeletions.insert(i)
+            } else if postVisible {
+                sectionInsertions.insert(i)
             }
-            
-            return TableViewChangeSet(rowInsertions: rowInsertions, rowDeletions: rowDeletions, sectionInsertions: sectionInsertions, sectionDeletions: sectionDeletions)
+        }
+        
+        return TableViewChangeSet(rowInsertions: rowInsertions, rowDeletions: rowDeletions, sectionInsertions: sectionInsertions, sectionDeletions: sectionDeletions)
     }
     
-    public func animateChangeSet(changeSet: TableViewChangeSet,
-                                 insertRowAnimation: UITableViewRowAnimation = .Automatic,
-                                 deleteRowAnimation: UITableViewRowAnimation = .Automatic,
-                                 insertSectionAnimation: UITableViewRowAnimation = .Automatic,
-                                 deleteSectionAnimation: UITableViewRowAnimation = .Automatic) {
+    public func animate(changeSet: TableViewChangeSet,
+                                 insertRowAnimation: UITableViewRowAnimation = .automatic,
+                                 deleteRowAnimation: UITableViewRowAnimation = .automatic,
+                                 insertSectionAnimation: UITableViewRowAnimation = .automatic,
+                                 deleteSectionAnimation: UITableViewRowAnimation = .automatic) {
         self.tableView.beginUpdates()
-        self.tableView.insertRowsAtIndexPaths(changeSet.rowInsertions, withRowAnimation: insertRowAnimation)
-        self.tableView.deleteRowsAtIndexPaths(changeSet.rowDeletions, withRowAnimation: deleteRowAnimation)
-        self.tableView.insertSections(changeSet.sectionInsertions, withRowAnimation: insertSectionAnimation)
-        self.tableView.deleteSections(changeSet.sectionDeletions, withRowAnimation: deleteSectionAnimation)
+        self.tableView.insertRows(at: changeSet.rowInsertions, with: insertRowAnimation)
+        self.tableView.deleteRows(at: changeSet.rowDeletions, with: deleteRowAnimation)
+        self.tableView.insertSections(changeSet.sectionInsertions, with: insertSectionAnimation)
+        self.tableView.deleteSections(changeSet.sectionDeletions, with: deleteSectionAnimation)
         self.tableView.endUpdates()
     }
     
     public func refreshAllRowConfigurations() {
-        for (i, sectionConfiguration) in self.sectionConfigurations.enumerate() {
-            sectionConfiguration.refreshAllRowConfigurationsWithSection(i, inTableView: self.tableView)
+        for (i, sectionConfiguration) in self.sectionConfigurations.enumerated() {
+            sectionConfiguration.refreshAllRowConfigurationsWith(section: i, inTableView: self.tableView)
         }
     }
     
-    public func refreshRowConfiguration(rowConfiguration: RowConfiguration) {
-        for (i, sectionConfiguration) in self.sectionConfigurations.enumerate() {
-            sectionConfiguration.refreshRowConfiguration(rowConfiguration, withSection: i, inTableView: self.tableView)
+    public func refresh(rowConfiguration: RowConfiguration) {
+        for (i, sectionConfiguration) in self.sectionConfigurations.enumerated() {
+            sectionConfiguration.refresh(rowConfiguration: rowConfiguration, withSection: i, inTableView: self.tableView)
         }
     }
     
-    public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    public func numberOfSections(in: UITableView) -> Int {
         if tableView === self.tableView {
-            let result = self.sectionConfigurations.reduce(0, combine: { (total, sectionConfiguration) -> Int in
+            let result = self.sectionConfigurations.reduce(0, { (total, sectionConfiguration) -> Int in
                 return sectionConfiguration.numberOfRows() > 0 ? total + 1 : total
             })
             return result
@@ -146,9 +146,9 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         fatalError("Provided tableView doesn't match configured table view.")
     }
     
-    public func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if tableView === self.tableView {
-            return performSectionOperation(section, handler: { (sectionConfiguration) -> String? in
+            return performOperationFor(section: section, handler: { (sectionConfiguration) -> String? in
                 return sectionConfiguration.titleForHeader()
             })
         }
@@ -156,9 +156,9 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         fatalError("Provided tableView doesn't match configured table view.")
     }
     
-    public func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+    public func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if tableView === self.tableView {
-            return performSectionOperation(section, handler: { (sectionConfiguration) -> String? in
+            return performOperationFor(section: section, handler: { (sectionConfiguration) -> String? in
                 return sectionConfiguration.titleForFooter()
             })
         }
@@ -166,24 +166,20 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         fatalError("Provided tableView doesn't match configured table view.")
     }
     
-    public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView === self.tableView {
-            return performSectionOperation(section, handler: { (sectionConfiguration) in
-                if let numberOfRows = sectionConfiguration.numberOfRows() {
-                    return numberOfRows
-                }
-                
-                fatalError("Could find numberOfRows for section \(section).")
+            return performOperationFor(section: section, handler: { (sectionConfiguration) in
+                return sectionConfiguration.numberOfRows()
             })
         }
         
         fatalError("Provided tableView doesn't match configured table view.")
     }
     
-    public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if tableView === self.tableView {
-            return performSectionOperation(indexPath.section, handler: { (sectionConfiguration) in
-                if let cell = sectionConfiguration.cellForRow(indexPath.row, inTableView: tableView) {
+            return performOperationFor(section: indexPath.section, handler: { (sectionConfiguration) in
+                if let cell = sectionConfiguration.cellFor(row: indexPath.row, inTableView: tableView) {
                     return cell
                 }
                 
@@ -194,10 +190,10 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         fatalError("Provided tableView doesn't match configured table view.")
     }
     
-    public func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if tableView === self.tableView {
-            return performSectionOperation(indexPath.section, handler: { (sectionConfiguration) -> CGFloat in
-                if let height = sectionConfiguration.heightForRow(indexPath.row) {
+            return performOperationFor(section: indexPath.section, handler: { (sectionConfiguration) -> CGFloat in
+                if let height = sectionConfiguration.heightFor(row: indexPath.row) {
                     return height
                 }
                 
@@ -208,10 +204,10 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         fatalError("Provided tableView doesn't match configured table view.")
     }
     
-    public func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         if tableView === self.tableView {
-            return performSectionOperation(indexPath.section, handler: { (sectionConfiguration) -> CGFloat in
-                if let estimatedHeight = sectionConfiguration.estimatedHeightForRow(indexPath.row) {
+            return performOperationFor(section: indexPath.section, handler: { (sectionConfiguration) -> CGFloat in
+                if let estimatedHeight = sectionConfiguration.estimatedHeightFor(row: indexPath.row) {
                     return estimatedHeight
                 }
                 
@@ -222,23 +218,23 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         fatalError("Provided tableView doesn't match configured table view.")
     }
     
-    public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView === self.tableView {
-            performSectionOperation(indexPath.section, handler: { (sectionConfiguration) in
-                sectionConfiguration.didSelectRow(indexPath.row)
+            performOperationFor(section: indexPath.section, handler: { (sectionConfiguration) in
+                sectionConfiguration.didSelect(row: indexPath.row)
             })
         } else {
             fatalError("Provided tableView doesn't match configured table view.")
         }
     }
     
-    private func performSectionOperation<T>(section: Int, handler: (sectionConfiguration: SectionConfiguration) -> T) -> T {
+    private func performOperationFor<T>(section: Int, handler: (SectionConfiguration) -> T) -> T {
         var sectionTotal = 0
         
         for sectionConfiguration in self.sectionConfigurations {
             if sectionConfiguration.numberOfRows() > 0 {
                 if section == sectionTotal {
-                    return handler(sectionConfiguration: sectionConfiguration)
+                    return handler(sectionConfiguration)
                 }
                 
                 sectionTotal += 1

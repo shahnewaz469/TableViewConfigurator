@@ -265,12 +265,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "TableViewConfigurator_Example" */;
 			buildPhases = (
-				F04BA231167B85ED2B75B307 /* 📦 Check Pods Manifest.lock */,
+				F04BA231167B85ED2B75B307 /* [CP] Check Pods Manifest.lock */,
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
-				478F6402AACFE990C340BB8F /* 📦 Embed Pods Frameworks */,
-				C3F93066A88FF99BF2FAC058 /* 📦 Copy Pods Resources */,
+				478F6402AACFE990C340BB8F /* [CP] Embed Pods Frameworks */,
+				C3F93066A88FF99BF2FAC058 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -285,12 +285,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACF21AFB9204008FA782 /* Build configuration list for PBXNativeTarget "TableViewConfigurator_Tests" */;
 			buildPhases = (
-				6A0882EEE19588F0D302296B /* 📦 Check Pods Manifest.lock */,
+				6A0882EEE19588F0D302296B /* [CP] Check Pods Manifest.lock */,
 				607FACE11AFB9204008FA782 /* Sources */,
 				607FACE21AFB9204008FA782 /* Frameworks */,
 				607FACE31AFB9204008FA782 /* Resources */,
-				DB8B361A60DD27A58077C612 /* 📦 Embed Pods Frameworks */,
-				87D27581B148F5C078FC2F22 /* 📦 Copy Pods Resources */,
+				DB8B361A60DD27A58077C612 /* [CP] Embed Pods Frameworks */,
+				87D27581B148F5C078FC2F22 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -309,7 +309,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
@@ -361,14 +361,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		478F6402AACFE990C340BB8F /* 📦 Embed Pods Frameworks */ = {
+		478F6402AACFE990C340BB8F /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -376,14 +376,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TableViewConfigurator_Example/Pods-TableViewConfigurator_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6A0882EEE19588F0D302296B /* 📦 Check Pods Manifest.lock */ = {
+		6A0882EEE19588F0D302296B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -391,14 +391,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		87D27581B148F5C078FC2F22 /* 📦 Copy Pods Resources */ = {
+		87D27581B148F5C078FC2F22 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -406,14 +406,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TableViewConfigurator_Tests/Pods-TableViewConfigurator_Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C3F93066A88FF99BF2FAC058 /* 📦 Copy Pods Resources */ = {
+		C3F93066A88FF99BF2FAC058 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -421,14 +421,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TableViewConfigurator_Example/Pods-TableViewConfigurator_Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DB8B361A60DD27A58077C612 /* 📦 Embed Pods Frameworks */ = {
+		DB8B361A60DD27A58077C612 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -436,14 +436,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TableViewConfigurator_Tests/Pods-TableViewConfigurator_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F04BA231167B85ED2B75B307 /* 📦 Check Pods Manifest.lock */ = {
+		F04BA231167B85ED2B75B307 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -531,8 +531,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -576,8 +578,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -596,6 +600,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -604,12 +609,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 548FF247CFDDED8256DCA405 /* Pods-TableViewConfigurator_Example.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = TableViewConfigurator/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -617,12 +624,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EEDD1B8377776F37C8479036 /* Pods-TableViewConfigurator_Example.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = TableViewConfigurator/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -630,6 +639,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6698D1412C75E62E0AF86BEB /* Pods-TableViewConfigurator_Tests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -643,6 +653,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TableViewConfigurator_Example.app/TableViewConfigurator_Example";
 			};
 			name = Debug;
@@ -651,6 +662,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 97A41BA9533D9730C206508E /* Pods-TableViewConfigurator_Tests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -660,6 +672,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TableViewConfigurator_Example.app/TableViewConfigurator_Example";
 			};
 			name = Release;

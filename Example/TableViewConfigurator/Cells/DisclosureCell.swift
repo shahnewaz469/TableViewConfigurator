@@ -13,6 +13,6 @@ class DisclosureCell: UITableViewCell, ConfigurableTableViewCell {
     
     func configure() {
         self.textLabel?.text = "Disclosure Cell"
-        self.accessoryType = .DisclosureIndicator
+        self.accessoryType = .disclosureIndicator
     }
 }

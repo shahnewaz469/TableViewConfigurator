@@ -25,8 +25,8 @@ class SectionConfigurationSpec: QuickSpec {
             
             beforeEach {
                 tableView = UITableViewMock()
-                tableView.registerClass(ImplicitReuseIdCell.self, forCellReuseIdentifier: ImplicitReuseIdCell.buildReuseIdentifier())
-                tableView.registerClass(ModelImplicitReuseIdCell.self, forCellReuseIdentifier: ModelImplicitReuseIdCell.buildReuseIdentifier())
+                tableView.register(ImplicitReuseIdCell.self, forCellReuseIdentifier: ImplicitReuseIdCell.buildReuseIdentifier())
+                tableView.register(ModelImplicitReuseIdCell.self, forCellReuseIdentifier: ModelImplicitReuseIdCell.buildReuseIdentifier())
                 constantRowConfiguration = ConstantRowConfiguration()
                 modelRowConfiguration = ModelRowConfiguration(models: self.things)
                 sectionConfiguration = SectionConfiguration(rowConfigurations: [modelRowConfiguration, constantRowConfiguration])
@@ -34,32 +34,40 @@ class SectionConfigurationSpec: QuickSpec {
             
             describe("its index set for row configuration") {
                 it("is correct") {
-                    expect(sectionConfiguration.indexSetForRowConfiguration(modelRowConfiguration)).to(equal(NSIndexSet(indexesInRange: NSMakeRange(0, 3))))
-                    expect(sectionConfiguration.indexSetForRowConfiguration(constantRowConfiguration)).to(equal(NSIndexSet(indexesInRange: NSMakeRange(3, 1))))
+                    expect(sectionConfiguration.indexSetFor(rowConfiguration: modelRowConfiguration)).to(equal(IndexSet(integersIn: 0 ..< 3)))
+                    expect(sectionConfiguration.indexSetFor(rowConfiguration: constantRowConfiguration)).to(equal(IndexSet(integersIn: 3 ..< 4)))
                     
-                    modelRowConfiguration.hideWhen({ $0 === self.things[2] })
-                    expect(sectionConfiguration.indexSetForRowConfiguration(modelRowConfiguration)).to(equal(NSIndexSet(indexesInRange: NSMakeRange(0, 2))))
-                    expect(sectionConfiguration.indexSetForRowConfiguration(constantRowConfiguration)).to(equal(NSIndexSet(indexesInRange: NSMakeRange(2, 1))))
+                    _ = modelRowConfiguration.hideWhen({ $0 === self.things[2] })
+                    expect(sectionConfiguration.indexSetFor(rowConfiguration: modelRowConfiguration)).to(equal(IndexSet(integersIn: 0 ..< 2)))
+                    expect(sectionConfiguration.indexSetFor(rowConfiguration: constantRowConfiguration)).to(equal(IndexSet(integersIn: 2 ..< 3)))
                     
-                    constantRowConfiguration.hideWhen({ return true })
-                    expect(sectionConfiguration.indexSetForRowConfiguration(constantRowConfiguration)).to(beEmpty())
+                    _ = constantRowConfiguration.hideWhen({ return true })
+                    expect(sectionConfiguration.indexSetFor(rowConfiguration: constantRowConfiguration)).to(beEmpty())
                 }
             }
             
             describe("its visibility map") {
                 it("is correct") {
-                    expect(sectionConfiguration.visibilityMap()).to(equal([[0: true, 1: true, 2: true], [0: true]]))
+                    // These tests should be of the form:
+                    // expect(sectionConfiguration.visibilityMap()).to(equal([[0: true, 1: true, 2: true], [0: true]]))
+                    // but I can't get that to work with Swift 3
                     
-                    modelRowConfiguration.hideWhen({ $0 === self.things[0] })
-                    expect(sectionConfiguration.visibilityMap()).to(equal([[0: false, 1: true, 2: true], [0: true]]))
+                    expect(sectionConfiguration.visibilityMap()[0]).to(equal([0: true, 1: true, 2: true]))
+                    expect(sectionConfiguration.visibilityMap()[1]).to(equal([0: true]))
                     
-                    constantRowConfiguration.hideWhen({ return true })
-                    expect(sectionConfiguration.visibilityMap()).to(equal([[0: false, 1: true, 2: true], [0: false]]))
+                    _ = modelRowConfiguration.hideWhen({ $0 === self.things[0] })
+                    expect(sectionConfiguration.visibilityMap()[0]).to(equal([0: false, 1: true, 2: true]))
+                    expect(sectionConfiguration.visibilityMap()[1]).to(equal([0: true]))
                     
-                    modelRowConfiguration.hideWhen({ (model) -> Bool in
+                    _ = constantRowConfiguration.hideWhen({ return true })
+                    expect(sectionConfiguration.visibilityMap()[0]).to(equal([0: false, 1: true, 2: true]))
+                    expect(sectionConfiguration.visibilityMap()[1]).to(equal([0: false]))
+                    
+                    _ = modelRowConfiguration.hideWhen({ (model) -> Bool in
                         return true
                     })
-                    expect(sectionConfiguration.visibilityMap()).to(equal([[0: false, 1: false, 2: false], [0: false]]))
+                    expect(sectionConfiguration.visibilityMap()[0]).to(equal([0: false, 1: false, 2: false]))
+                    expect(sectionConfiguration.visibilityMap()[1]).to(equal([0: false]))
                 }
             }
             
@@ -71,14 +79,14 @@ class SectionConfigurationSpec: QuickSpec {
             
             describe("its produced cell") {
                 it("is correct for constant row configuration") {
-                    let cell = sectionConfiguration.cellForRow(3, inTableView: tableView) as? ImplicitReuseIdCell
+                    let cell = sectionConfiguration.cellFor(row: 3, inTableView: tableView) as? ImplicitReuseIdCell
                     
                     expect(cell).toNot(beNil())
                     expect(cell?.configured).to(beTrue())
                 }
                 
                 it("is correct for model row configuration") {
-                    let cell = sectionConfiguration.cellForRow(1, inTableView: tableView) as? ModelImplicitReuseIdCell
+                    let cell = sectionConfiguration.cellFor(row: 1, inTableView: tableView) as? ModelImplicitReuseIdCell
                     
                     expect(cell).toNot(beNil())
                     expect(cell?.model).toNot(beNil())
@@ -86,8 +94,8 @@ class SectionConfigurationSpec: QuickSpec {
                 }
                 
                 it("is refreshed for constant row configuration") {
-                    let indexPath = NSIndexPath(forRow: 3, inSection: 0)
-                    let cell = sectionConfiguration.cellForRow(indexPath.row, inTableView: tableView) as? ImplicitReuseIdCell
+                    let indexPath = IndexPath(row: 3, section: 0)
+                    let cell = sectionConfiguration.cellFor(row: indexPath.row, inTableView: tableView) as? ImplicitReuseIdCell
                     
                     expect(cell?.configured).to(beTrue())
                     
@@ -95,13 +103,13 @@ class SectionConfigurationSpec: QuickSpec {
                     expect(cell?.configured).to(beFalse())
                     
                     tableView.storeCell(cell!, forIndexPath: indexPath)
-                    sectionConfiguration.refreshRowConfiguration(constantRowConfiguration, withSection: indexPath.section, inTableView: tableView)
+                    sectionConfiguration.refresh(rowConfiguration: constantRowConfiguration, withSection: indexPath.section, inTableView: tableView)
                     expect(cell?.configured).to(beTrue())
                 }
                 
                 it("is refreshed for model row configuration") {
-                    let indexPath = NSIndexPath(forRow: 1, inSection: 0)
-                    let cell = sectionConfiguration.cellForRow(indexPath.row, inTableView: tableView) as? ModelImplicitReuseIdCell
+                    let indexPath = IndexPath(row: 1, section: 0)
+                    let cell = sectionConfiguration.cellFor(row: indexPath.row, inTableView: tableView) as? ModelImplicitReuseIdCell
                     
                     expect(cell?.model).toNot(beNil())
                     
@@ -109,32 +117,32 @@ class SectionConfigurationSpec: QuickSpec {
                     expect(cell?.model).to(beNil())
                     
                     tableView.storeCell(cell!, forIndexPath: indexPath)
-                    sectionConfiguration.refreshRowConfiguration(modelRowConfiguration, withSection: indexPath.section, inTableView: tableView)
+                    sectionConfiguration.refresh(rowConfiguration: modelRowConfiguration, withSection: indexPath.section, inTableView: tableView)
                     expect(cell?.model).toNot(beNil())
                 }
             }
             
             describe("its height") {
                 it("is correct for constant row configuration") {
-                    constantRowConfiguration.height(200.0)
-                    expect(sectionConfiguration.heightForRow(3)).to(equal(200.0))
+                    _ = constantRowConfiguration.height(200.0)
+                    expect(sectionConfiguration.heightFor(row: 3)).to(equal(200.0))
                 }
                 
                 it("is correct for model row configuration") {
-                    modelRowConfiguration.height(100.0)
-                    expect(sectionConfiguration.heightForRow(1)).to(equal(100.0))
+                    _ = modelRowConfiguration.height(100.0)
+                    expect(sectionConfiguration.heightFor(row: 1)).to(equal(100.0))
                 }
             }
             
             describe("its estimated height") {
                 it("is correct for constant row configuration") {
-                    constantRowConfiguration.estimatedHeight(200.0)
-                    expect(sectionConfiguration.estimatedHeightForRow(3)).to(equal(200.0))
+                    _ = constantRowConfiguration.estimatedHeight(200.0)
+                    expect(sectionConfiguration.estimatedHeightFor(row: 3)).to(equal(200.0))
                 }
                 
                 it("is correct for model row configuration") {
-                    modelRowConfiguration.estimatedHeight(100.0)
-                    expect(sectionConfiguration.estimatedHeightForRow(1)).to(equal(100.0))
+                    _ = modelRowConfiguration.estimatedHeight(100.0)
+                    expect(sectionConfiguration.estimatedHeightFor(row: 1)).to(equal(100.0))
                 }
             }
             
@@ -144,16 +152,16 @@ class SectionConfigurationSpec: QuickSpec {
                     
                     beforeEach {
                         selectionHandlerInvoked = false
-                        constantRowConfiguration.selectionHandler({ selectionHandlerInvoked = true })
+                        _ = constantRowConfiguration.selectionHandler({ selectionHandlerInvoked = true })
                     }
                     
                     it("is correct when selected") {
-                        sectionConfiguration.didSelectRow(3)
+                        sectionConfiguration.didSelect(row: 3)
                         expect(selectionHandlerInvoked).to(beTrue())
                     }
                     
                     it("is correct when not selected") {
-                        sectionConfiguration.didSelectRow(2)
+                        sectionConfiguration.didSelect(row: 2)
                         expect(selectionHandlerInvoked).to(beFalse())
                     }
                 }
@@ -163,18 +171,18 @@ class SectionConfigurationSpec: QuickSpec {
                     
                     beforeEach {
                         selectionHandlerInvoked = false
-                        modelRowConfiguration.selectionHandler({ (model) -> Void in
+                        _ = modelRowConfiguration.selectionHandler({ (model) -> Void in
                             selectionHandlerInvoked = true
                         })
                     }
                     
                     it("is correct when selected") {
-                        sectionConfiguration.didSelectRow(1)
+                        sectionConfiguration.didSelect(row: 1)
                         expect(selectionHandlerInvoked).to(beTrue())
                     }
                     
                     it("is correct when not selected") {
-                        sectionConfiguration.didSelectRow(3)
+                        sectionConfiguration.didSelect(row: 3)
                         expect(selectionHandlerInvoked).to(beFalse())
                     }
                 }
@@ -182,14 +190,14 @@ class SectionConfigurationSpec: QuickSpec {
             
             describe("its header title") {
                 it("is correct") {
-                    sectionConfiguration.headerTitle("Foo Header")
+                    _ = sectionConfiguration.headerTitle("Foo Header")
                     expect(sectionConfiguration.titleForHeader()).to(equal("Foo Header"))
                 }
             }
             
             describe("its footer title") {
                 it("is correct") {
-                    sectionConfiguration.footerTitle("Bar Footer")
+                    _ = sectionConfiguration.footerTitle("Bar Footer")
                     expect(sectionConfiguration.titleForFooter()).to(equal("Bar Footer"))
                 }
             }

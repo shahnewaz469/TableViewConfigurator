@@ -9,7 +9,7 @@
 import UIKit
 import TableViewConfigurator
 
-class MainViewController: UIViewController {
+class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     private static let BASIC_CELL_REUSE_ID = "basicCell"
     private static let PERSON_CELL_REUSE_ID = "personCell"
@@ -46,7 +46,7 @@ class MainViewController: UIViewController {
                 .additionalConfig({ (cell) in
                     cell.textLabel!.text = "Reset Text"
                 })
-                .selectionHandler({ self.configurator.refreshRowConfiguration(textRow) })
+                .selectionHandler({ self.configurator.refresh(rowConfiguration: textRow) })
                 .height(44.0)]).headerTitle("Refreshable UITextField")
         
         let peopleRows = ModelRowConfiguration<PersonCell, Person>(models: self.people)
@@ -61,20 +61,20 @@ class MainViewController: UIViewController {
             [ConstantRowConfiguration<SwitchCell>()
                 .additionalConfig({ (cell) -> Void in
                     cell.hideLabel.text = "Hide All People"
-                    cell.hideSwitch.on = self.hidePeople
+                    cell.hideSwitch.isOn = self.hidePeople
                     cell.switchChangedHandler = { (on) -> Void in
-                        self.configurator.animateChangeSet(self.configurator.changeSetAfterPerformingOperation({ self.hidePeople = on }),
-                            insertRowAnimation: .Top, deleteRowAnimation: .Top)
+                        self.configurator.animate(changeSet: self.configurator.changeSetAfterPerformingOperation({ self.hidePeople = on }),
+                            insertRowAnimation: .top, deleteRowAnimation: .top)
                     }
                 })
                 .height(44.0),
                 ConstantRowConfiguration<SwitchCell>()
                     .additionalConfig({ (cell) -> Void in
                         cell.hideLabel.text = "Hide Johns"
-                        cell.hideSwitch.on = self.hideJohns
+                        cell.hideSwitch.isOn = self.hideJohns
                         cell.switchChangedHandler = { (on) -> Void in
-                            self.configurator.animateChangeSet(self.configurator.changeSetAfterPerformingOperation({ self.hideJohns = on }),
-                                insertRowAnimation: .Top, deleteRowAnimation: .Top)
+                            self.configurator.animate(changeSet: self.configurator.changeSetAfterPerformingOperation({ self.hideJohns = on }),
+                                insertRowAnimation: .top, deleteRowAnimation: .top)
                         }
                     })
                     .height(44.0), peopleRows,
@@ -84,8 +84,7 @@ class MainViewController: UIViewController {
                     })
                     .selectionHandler({
                         self.people.forEach({ $0.incrementAge() })
-                        self.tableView.reloadRowsAtIndexPaths(self.configurator.indexPathsForRowConfiguration(peopleRows),
-                            withRowAnimation: .Automatic)
+                        self.tableView.reloadRows(at: self.configurator.indexPathsFor(rowConfiguration: peopleRows), with: .automatic)
                     })
                     .height(44.0)]).headerTitle("People")
         
@@ -93,7 +92,7 @@ class MainViewController: UIViewController {
         let disclosureSection = SectionConfiguration(rowConfiguration:
             ConstantRowConfiguration<DisclosureCell>()
                 .selectionHandler({
-                    self.performSegueWithIdentifier("showDetails", sender: self)
+                    self.performSegue(withIdentifier: "showDetails", sender: self)
                 })
                 .height(44.0))
         
@@ -103,10 +102,10 @@ class MainViewController: UIViewController {
             configurations.append(SectionConfiguration(rowConfiguration:
                 ModelRowConfiguration<AnimalCell, Animal>(modelGenerator: { return animalTuple.animals })
                     .selectionHandler({ (model) -> Void in
-                        let alertController = UIAlertController(title: model.name, message: model.scientificName, preferredStyle: .Alert)
+                        let alertController = UIAlertController(title: model.name, message: model.scientificName, preferredStyle: .alert)
                         
-                        alertController.addAction(UIAlertAction(title: "Dismiss", style: .Default, handler: nil))
-                        self.presentViewController(alertController, animated: true, completion: nil)
+                        alertController.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+                        self.present(alertController, animated: true, completion: nil)
                     })
                     .hideWhen({ (model) -> Bool in
                         return self.hideAnimals
@@ -120,7 +119,7 @@ class MainViewController: UIViewController {
                     cell.textLabel!.text = "Toggle Animal Sections"
                 })
                 .selectionHandler({
-                    self.configurator.animateChangeSet(self.configurator.changeSetAfterPerformingOperation({
+                    self.configurator.animate(changeSet: self.configurator.changeSetAfterPerformingOperation({
                         self.hideAnimals = !self.hideAnimals
                     }))
                 })
@@ -129,33 +128,33 @@ class MainViewController: UIViewController {
         self.configurator = TableViewConfigurator(tableView: tableView, sectionConfigurations: configurations)
     }
     
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return self.configurator.numberOfSectionsInTableView(tableView)
+    func numberOfSections(in: UITableView) -> Int {
+        return self.configurator.numberOfSections(in: tableView)
     }
     
-    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return self.configurator.tableView(tableView, titleForHeaderInSection: section)
     }
     
-    func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         return self.configurator.tableView(tableView, titleForFooterInSection: section)
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.configurator.tableView(tableView, numberOfRowsInSection: section)
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        return self.configurator.tableView(tableView, cellForRowAtIndexPath: indexPath)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        return self.configurator.tableView(tableView, cellForRowAt: indexPath)
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return self.configurator.tableView(tableView, heightForRowAtIndexPath: indexPath)
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return self.configurator.tableView(tableView, heightForRowAt: indexPath)
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        self.configurator.tableView(tableView, didSelectRowAtIndexPath: indexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        self.configurator.tableView(tableView, didSelectRowAt: indexPath)
     }
 }
 

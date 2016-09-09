@@ -15,17 +15,17 @@ public class RowConfiguration {
     
     internal var cellReuseId: String?
     
-    public func cellReuseId(cellReuseId: String) -> Self {
+    public func cellReuseId(_ cellReuseId: String) -> Self {
         self.cellReuseId = cellReuseId
         return self
     }
     
-    public func height(height: CGFloat) -> Self {
+    public func height(_ height: CGFloat) -> Self {
         self.height = height
         return self
     }
     
-    public func estimatedHeight(estimatedHeight: CGFloat) -> Self {
+    public func estimatedHeight(_ estimatedHeight: CGFloat) -> Self {
         self.estimatedHeight = estimatedHeight
         return self
     }
@@ -34,25 +34,25 @@ public class RowConfiguration {
     
     internal func rowIsVisible(row: Int) -> Bool? { return true }
     
-    internal func cellForRow(row: Int, inTableView tableView: UITableView) -> UITableViewCell? { return nil };
+    internal func cellFor(row: Int, inTableView tableView: UITableView) -> UITableViewCell? { return nil };
     
-    internal func refreshCellForRow(row: Int, withIndexPath indexPath: NSIndexPath, inTableView tableView: UITableView) { }
+    internal func refreshCellFor(row: Int, withIndexPath indexPath: IndexPath, inTableView tableView: UITableView) { }
     
-    internal func heightForRow(row: Int) -> CGFloat? {
-        if row < numberOfRows(false) {
+    internal func heightFor(row: Int) -> CGFloat? {
+        if row < numberOfRows(countHidden: false) {
             return self.height
         }
         
         return nil
     }
     
-    internal func estimatedHeightForRow(row: Int) -> CGFloat? {
-        if row < numberOfRows(false) {
+    internal func estimatedHeightFor(row: Int) -> CGFloat? {
+        if row < numberOfRows(countHidden: false) {
             return self.estimatedHeight
         }
         
         return nil
     }
     
-    internal func didSelectRow(row: Int) { };
+    internal func didSelect(row: Int) { };
 }
