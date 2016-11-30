@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where CellType: UITableViewCell>: RowConfiguration {
+public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell>: RowConfiguration where CellType: UITableViewCell {
     
     private var additionalConfig: ((_ cell: CellType) -> Void)?
     private var selectionHandler: (() -> Void)?
@@ -64,7 +64,7 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell where 
         if row < numberOfRows(countHidden: false) {
             tableView.cellForRow(at: indexPath)
             if let cell = tableView.cellForRow(at: indexPath) as? CellType {
-                configure(cell: cell)
+                _ = configure(cell: cell)
             }
         }
     }

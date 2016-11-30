@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, ModelType where CellType: UITableViewCell, CellType.ModelType == ModelType>: RowConfiguration {
+public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, ModelType>: RowConfiguration where CellType: UITableViewCell, CellType.ModelType == ModelType {
 
     private let models: [ModelType]?
     private let modelGenerator: (() -> [ModelType]?)?
@@ -97,7 +97,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     override func refreshCellFor(row: Int, withIndexPath indexPath: IndexPath, inTableView tableView: UITableView) {
         if row < numberOfRows(countHidden: false) {
             if let cell = tableView.cellForRow(at: indexPath) as? CellType {
-                configure(cell: cell, forRow: row)
+                _ = configure(cell: cell, forRow: row)
             }
         }
     }
