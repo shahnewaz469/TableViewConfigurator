@@ -101,7 +101,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         for animalTuple in animals {
             configurations.append(SectionConfiguration(rowConfiguration:
                 ModelRowConfiguration<AnimalCell, Animal>(modelGenerator: { return animalTuple.animals })
-                    .selectionHandler({ (model) -> Void in
+                    .selectionHandler({ (model, index) -> Void in
                         let alertController = UIAlertController(title: model.name, message: model.scientificName, preferredStyle: .alert)
                         
                         alertController.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))

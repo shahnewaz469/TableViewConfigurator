@@ -16,7 +16,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     private var heightGenerator: ((_ model: ModelType) -> CGFloat)?
     private var estimatedHeightGenerator: ((_ model: ModelType) -> CGFloat)?
     private var additionalConfig: ((_ cell: CellType, _ model: ModelType) -> Void)?
-    private var selectionHandler: ((_ model: ModelType) -> Void)?
+    private var selectionHandler: ((_ model: ModelType, _ index: Int) -> Void)?
     private var hideWhen: ((_ model: ModelType) -> Bool)?
     
     public init(models: [ModelType]) {
@@ -44,7 +44,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         return self
     }
     
-    public func selectionHandler(_ selectionHandler: @escaping (_ model: ModelType) -> Void) -> Self {
+    public func selectionHandler(_ selectionHandler: @escaping (_ model: ModelType, _ index: Int) -> Void) -> Self {
         self.selectionHandler = selectionHandler
         return self
     }
@@ -132,7 +132,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     
     override internal func didSelect(row: Int) {
         if row < numberOfRows(countHidden: false), let model = selectModelFor(row: row) {
-            self.selectionHandler?(model)
+            self.selectionHandler?(model, originalIndexFor(row: row))
         }
     }
     
@@ -154,6 +154,24 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         }
         
         return nil
+    }
+    
+    private func originalIndexFor(row: Int) -> Int {
+        if let hideWhen = self.hideWhen, let models = generateModels() {
+            var total = 0
+            var unhiddenTotal = 0
+            
+            for model in models {
+                total += 1
+                unhiddenTotal += (hideWhen(model) ? 0 : 1)
+                
+                if unhiddenTotal - 1 == row {
+                    return total - 1
+                }
+            }
+        }
+        
+        return row
     }
     
     private func generateModels() -> [ModelType]? {
