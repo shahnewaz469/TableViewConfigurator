@@ -10,6 +10,7 @@ import TableViewConfigurator
 
 class Animal: RowModel {
 
+    var tag: Int?
     let name: String
     let scientificName: String
     

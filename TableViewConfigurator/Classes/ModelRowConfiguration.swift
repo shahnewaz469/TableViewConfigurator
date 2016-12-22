@@ -9,6 +9,16 @@
 import UIKit
 import Dwifft
 
+public protocol RowModel: Equatable {
+    
+    var tag: Int? { get set }
+    
+}
+
+public func == <T: RowModel>(lhs: T, rhs: T) -> Bool {
+    return lhs.tag == rhs.tag
+}
+
 public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
     where CellType: UITableViewCell, CellType: ModelConfigurableTableViewCell, ModelType == CellType.ModelType {
     
@@ -75,7 +85,9 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
         self.modelSnapshot.removeAll(keepingCapacity: true)
         
         if let models = generateModels() {
-            for (i, model) in models.enumerated() {
+            for i in 0 ..< models.count {
+                var model = models[i]
+                
                 if model.tag == nil {
                     model.tag = i
                 }
