@@ -75,11 +75,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         
         if let models = generateModels() {
             if let hideWhen = self.hideWhen {
-                for model in models {
-                    if !hideWhen(model) {
-                        self.modelSnapshot.append(model)
-                    }
-                }
+                self.modelSnapshot.append(contentsOf: models.filter { !hideWhen($0) })
             } else {
                 self.modelSnapshot.append(contentsOf: models)
             }
@@ -155,7 +151,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         if let models = generateModels() {
             if let hideWhen = self.hideWhen {
                 var unhiddenTotal = 0
-                
+
                 for model in models {
                     unhiddenTotal += (hideWhen(model) ? 0 : 1)
                     
