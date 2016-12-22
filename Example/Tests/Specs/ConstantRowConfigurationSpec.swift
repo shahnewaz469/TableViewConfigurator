@@ -100,35 +100,11 @@ class ConstantRowConfigurationSpec: QuickSpec {
             
             describe("its visible row count") {
                 it("is correct when visible") {
-                    expect(rowConfiguration.numberOfRows(countHidden: false)).to(equal(1))
+                    expect(rowConfiguration.numberOfRows()).to(equal(1))
                 }
                 
                 it("is correct when hidden") {
-                    expect(rowConfiguration.hideWhen({ return true }).numberOfRows(countHidden: false)).to(equal(0))
-                }
-            }
-            
-            describe("its total row count") {
-                it("is correct when visible") {
-                    expect(rowConfiguration.numberOfRows(countHidden: true)).to(equal(1))
-                }
-                
-                it("is correct when hidden") {
-                    expect(rowConfiguration.hideWhen({ return true }).numberOfRows(countHidden: true)).to(equal(1))
-                }
-            }
-            
-            describe("its row visibility") {
-                it("is correct when visible") {
-                    expect(rowConfiguration.rowIsVisible(row: 0)).to(beTrue())
-                }
-            
-                it("is correct when hidden") {
-                    expect(rowConfiguration.hideWhen({ return true }).rowIsVisible(row: 0)).to(beFalse())
-                }
-                
-                it("is nil when asking for non-existant row") {
-                    expect(rowConfiguration.rowIsVisible(row: 3)).to(beNil())
+                    expect(rowConfiguration.hideWhen({ return true }).numberOfRows()).to(equal(0))
                 }
             }
             

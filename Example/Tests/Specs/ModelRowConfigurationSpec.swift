@@ -128,42 +128,14 @@ class ModelRowConfigurationSpec: QuickSpec {
             describe("its visible row count") {
                 context("when visible") {
                     it("is correct") {
-                        expect(rowConfiguration.numberOfRows(countHidden: false)).to(equal(3))
+                        expect(rowConfiguration.numberOfRows()).to(equal(3))
                     }
                 }
                 
                 context("when hidden") {
                     it("is correct") {
-                        expect(rowConfiguration.hideWhen({ return $0 === self.things[0] || $0 === self.things[2] }).numberOfRows(countHidden: false)).to(equal(1))
+                        expect(rowConfiguration.hideWhen({ return $0 === self.things[0] || $0 === self.things[2] }).numberOfRows()).to(equal(1))
                     }
-                }
-            }
-            
-            describe("its total row count") {
-                context("when visible") {
-                    it("is correct") {
-                        expect(rowConfiguration.numberOfRows(countHidden: true)).to(equal(3))
-                    }
-                }
-                
-                context("when hidden") {
-                    it("is correct") {
-                        expect(rowConfiguration.hideWhen({ return $0 === self.things[0] || $0 === self.things[2] }).numberOfRows(countHidden: true)).to(equal(3))
-                    }
-                }
-            }
-            
-            describe("its row visibility") {
-                it("is correct when visible") {
-                    expect(rowConfiguration.rowIsVisible(row: 1)).to(beTrue())
-                }
-                
-                it("is correct when hidden") {
-                    expect(rowConfiguration.hideWhen({ return $0 === self.things[1] }).rowIsVisible(row: 1)).to(beFalse())
-                }
-                
-                it("is nil when asking for non-existant row") {
-                    expect(rowConfiguration.rowIsVisible(row: 3)).to(beNil())
                 }
             }
             

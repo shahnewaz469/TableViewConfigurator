@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Dwifft
 
 public typealias TableViewChangeSet = (rowInsertions: [IndexPath], rowDeletions: [IndexPath], sectionInsertions: IndexSet, sectionDeletions: IndexSet)
 
@@ -15,26 +16,9 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     private var sectionConfigurations: [SectionConfiguration]
     private var tableView: UITableView
     
-    public init(tableView: UITableView) {
-        self.tableView = tableView
-        self.sectionConfigurations = []
-    }
-    
     public init(tableView: UITableView, sectionConfigurations: [SectionConfiguration]) {
         self.tableView = tableView
         self.sectionConfigurations = sectionConfigurations
-    }
-    
-    public func addConfiguration(sectionConfiguration: SectionConfiguration) {
-        self.sectionConfigurations.append(sectionConfiguration)
-    }
-    
-    public func insertConfiguration(sectionConfiguration: SectionConfiguration, atIndex index: Int) {
-        self.sectionConfigurations.insert(sectionConfiguration, at: index)
-    }
-    
-    public func removeAllConfigurations() {
-        self.sectionConfigurations.removeAll(keepingCapacity: true)
     }
     
     public func indexPathsFor(rowConfiguration: RowConfiguration) -> [IndexPath] {
@@ -52,58 +36,32 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     }
     
     public func changeSetAfterPerformingOperation(_ operation: () -> Void) -> TableViewChangeSet {
-        let preVisibilityMap = self.sectionConfigurations.map { (sectionConfiguration) -> [[Int: Bool]] in
-            return sectionConfiguration.visibilityMap()
-        }
-        
-        operation()
-        
         var rowInsertions = [IndexPath]()
         var rowDeletions = [IndexPath]()
         var sectionInsertions = IndexSet()
         var sectionDeletions = IndexSet()
         
-        for (i, sectionConfiguration) in self.sectionConfigurations.enumerated() {
-            var deletionIndexOffset = 0
-            var insertionIndexOffet = 0
-            let preSectionVisibility = preVisibilityMap[i]
-            let postSectionVisibility = sectionConfiguration.visibilityMap()
-            let preVisible = preSectionVisibility.reduce(false, { (visible, visibilityMap) -> Bool in
-                return visible || visibilityMap.values.reduce(false, { return $0 || $1 })
-            })
-            let postVisible = postSectionVisibility.reduce(false, { (visible, visibilityMap) -> Bool in
-                return visible || visibilityMap.values.reduce(false, { return $0 || $1 })
-            })
+        self.sectionConfigurations.forEach { $0.saveSnapshot() }
+        operation()
+        
+        let changeSets = self.sectionConfigurations.map { $0.snapshotChangeSet() }
+        
+        for (i, changeSet) in changeSets.enumerated() {
+            let insertions = changeSet.rowInsertions
+            let deletions = changeSet.rowDeletions
             
-            if preVisible && postVisible {
-                for (j, preRowConfigVisibility) in preSectionVisibility.enumerated() {
-                    let postRowConfigVisibility = postSectionVisibility[j]
-                    let indexCount = max(preRowConfigVisibility.count, postRowConfigVisibility.count)
-                    
-                    for index in 0 ..< indexCount {
-                        switch (preRowConfigVisibility[index], postRowConfigVisibility[index]) {
-                            
-                        case let (.some(pre), .some(post)) where pre == true && post == true:
-                            insertionIndexOffet += 1
-                            deletionIndexOffset += 1
-                            
-                        case let (.some(pre), _) where pre == true:
-                            rowDeletions.append(IndexPath(row: deletionIndexOffset, section: i))
-                            deletionIndexOffset += 1
-                            
-                        case let (_, .some(post)) where post == true:
-                            rowInsertions.append(IndexPath(row: insertionIndexOffet, section: i))
-                            insertionIndexOffet += 1
-                            
-                        default: ()
-                            
-                        }
-                    }
+            if insertions.count > 0 || deletions.count > 0 {
+                let preOpCount = changeSet.initialRowCount
+                let postOpCount = preOpCount + insertions.count - deletions.count
+                
+                if preOpCount == 0 && postOpCount > 0 {
+                    sectionInsertions.insert(i)
+                } else if preOpCount > 0 && postOpCount == 0 {
+                    sectionDeletions.insert(i)
+                } else {
+                    insertions.forEach { rowInsertions.append(IndexPath(row: $0, section: i)) }
+                    deletions.forEach { rowDeletions.append(IndexPath(row: $0, section: i)) }
                 }
-            } else if preVisible {
-                sectionDeletions.insert(i)
-            } else if postVisible {
-                sectionInsertions.insert(i)
             }
         }
         

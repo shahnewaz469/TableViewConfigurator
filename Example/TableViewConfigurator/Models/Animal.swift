@@ -6,9 +6,13 @@
 //  Copyright © 2016 John Volk. All rights reserved.
 //
 
-import Foundation
+import TableViewConfigurator
 
-class Animal {
+func ==(lhs: Animal, rhs: Animal) -> Bool {
+    return lhs === rhs
+}
+
+class Animal: Equatable {
 
     let name: String
     let scientificName: String

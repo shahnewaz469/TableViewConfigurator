@@ -8,6 +8,8 @@
 
 import UIKit
 
+typealias SnapshotChangeSet = (initialRowCount: Int, rowInsertions: [Int], rowDeletions: [Int])
+
 public class SectionConfiguration {
 
     private var headerTitle: String?
@@ -32,13 +34,12 @@ public class SectionConfiguration {
         return self
     }
     
-    
     internal func indexSetFor(rowConfiguration: RowConfiguration) -> IndexSet {
         var result = IndexSet()
         var rowTotal = 0
         
         for candidateConfiguration in self.rowConfigurations {
-            let numberOfRows = candidateConfiguration.numberOfRows(countHidden: false)
+            let numberOfRows = candidateConfiguration.numberOfRows()
             
             if candidateConfiguration === rowConfiguration {
                 for i in 0 ..< numberOfRows {
@@ -52,21 +53,24 @@ public class SectionConfiguration {
         return result
     }
     
-    internal func visibilityMap() -> [[Int: Bool]] {
-        var result = [[Int: Bool]]()
+    internal func saveSnapshot() {
+        self.rowConfigurations.forEach { $0.saveSnapshot() }
+    }
+    
+    internal func snapshotChangeSet() -> SnapshotChangeSet {
+        var rowInsertions = [Int]()
+        var rowDeletions = [Int]()
+        var totalRows = 0
         
         for configuration in self.rowConfigurations {
-            var visibilityMap = [Int: Bool]()
-            let numberOfRows = configuration.numberOfRows(countHidden: true)
-            
-            for i in 0 ..< numberOfRows {
-                visibilityMap[i] = configuration.rowIsVisible(row: i)!
+            if let changeSet = configuration.snapshotChangeSet() {
+                changeSet.rowInsertions.forEach { rowInsertions.append( $0 + totalRows ) }
+                changeSet.rowDeletions.forEach { rowDeletions.append( $0 + totalRows ) }
+                totalRows += changeSet.initialRowCount
             }
-            
-            result.append(visibilityMap)
         }
         
-        return result
+        return (totalRows, rowInsertions, rowDeletions)
     }
     
     internal func refreshAllRowConfigurationsWith(section: Int, inTableView tableView: UITableView) {
@@ -94,7 +98,7 @@ public class SectionConfiguration {
     
     internal func numberOfRows() -> Int {
         return self.rowConfigurations.reduce(0) { (totalRows, rowConfiguration) -> Int in
-            return totalRows + rowConfiguration.numberOfRows(countHidden: false)
+            return totalRows + rowConfiguration.numberOfRows()
         }
     }
     
@@ -126,7 +130,7 @@ public class SectionConfiguration {
         var rowTotal = 0
         
         for rowConfiguration in self.rowConfigurations {
-            let numberOfRows = rowConfiguration.numberOfRows(countHidden: false)
+            let numberOfRows = rowConfiguration.numberOfRows()
             
             if row < rowTotal + numberOfRows {
                 return handler(rowConfiguration, row - rowTotal)

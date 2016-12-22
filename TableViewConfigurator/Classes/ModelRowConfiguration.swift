@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import Dwifft
 
 public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, ModelType>: RowConfiguration where CellType: UITableViewCell, CellType.ModelType == ModelType {
-
+    
     private let models: [ModelType]?
     private let modelGenerator: (() -> [ModelType]?)?
+    private var modelSnapshot = [ModelType]()
     
     private var heightGenerator: ((_ model: ModelType) -> CGFloat)?
     private var estimatedHeightGenerator: ((_ model: ModelType) -> CGFloat)?
@@ -54,9 +56,9 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         return self
     }
     
-    override internal func numberOfRows(countHidden: Bool) -> Int {
+    override internal func numberOfRows() -> Int {
         if let models = generateModels() {
-            if let hideWhen = self.hideWhen, !countHidden {
+            if let hideWhen = self.hideWhen {
                 return models.reduce(0) { (totalRows, model) -> Int in
                     return totalRows + (hideWhen(model) ? 0 : 1)
                 }
@@ -68,37 +70,50 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         return 0
     }
     
-    override func rowIsVisible(row: Int) -> Bool? {
+    override func saveSnapshot() {
+        self.modelSnapshot.removeAll(keepingCapacity: true)
+        
         if let models = generateModels() {
-            if row < numberOfRows(countHidden: true) {
-                if let hideWhen = self.hideWhen {
-                    return !hideWhen(models[row])
+            if let hideWhen = self.hideWhen {
+                for model in models {
+                    if !hideWhen(model) {
+                        self.modelSnapshot.append(model)
+                    }
                 }
-                
-                return true
+            } else {
+                self.modelSnapshot.append(contentsOf: models)
             }
         }
+    }
+    
+    override func snapshotChangeSet() -> SnapshotChangeSet? {
+        let before = self.modelSnapshot
         
-        return nil
+        saveSnapshot()
+        
+        var rowInsertions = [Int]()
+        var rowDeletions = [Int]()
+        let diff = before.diff(self.modelSnapshot)
+        
+        diff.insertions.forEach { rowInsertions.append($0.idx) }
+        diff.deletions.forEach { rowDeletions.append($0.idx) }
+        
+        return (before.count, rowInsertions, rowDeletions)
     }
     
     override func cellFor(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
-        if row < numberOfRows(countHidden: false) {
-            let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier()
+        let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier()
 
-            if let cell = tableView.dequeueReusableCell(withIdentifier: reuseId) as? CellType {
-                return configure(cell: cell, forRow: row)
-            }
+        if let cell = tableView.dequeueReusableCell(withIdentifier: reuseId) as? CellType {
+            return configure(cell: cell, forRow: row)
         }
-        
+
         return nil
     }
     
     override func refreshCellFor(row: Int, withIndexPath indexPath: IndexPath, inTableView tableView: UITableView) {
-        if row < numberOfRows(countHidden: false) {
-            if let cell = tableView.cellForRow(at: indexPath) as? CellType {
-                _ = configure(cell: cell, forRow: row)
-            }
+        if let cell = tableView.cellForRow(at: indexPath) as? CellType {
+            _ = configure(cell: cell, forRow: row)
         }
     }
     
@@ -115,7 +130,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     }
     
     override func heightFor(row: Int) -> CGFloat? {
-        if let heightGenerator = self.heightGenerator, row < numberOfRows(countHidden: false), let model = selectModelFor(row: row) {
+        if let heightGenerator = self.heightGenerator, let model = selectModelFor(row: row) {
             return heightGenerator(model)
         }
         
@@ -123,7 +138,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     }
     
     override func estimatedHeightFor(row: Int) -> CGFloat? {
-        if let estimatedHeightGenerator = self.estimatedHeightGenerator, row < numberOfRows(countHidden: false), let model = selectModelFor(row: row) {
+        if let estimatedHeightGenerator = self.estimatedHeightGenerator, let model = selectModelFor(row: row) {
             return estimatedHeightGenerator(model)
         }
         
@@ -131,7 +146,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     }
     
     override internal func didSelect(row: Int) {
-        if row < numberOfRows(countHidden: false), let model = selectModelFor(row: row) {
+        if let model = selectModelFor(row: row) {
             self.selectionHandler?(model, originalIndexFor(row: row))
         }
     }

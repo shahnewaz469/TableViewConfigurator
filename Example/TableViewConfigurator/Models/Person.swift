@@ -6,9 +6,13 @@
 //  Copyright © 2016 John Volk. All rights reserved.
 //
 
-import Foundation
+import TableViewConfigurator
 
-class Person {
+func ==(lhs: Person, rhs: Person) -> Bool {
+    return lhs === rhs
+}
+
+class Person: Equatable {
 
     let firstName: String
     let lastName: String
