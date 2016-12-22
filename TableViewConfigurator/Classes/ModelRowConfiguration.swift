@@ -9,7 +9,8 @@
 import UIKit
 import Dwifft
 
-public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, ModelType>: RowConfiguration where CellType: UITableViewCell, CellType.ModelType == ModelType {
+public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
+    where CellType: UITableViewCell, CellType: ModelConfigurableTableViewCell, ModelType == CellType.ModelType {
     
     private let models: [ModelType]?
     private let modelGenerator: (() -> [ModelType]?)?
@@ -21,12 +22,12 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     private var selectionHandler: ((_ model: ModelType, _ index: Int) -> Void)?
     private var hideWhen: ((_ model: ModelType) -> Bool)?
     
-    public init(models: [ModelType]) {
+    public init(models: [ModelType], ignoreEquatable: Bool = false) {
         self.models = models
         self.modelGenerator = nil
     }
     
-    public init(modelGenerator: @escaping () -> [ModelType]?) {
+    public init(modelGenerator: @escaping () -> [ModelType]?, overrideEquatable: Bool = false) {
         self.modelGenerator = modelGenerator
         self.models = nil
     }
@@ -74,6 +75,12 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         self.modelSnapshot.removeAll(keepingCapacity: true)
         
         if let models = generateModels() {
+            for (i, model) in models.enumerated() {
+                if model.tag == nil {
+                    model.tag = i
+                }
+            }
+            
             if let hideWhen = self.hideWhen {
                 self.modelSnapshot.append(contentsOf: models.filter { !hideWhen($0) })
             } else {
@@ -186,10 +193,6 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     }
     
     private func generateModels() -> [ModelType]? {
-        if let models = self.models {
-            return models
-        }
-        
-        return self.modelGenerator?()
+        return self.models != nil ? self.models : self.modelGenerator?()
     }
 }

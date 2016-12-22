@@ -8,11 +8,7 @@
 
 import TableViewConfigurator
 
-func ==(lhs: Animal, rhs: Animal) -> Bool {
-    return lhs === rhs
-}
-
-class Animal: Equatable {
+class Animal: RowModel {
 
     let name: String
     let scientificName: String

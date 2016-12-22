@@ -16,7 +16,7 @@ public protocol ConfigurableTableViewCell {
 
 public protocol ModelConfigurableTableViewCell {
 
-    associatedtype ModelType: Equatable
+    associatedtype ModelType: RowModel
     
     func configure(model: ModelType)
     

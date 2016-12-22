@@ -8,11 +8,7 @@
 
 import TableViewConfigurator
 
-func ==(lhs: Person, rhs: Person) -> Bool {
-    return lhs === rhs
-}
-
-class Person: Equatable {
+class Person: RowModel {
 
     let firstName: String
     let lastName: String
