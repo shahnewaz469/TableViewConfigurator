@@ -11,7 +11,7 @@ import Dwifft
 
 public protocol RowModel: class, Equatable {
     
-    var rowTag: Int? { get set }
+    var rowTag: String? { get set }
     
 }
 
@@ -23,9 +23,9 @@ private var rowTagAssociationKey: UInt8 = 0
 
 public extension RowModel {
     
-    var rowTag: Int? {
+    var rowTag: String? {
         get {
-            return objc_getAssociatedObject(self, &rowTagAssociationKey) as? Int
+            return objc_getAssociatedObject(self, &rowTagAssociationKey) as? String
         }
         set(value) {
             objc_setAssociatedObject(self, &rowTagAssociationKey, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
@@ -104,7 +104,7 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
                 var model = models[i]
                 
                 if model.rowTag == nil {
-                    model.rowTag = i
+                    model.rowTag = String(i)
                 }
             }
             
