@@ -9,7 +9,7 @@
 import UIKit
 import Dwifft
 
-public protocol RowModel: Equatable {
+public protocol RowModel: class, Equatable {
     
     var rowTag: Int? { get set }
     
