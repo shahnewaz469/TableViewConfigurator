@@ -11,12 +11,27 @@ import Dwifft
 
 public protocol RowModel: Equatable {
     
-    var tag: Int? { get set }
+    var rowTag: Int? { get set }
     
 }
 
 public func == <T: RowModel>(lhs: T, rhs: T) -> Bool {
-    return lhs.tag == rhs.tag
+    return lhs.rowTag == rhs.rowTag
+}
+
+private var rowTagAssociationKey: UInt8 = 0
+
+public extension RowModel {
+    
+    var rowTag: Int? {
+        get {
+            return objc_getAssociatedObject(self, &rowTagAssociationKey) as? Int
+        }
+        set(value) {
+            objc_setAssociatedObject(self, &rowTagAssociationKey, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+    
 }
 
 public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
@@ -88,8 +103,8 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
             for i in 0 ..< models.count {
                 var model = models[i]
                 
-                if model.tag == nil {
-                    model.tag = i
+                if model.rowTag == nil {
+                    model.rowTag = i
                 }
             }
             

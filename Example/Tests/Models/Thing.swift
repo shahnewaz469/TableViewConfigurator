@@ -10,7 +10,6 @@ import TableViewConfigurator
 
 class Thing: RowModel {
     
-    var tag: Int?
     let name: String
     
     init(name: String) {

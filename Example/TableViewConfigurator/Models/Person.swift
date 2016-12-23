@@ -10,7 +10,6 @@ import TableViewConfigurator
 
 class Person: RowModel {
 
-    var tag: Int?
     let firstName: String
     let lastName: String
     var age: Int
