@@ -48,9 +48,6 @@ class ConstantRowConfigurationSpec: QuickSpec {
                     expect(implicitIdRowConfiguration.cellFor(row: 0, inTableView: tableView)).to(beAnInstanceOf(ImplicitReuseIdCell.self))
                 }
                 
-                it("is nil when asking for non-existant row") {
-                    expect(implicitIdRowConfiguration.cellFor(row: 1, inTableView: tableView)).to(beNil())
-                }
                 
                 it("is configured") {
                     let cell = implicitIdRowConfiguration.cellFor(row: 0, inTableView: tableView) as? ImplicitReuseIdCell
@@ -75,26 +72,16 @@ class ConstantRowConfigurationSpec: QuickSpec {
             }
             
             describe("its height") {
-                it("is set correctly for existant row") {
+                it("is set correctly for row") {
                     expect(rowConfiguration.height(100.0).heightFor(row: 0))
                         .to(equal(100.0))
-                }
-                
-                it("is nil when asking for non-existant row") {
-                    expect(rowConfiguration.height(100.0).heightFor(row: 1))
-                        .to(beNil())
                 }
             }
             
             describe("its estimated height") {
-                it("is set correctly for existant row") {
+                it("is set correctly for row") {
                     expect(rowConfiguration.estimatedHeight(200.0).estimatedHeightFor(row: 0))
                         .to(equal(200.0))
-                }
-                
-                it("is nil when asking for non-existant row") {
-                    expect(rowConfiguration.estimatedHeight(100.0).estimatedHeightFor(row: 1))
-                        .to(beNil())
                 }
             }
             
@@ -114,13 +101,6 @@ class ConstantRowConfigurationSpec: QuickSpec {
                     
                     rowConfiguration.selectionHandler({ selectionHandlerInvoked = true }).didSelect(row: 0)
                     expect(selectionHandlerInvoked).to(beTrue())
-                }
-                
-                it("is not invoked when selecting non-existant row") {
-                    var selectionHandlerInvoked = false
-                    
-                    rowConfiguration.selectionHandler({ selectionHandlerInvoked = true }).didSelect(row: 1)
-                    expect(selectionHandlerInvoked).to(beFalse())
                 }
             }
             
