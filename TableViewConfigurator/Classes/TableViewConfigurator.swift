@@ -36,14 +36,14 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     }
     
     public func changeSetAfterPerformingOperation(_ operation: () -> Void) -> TableViewChangeSet {
-        var rowInsertions = [IndexPath]()
-        var rowDeletions = [IndexPath]()
-        var sectionInsertions = IndexSet()
-        var sectionDeletions = IndexSet()
+        let preOpSectionVisibility = sectionVisibilitySnapshot()
         
         self.sectionConfigurations.forEach { $0.saveSnapshot() }
         operation()
         
+        var rowInsertions = [IndexPath]()
+        var rowDeletions = [IndexPath]()
+        let postOpSectionVisibility = sectionVisibilitySnapshot()
         let changeSets = self.sectionConfigurations.map { $0.snapshotChangeSet() }
         
         for (i, changeSet) in changeSets.enumerated() {
@@ -54,18 +54,33 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
                 let preOpCount = changeSet.initialRowCount
                 let postOpCount = preOpCount + insertions.count - deletions.count
                 
-                if preOpCount == 0 && postOpCount > 0 {
-                    sectionInsertions.insert(i)
-                } else if preOpCount > 0 && postOpCount == 0 {
-                    sectionDeletions.insert(i)
-                } else {
+                if preOpCount > 0 && postOpCount > 0 {
                     insertions.forEach { rowInsertions.append(IndexPath(row: $0, section: i)) }
                     deletions.forEach { rowDeletions.append(IndexPath(row: $0, section: i)) }
                 }
             }
         }
         
+        var sectionInsertions = IndexSet()
+        var sectionDeletions = IndexSet()
+        let sectionDiff = preOpSectionVisibility.diff(postOpSectionVisibility)
+        
+        sectionDiff.insertions.forEach { sectionInsertions.insert($0.idx) }
+        sectionDiff.deletions.forEach { sectionDeletions.insert($0.idx) }
+        
         return TableViewChangeSet(rowInsertions: rowInsertions, rowDeletions: rowDeletions, sectionInsertions: sectionInsertions, sectionDeletions: sectionDeletions)
+    }
+    
+    private func sectionVisibilitySnapshot() -> [Int] {
+        var sectionVisibility = [Int]()
+        
+        for (i, section) in self.sectionConfigurations.enumerated() {
+            if section.numberOfRows() > 0 {
+                sectionVisibility.append(i)
+            }
+        }
+        
+        return sectionVisibility
     }
     
     public func animate(changeSet: TableViewChangeSet,
