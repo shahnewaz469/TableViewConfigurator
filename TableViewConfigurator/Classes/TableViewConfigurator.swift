@@ -45,20 +45,22 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         var rowDeletions = [IndexPath]()
         let postOpSectionVisibility = sectionVisibilitySnapshot()
         let changeSets = self.sectionConfigurations.map { $0.snapshotChangeSet() }
+        var insertionSection = 0
+        var deletionSection = 0
         
         for (i, changeSet) in changeSets.enumerated() {
             let insertions = changeSet.rowInsertions
             let deletions = changeSet.rowDeletions
+            let preOpCount = changeSet.initialRowCount
+            let postOpCount = preOpCount + insertions.count - deletions.count
             
-            if insertions.count > 0 || deletions.count > 0 {
-                let preOpCount = changeSet.initialRowCount
-                let postOpCount = preOpCount + insertions.count - deletions.count
-                
-                if preOpCount > 0 && postOpCount > 0 {
-                    insertions.forEach { rowInsertions.append(IndexPath(row: $0, section: i)) }
-                    deletions.forEach { rowDeletions.append(IndexPath(row: $0, section: i)) }
-                }
+            if preOpCount > 0 && postOpCount > 0 {
+                insertions.forEach { rowInsertions.append(IndexPath(row: $0, section: insertionSection)) }
+                deletions.forEach { rowDeletions.append(IndexPath(row: $0, section: deletionSection)) }
             }
+            
+            deletionSection += preOpCount > 0 ? 1 : 0
+            insertionSection += postOpCount > 0 ? 1 : 0
         }
         
         var sectionInsertions = IndexSet()
