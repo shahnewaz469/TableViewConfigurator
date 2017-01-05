@@ -45,6 +45,8 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
     private var estimatedHeightGenerator: ((_ model: ModelType) -> CGFloat)?
     private var additionalConfig: ((_ cell: CellType, _ model: ModelType) -> Void)?
     private var selectionHandler: ((_ model: ModelType, _ index: Int) -> Void)?
+    private var canEditHandler: ((_ model: ModelType, _ index: Int) -> Bool)?
+    private var editHandler: ((_ editingStyle: UITableViewCellEditingStyle, _ model: ModelType, _ index: Int) -> Void)?
     private var hideWhen: ((_ model: ModelType) -> Bool)?
     
     public init(models: [ModelType], ignoreEquatable: Bool = false) {
@@ -74,6 +76,16 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
     
     public func selectionHandler(_ selectionHandler: @escaping (_ model: ModelType, _ index: Int) -> Void) -> Self {
         self.selectionHandler = selectionHandler
+        return self
+    }
+    
+    public func canEditHandler(_ canEditHandler: @escaping (_ model: ModelType, _ index: Int) -> Bool) -> Self {
+        self.canEditHandler = canEditHandler
+        return self
+    }
+    
+    public func editHandler(_ editHandler: @escaping (_ editingStyle: UITableViewCellEditingStyle, _ model: ModelType, _ index: Int) -> Void) -> Self {
+        self.editHandler = editHandler
         return self
     }
     
@@ -178,6 +190,19 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
     override internal func didSelect(row: Int) {
         if let model = selectModelFor(row: row) {
             self.selectionHandler?(model, originalIndexFor(row: row))
+        }
+    }
+    
+    override func canEdit(row: Int) -> Bool {
+        if let model = selectModelFor(row: row) {
+            return self.canEditHandler?(model, originalIndexFor(row: row)) ?? false
+        }
+        return false
+    }
+    
+    override func commit(editingStyle: UITableViewCellEditingStyle, forRow row: Int) {
+        if let model = selectModelFor(row: row) {
+            self.editHandler?(editingStyle, model, originalIndexFor(row: row))
         }
     }
     

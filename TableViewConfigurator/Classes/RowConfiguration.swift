@@ -49,5 +49,9 @@ public class RowConfiguration {
         return self.estimatedHeight
     }
     
-    internal func didSelect(row: Int) { };
+    internal func didSelect(row: Int) { }
+    
+    internal func canEdit(row: Int) -> Bool { return false }
+    
+    internal func commit(editingStyle: UITableViewCellEditingStyle, forRow row: Int) { }
 }

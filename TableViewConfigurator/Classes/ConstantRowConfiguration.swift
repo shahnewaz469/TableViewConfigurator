@@ -14,20 +14,35 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell>: RowC
     
     private var additionalConfig: ((_ cell: CellType) -> Void)?
     private var selectionHandler: (() -> Void)?
+    private var canEditHandler: (() -> Bool)?
+    private var editHandler: ((_ editingStyle: UITableViewCellEditingStyle) -> Void)?
     private var hideWhen: (() -> Bool)?
     
     public override init() { }
     
     public func additionalConfig(_ additionalConfig: @escaping (_ cell: CellType) -> Void) -> Self {
-        self.additionalConfig = additionalConfig; return self
+        self.additionalConfig = additionalConfig
+        return self
     }
     
     public func selectionHandler(_ selectionHandler: @escaping () -> Void) -> Self {
-        self.selectionHandler = selectionHandler; return self
+        self.selectionHandler = selectionHandler
+        return self
+    }
+    
+    public func canEditHandler(_ canEditHandler: @escaping () -> Bool) -> Self {
+        self.canEditHandler = canEditHandler
+        return self
+    }
+    
+    public func editHandler(_ editHandler: @escaping (_ editingStyle: UITableViewCellEditingStyle) -> Void) -> Self {
+        self.editHandler = editHandler
+        return self
     }
     
     public func hideWhen(_ hideWhen: @escaping () -> Bool) -> Self {
-        self.hideWhen = hideWhen; return self
+        self.hideWhen = hideWhen
+        return self
     }
     
     override internal func numberOfRows() -> Int {
@@ -82,5 +97,13 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell>: RowC
     
     override internal func didSelect(row: Int) {
         self.selectionHandler?()
+    }
+    
+    override func canEdit(row: Int) -> Bool {
+        return self.canEditHandler?() ?? false
+    }
+    
+    override func commit(editingStyle: UITableViewCellEditingStyle, forRow row: Int) {
+        self.editHandler?(editingStyle)
     }
 }

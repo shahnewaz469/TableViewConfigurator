@@ -13,7 +13,15 @@ typealias SnapshotChangeSet = (initialRowCount: Int, rowInsertions: [Int], rowDe
 public class SectionConfiguration {
 
     private var headerTitle: String?
+    private var headerViewGenerator: (() -> UIView?)?
+    private var headerViewHeight: CGFloat?
+    private var displayHeaderHandler: ((UIView) -> Void)?
+    
     private var footerTitle: String?
+    private var footerViewGenerator: (() -> UIView?)?
+    private var footerViewHeight: CGFloat?
+    private var displayFooterHandler: ((UIView) -> Void)?
+    
     private let rowConfigurations: [RowConfiguration]
     
     public init(rowConfigurations: [RowConfiguration]) {
@@ -29,8 +37,38 @@ public class SectionConfiguration {
         return self
     }
     
+    public func headerViewGenerator(_ headerViewGenerator: @escaping () -> UIView?) -> Self {
+        self.headerViewGenerator = headerViewGenerator
+        return self
+    }
+    
+    public func headerViewHeight(_ height: CGFloat) -> Self {
+        self.headerViewHeight = height
+        return self
+    }
+    
+    public func displayHeaderHandler(_ handler: @escaping (UIView) -> Void) -> Self {
+        self.displayHeaderHandler = handler
+        return self
+    }
+    
     public func footerTitle(_ footerTitle: String) -> Self {
         self.footerTitle = footerTitle
+        return self
+    }
+    
+    public func footerViewGenerator(_ footerViewGenerator: @escaping () -> UIView?) -> Self {
+        self.footerViewGenerator = footerViewGenerator
+        return self
+    }
+    
+    public func footerViewHeight(_ height: CGFloat) -> Self {
+        self.footerViewHeight = height
+        return self
+    }
+    
+    public func displayFooterHandler(_ handler: @escaping (UIView) -> Void) -> Self {
+        self.displayFooterHandler = handler
         return self
     }
     
@@ -92,8 +130,32 @@ public class SectionConfiguration {
         return self.headerTitle
     }
     
+    internal func viewForHeader() -> UIView? {
+        return self.headerViewGenerator?()
+    }
+    
+    internal func heightForHeader() -> CGFloat {
+        return self.headerViewHeight ?? 0
+    }
+    
+    internal func willDisplayHeaderView(_ view: UIView) {
+        self.displayHeaderHandler?(view)
+    }
+    
     internal func titleForFooter() -> String? {
         return self.footerTitle
+    }
+
+    internal func viewForFooter() -> UIView? {
+        return self.footerViewGenerator?()
+    }
+    
+    internal func heightForFooter() -> CGFloat {
+        return self.footerViewHeight ?? 0
+    }
+    
+    internal func willDisplayFooterView(_ view: UIView) {
+        self.displayFooterHandler?(view)
     }
     
     internal func numberOfRows() -> Int {

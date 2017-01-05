@@ -131,10 +131,70 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         fatalError("Provided tableView doesn't match configured table view.")
     }
     
+    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if tableView === self.tableView {
+            return performOperationFor(section: section, handler: { (sectionConfiguration) -> UIView? in
+                return sectionConfiguration.viewForHeader()
+            })
+        }
+        
+        fatalError("Provided tableView doesn't match configured table view.")
+    }
+    
+    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if tableView === self.tableView {
+            return performOperationFor(section: section, handler: { (sectionConfiguration) -> CGFloat in
+                return sectionConfiguration.heightForHeader()
+            })
+        }
+        
+        fatalError("Provided tableView doesn't match configured table view.")
+    }
+    
+    public func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        if tableView === self.tableView {
+            return performOperationFor(section: section, handler: { (sectionConfiguration) -> Void in
+                sectionConfiguration.willDisplayHeaderView(view)
+            })
+        }
+        
+        fatalError("Provided tableView doesn't match configured table view.")
+    }
+    
     public func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if tableView === self.tableView {
             return performOperationFor(section: section, handler: { (sectionConfiguration) -> String? in
                 return sectionConfiguration.titleForFooter()
+            })
+        }
+        
+        fatalError("Provided tableView doesn't match configured table view.")
+    }
+    
+    public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        if tableView === self.tableView {
+            return performOperationFor(section: section, handler: { (sectionConfiguration) -> UIView? in
+                return sectionConfiguration.viewForFooter()
+            })
+        }
+        
+        fatalError("Provided tableView doesn't match configured table view.")
+    }
+    
+    public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if tableView === self.tableView {
+            return performOperationFor(section: section, handler: { (sectionConfiguration) -> CGFloat in
+                return sectionConfiguration.heightForFooter()
+            })
+        }
+        
+        fatalError("Provided tableView doesn't match configured table view.")
+    }
+    
+    public func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
+        if tableView === self.tableView {
+            return performOperationFor(section: section, handler: { (sectionConfiguration) -> Void in
+                sectionConfiguration.willDisplayFooterView(view)
             })
         }
         
