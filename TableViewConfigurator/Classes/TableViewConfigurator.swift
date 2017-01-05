@@ -258,9 +258,29 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
             performOperationFor(section: indexPath.section, handler: { (sectionConfiguration) in
                 sectionConfiguration.didSelect(row: indexPath.row)
             })
-        } else {
-            fatalError("Provided tableView doesn't match configured table view.")
         }
+        
+        fatalError("Provided tableView doesn't match configured table view.")
+    }
+    
+    public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        if tableView === self.tableView {
+            return performOperationFor(section: indexPath.section, handler: { (sectionConfiguration) -> Bool in
+                return sectionConfiguration.canEdit(row: indexPath.row)
+            })
+        }
+        
+        fatalError("Provided tableView doesn't match configured table view.")
+    }
+    
+    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if tableView === self.tableView {
+            return performOperationFor(section: indexPath.section, handler: { (sectionConfiguration) -> Void in
+                sectionConfiguration.commit(editingStyle: editingStyle, forRow: indexPath.row)
+            })
+        }
+        
+        fatalError("Provided tableView doesn't match configured table view.")
     }
     
     private func performOperationFor<T>(section: Int, handler: (SectionConfiguration) -> T) -> T {

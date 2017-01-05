@@ -188,6 +188,18 @@ public class SectionConfiguration {
         })
     }
     
+    internal func canEdit(row: Int) -> Bool {
+        return performOperationFor(row: row, handler: { (rowConfiguration, localizedRow) -> Bool in
+            return rowConfiguration.canEdit(row: localizedRow)
+        })
+    }
+    
+    internal func commit(editingStyle: UITableViewCellEditingStyle, forRow row: Int) {
+        performOperationFor(row: row, handler: { (rowConfiguration, localizedRow) -> Void in
+            rowConfiguration.commit(editingStyle: editingStyle, forRow: localizedRow)
+        })
+    }
+    
     private func performOperationFor<T>(row: Int, handler: (RowConfiguration, Int) -> T) -> T {
         var rowTotal = 0
         
