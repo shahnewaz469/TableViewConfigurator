@@ -255,7 +255,7 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView === self.tableView {
-            performOperationFor(section: indexPath.section, handler: { (sectionConfiguration) in
+            return performOperationFor(section: indexPath.section, handler: { (sectionConfiguration) in
                 sectionConfiguration.didSelect(row: indexPath.row)
             })
         }
