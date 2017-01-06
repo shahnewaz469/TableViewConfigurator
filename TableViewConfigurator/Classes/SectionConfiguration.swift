@@ -98,17 +98,24 @@ public class SectionConfiguration {
     internal func snapshotChangeSet() -> SnapshotChangeSet {
         var rowInsertions = [Int]()
         var rowDeletions = [Int]()
-        var totalRows = 0
+        var insertionOffset = 0
+        var deletionOffset = 0
         
         for configuration in self.rowConfigurations {
             if let changeSet = configuration.snapshotChangeSet() {
-                changeSet.rowInsertions.forEach { rowInsertions.append( $0 + totalRows ) }
-                changeSet.rowDeletions.forEach { rowDeletions.append( $0 + totalRows ) }
-                totalRows += changeSet.initialRowCount
+                let insertions = changeSet.rowInsertions
+                let deletions = changeSet.rowDeletions
+                let preOpCount = changeSet.initialRowCount
+                let postOpCount = preOpCount + insertions.count - deletions.count
+                
+                insertions.forEach { rowInsertions.append( $0 + insertionOffset ) }
+                deletions.forEach { rowDeletions.append( $0 + deletionOffset ) }
+                deletionOffset += preOpCount
+                insertionOffset += postOpCount
             }
         }
         
-        return (totalRows, rowInsertions, rowDeletions)
+        return (deletionOffset, rowInsertions, rowDeletions)
     }
     
     internal func refreshAllRowConfigurationsWith(section: Int, inTableView tableView: UITableView) {
