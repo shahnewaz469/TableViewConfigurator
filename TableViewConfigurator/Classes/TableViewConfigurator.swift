@@ -99,14 +99,13 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     }
     
     public func refreshAllRowConfigurations() {
-        for (i, sectionConfiguration) in self.sectionConfigurations.enumerated() {
-            sectionConfiguration.refreshAllRowConfigurationsWith(section: i, inTableView: self.tableView)
-        }
-    }
-    
-    public func refresh(rowConfiguration: RowConfiguration) {
-        for (i, sectionConfiguration) in self.sectionConfigurations.enumerated() {
-            sectionConfiguration.refresh(rowConfiguration: rowConfiguration, withSection: i, inTableView: self.tableView)
+        var section = 0
+        
+        for sectionConfiguration in self.sectionConfigurations {
+            if sectionConfiguration.numberOfRows() > 0 {
+                sectionConfiguration.refreshAllRowConfigurationsWith(section: section, inTableView: self.tableView)
+                section += 1
+            }
         }
     }
     

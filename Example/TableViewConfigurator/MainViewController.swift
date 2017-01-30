@@ -46,7 +46,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 .additionalConfig({ (cell) in
                     cell.textLabel!.text = "Reset Text"
                 })
-                .selectionHandler({ self.configurator.refresh(rowConfiguration: textRow) })
+                .selectionHandler({ self.configurator.refreshAllRowConfigurations() })
                 .height(44.0)]).headerTitle("Refreshable UITextField")
         
         let peopleRows = ModelRowConfiguration<PersonCell, Person>(models: self.people)
