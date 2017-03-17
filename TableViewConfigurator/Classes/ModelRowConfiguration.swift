@@ -37,7 +37,7 @@ public extension RowModel {
 public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
     where CellType: UITableViewCell, CellType: ModelConfigurableTableViewCell, ModelType == CellType.ModelType {
     
-    private var models: [ModelType]?
+    private let models: [ModelType]?
     private let modelGenerator: (() -> [ModelType]?)?
     private var modelSnapshot = [ModelType]()
     
@@ -111,7 +111,7 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
     override func saveSnapshot() {
         self.modelSnapshot.removeAll(keepingCapacity: true)
         
-        if let models = generateModels(forceRefresh: true) {
+        if let models = generateModels() {
             for i in 0 ..< models.count {
                 var model = models[i]
                 
@@ -244,21 +244,7 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
         return row
     }
     
-    private func generateModels(forceRefresh: Bool = false) -> [ModelType]? {
-        var result: [ModelType]?
-        
-        if let modelGenerator = self.modelGenerator {
-            if let models = self.models, !forceRefresh {
-                result = models
-            } else if let models = modelGenerator() {
-                result = models
-            }
-        } else {
-            result = models
-        }
-        
-        self.models = result
-        
-        return result
+    private func generateModels() -> [ModelType]? {
+        return self.models != nil ? self.models : self.modelGenerator?()
     }
 }

@@ -84,7 +84,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                     })
                     .selectionHandler({
                         self.people.forEach({ $0.incrementAge() })
-                        self.configurator.refreshAllRowConfigurations()
+                        self.tableView.reloadRows(at: self.configurator.indexPathsFor(rowConfiguration: peopleRows), with: .automatic)
                     })
                     .height(44.0)]).headerTitle("People")
         
