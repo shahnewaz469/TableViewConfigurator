@@ -98,11 +98,14 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         self.tableView.endUpdates()
     }
     
-    public func reloadAllRowConfigurations() {
+    public func reloadData() {
         self.sectionConfigurations.forEach { $0.saveSnapshot() }
+        self.tableView.reloadData()
     }
     
     public func refreshAllRowConfigurations() {
+        self.sectionConfigurations.forEach { $0.saveSnapshot() }
+        
         var section = 0
         
         for sectionConfiguration in self.sectionConfigurations {
