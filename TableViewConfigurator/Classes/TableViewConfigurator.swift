@@ -43,8 +43,8 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         
         var rowInsertions = [IndexPath]()
         var rowDeletions = [IndexPath]()
-        let postOpSectionVisibility = sectionVisibilitySnapshot()
         let changeSets = self.sectionConfigurations.map { $0.snapshotChangeSet() }
+        let postOpSectionVisibility = sectionVisibilitySnapshot()
         var insertionSection = 0
         var deletionSection = 0
         
