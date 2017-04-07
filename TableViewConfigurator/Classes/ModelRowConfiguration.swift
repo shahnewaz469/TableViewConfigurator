@@ -37,7 +37,7 @@ public extension RowModel {
 public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
     where CellType: UITableViewCell, CellType: ModelConfigurableTableViewCell, ModelType == CellType.ModelType {
     
-    private let models: [ModelType]?
+    private var models: [ModelType]?
     private let modelGenerator: (() -> [ModelType]?)?
     private var modelSnapshot = [ModelType]()
     
@@ -49,14 +49,14 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
     private var editHandler: ((_ editingStyle: UITableViewCellEditingStyle, _ model: ModelType, _ index: Int) -> Void)?
     private var hideWhen: ((_ model: ModelType) -> Bool)?
     
-    public init(models: [ModelType], ignoreEquatable: Bool = false) {
+    public init(models: [ModelType]) {
         self.models = models
         self.modelGenerator = nil
     }
     
-    public init(modelGenerator: @escaping () -> [ModelType]?, overrideEquatable: Bool = false) {
+    public init(modelGenerator: @escaping () -> [ModelType]?) {
         self.modelGenerator = modelGenerator
-        self.models = nil
+        self.models = modelGenerator()
     }
     
     public func heightGenerator(_ heightGenerator: @escaping (_ model: ModelType) -> CGFloat) -> Self {
@@ -95,7 +95,7 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
     }
     
     override internal func numberOfRows() -> Int {
-        if let models = generateModels() {
+        if let models = self.models {
             if let hideWhen = self.hideWhen {
                 return models.reduce(0) { (totalRows, model) -> Int in
                     return totalRows + (hideWhen(model) ? 0 : 1)
@@ -110,10 +110,11 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
     
     override func saveSnapshot() {
         self.modelSnapshot.removeAll(keepingCapacity: true)
+        self.refreshModels()
         
-        if let models = generateModels() {
+        if let models = self.models {
             for i in 0 ..< models.count {
-                var model = models[i]
+                let model = models[i]
                 
                 if model.identityTag == nil {
                     model.identityTag = String(i)
@@ -207,7 +208,7 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
     }
     
     private func selectModelFor(row: Int) -> ModelType? {
-        if let models = generateModels() {
+        if let models = self.models {
             if let hideWhen = self.hideWhen {
                 var unhiddenTotal = 0
 
@@ -227,7 +228,7 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
     }
     
     private func originalIndexFor(row: Int) -> Int {
-        if let hideWhen = self.hideWhen, let models = generateModels() {
+        if let hideWhen = self.hideWhen, let models = self.models {
             var total = 0
             var unhiddenTotal = 0
             
@@ -244,7 +245,9 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
         return row
     }
     
-    private func generateModels() -> [ModelType]? {
-        return self.models != nil ? self.models : self.modelGenerator?()
+    private func refreshModels() {
+        if let modelGenerator = self.modelGenerator {
+            self.models = modelGenerator()
+        }
     }
 }

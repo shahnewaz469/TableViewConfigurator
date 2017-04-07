@@ -48,7 +48,7 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         var insertionSection = 0
         var deletionSection = 0
         
-        for (i, changeSet) in changeSets.enumerated() {
+        for changeSet in changeSets {
             let insertions = changeSet.rowInsertions
             let deletions = changeSet.rowDeletions
             let preOpCount = changeSet.initialRowCount
@@ -96,6 +96,10 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         self.tableView.insertSections(changeSet.sectionInsertions, with: insertSectionAnimation)
         self.tableView.deleteSections(changeSet.sectionDeletions, with: deleteSectionAnimation)
         self.tableView.endUpdates()
+    }
+    
+    public func reloadAllRowConfigurations() {
+        self.sectionConfigurations.forEach { $0.saveSnapshot() }
     }
     
     public func refreshAllRowConfigurations() {
