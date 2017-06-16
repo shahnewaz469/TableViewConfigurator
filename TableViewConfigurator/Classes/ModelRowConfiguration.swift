@@ -139,10 +139,16 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
         
         var rowInsertions = [Int]()
         var rowDeletions = [Int]()
-        let diff = before.diff(self.modelSnapshot)
+        let diff = Dwifft.diff(before, self.modelSnapshot)
         
-        diff.insertions.forEach { rowInsertions.append($0.idx) }
-        diff.deletions.forEach { rowDeletions.append($0.idx) }
+        for result in diff {
+            switch result {
+            case let .insert(i, _):
+                rowInsertions.append(i)
+            case let .delete(i, _):
+                rowDeletions.append(i)
+            }
+        }
         
         return (before.count, rowInsertions, rowDeletions)
     }

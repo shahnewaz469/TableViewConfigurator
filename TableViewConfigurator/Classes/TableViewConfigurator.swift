@@ -65,10 +65,16 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         
         var sectionInsertions = IndexSet()
         var sectionDeletions = IndexSet()
-        let sectionDiff = preOpSectionVisibility.diff(postOpSectionVisibility)
+        let sectionDiff = Dwifft.diff(preOpSectionVisibility, postOpSectionVisibility)
         
-        sectionDiff.insertions.forEach { sectionInsertions.insert($0.idx) }
-        sectionDiff.deletions.forEach { sectionDeletions.insert($0.idx) }
+        for result in sectionDiff {
+            switch result {
+            case let .insert(i, _):
+                sectionInsertions.insert(i)
+            case let .delete(i, _):
+                sectionDeletions.insert(i)
+            }
+        }
         
         return TableViewChangeSet(rowInsertions: rowInsertions, rowDeletions: rowDeletions, sectionInsertions: sectionInsertions, sectionDeletions: sectionDeletions)
     }
