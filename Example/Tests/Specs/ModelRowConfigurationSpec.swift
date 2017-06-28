@@ -140,7 +140,7 @@ class ModelRowConfigurationSpec: QuickSpec {
             describe("its additional config") {
                 it("is applied when retrieving a cell") {
                     let cell = implicitIdRowConfiguration
-                        .additionalConfig({ (cell, model) -> Void in
+                        .additionalConfig({ (cell, model, index) -> Void in
                             cell.additionallyConfigured = true
                         }).cellFor(row: 2, inTableView: tableView) as? ModelImplicitReuseIdCell
                     

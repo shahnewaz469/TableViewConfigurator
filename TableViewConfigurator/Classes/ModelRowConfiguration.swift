@@ -44,7 +44,7 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
     
     private var heightGenerator: ((_ model: ModelType) -> CGFloat)?
     private var estimatedHeightGenerator: ((_ model: ModelType) -> CGFloat)?
-    private var additionalConfig: ((_ cell: CellType, _ model: ModelType) -> Void)?
+    private var additionalConfig: ((_ cell: CellType, _ model: ModelType, _ index: Int) -> Void)?
     private var selectionHandler: ((_ model: ModelType, _ index: Int) -> Void)?
     private var canEditHandler: ((_ model: ModelType, _ index: Int) -> Bool)?
     private var editHandler: ((_ editingStyle: UITableViewCellEditingStyle, _ model: ModelType, _ index: Int) -> Void)?
@@ -72,7 +72,7 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
         return self
     }
     
-    public func additionalConfig(_ additionalConfig: @escaping (_ cell: CellType, _ model: ModelType) -> Void) -> Self {
+    public func additionalConfig(_ additionalConfig: @escaping (_ cell: CellType, _ model: ModelType, _ index: Int) -> Void) -> Self {
         self.additionalConfig = additionalConfig
         return self
     }
@@ -174,7 +174,7 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
             cell.configure(model: model)
             
             if let additionalConfig = self.additionalConfig {
-                additionalConfig(cell, model)
+                additionalConfig(cell, model, originalIndexFor(row: row))
             }
         }
         
