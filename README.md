@@ -191,7 +191,9 @@ let rowConfiguration = ConstantRowConfiguration<BasicCell>()
 
 #### ModelRowConfiguration
 
-A `ModelRowConfiguration` represents a group of rows that are defined by an array of some model type. It has all the same configuration options as `ConstantRowConfiguration` but closure callbacks you define will take a `model` parameter that represents the model associated with the actual row in question and an `index` parameter that indicates the position of the model in the current model sequence. Additionally, it's constructor requires two generic type parameters. The first is an implementation of `ModelConfigurableTableViewCell` and the second is class conforming to the RowModel protocol. It's constructor can also be passed a function that returns an up-to-date model array. This is useful in dynamic UIs. When using the `modelGenerator` you can also optionally specify whether model generation should be optimized. When you pass `true`, the generator will only be called when invoking `changeSetAfterPerformingOperation()` or `reloadData()` on the TableViewConfigurator itself. Calling `reloadData()` on the underlying `UITableView` will produce no visible changes.
+A `ModelRowConfiguration` represents a group of rows that are defined by an array of some model type. It has all the same configuration options as `ConstantRowConfiguration` but closure callbacks you define will take a `model` parameter that represents the model associated with the actual row in question and an `index` parameter that indicates the position of the model in the current model sequence. Additionally, it's constructor requires two generic type parameters. The first is an implementation of `ModelConfigurableTableViewCell` and the second is class conforming to the RowModel protocol.
+
+It's constructor can also be passed a function that returns an up-to-date model array. This is useful in dynamic UIs. When using the `modelGenerator` you can also optionally specify whether model generation should be optimized. When you pass `true`, the generator will only be called when invoking `changeSetAfterPerformingOperation()` or `reloadData()` on the TableViewConfigurator itself. Calling `reloadData()` on the underlying `UITableView` will produce no visible changes.
 
 ```swift
 class PersonCell: UITableViewCell, ModelConfigurableTableViewCell {
@@ -323,15 +325,15 @@ As you can see in the above example, `TableViewConfigurator` also supports UITab
 
 ##### .changeSetAfterPerformingOperation() / .animateChangeSet()
 
-In order to support row and section insertion / deletion, all you need to do is setup your cells .hideWhen() handlers appropriately and then call `changeSetAfterPerformingOperation()`. `TableViewConfigurator` will note changes in visibility before and after performing the operation you specify and will return those changes to you in the resulting tuple. All you have to do is pass those changes to `animatedChangeSet()` or your `UITableView` directly and your rows / sections will animated appropriately.
+In order to support row and section insertion / deletion, all you need to do is setup your cells .hideWhen() handlers appropriately (or return `nil` from your model generator) and then call `changeSetAfterPerformingOperation()`. `TableViewConfigurator` will note changes in visibility before and after performing the operation you specify and will return those changes to you in the resulting `TableViewChangeSet` tuple. All you have to do is pass those changes to `animatedChangeSet()` or your `UITableView` directly and your rows / sections will be animated appropriately.
 
 ##### .indexPathsForRowConfiguration()
 
-`TableViewConfigurator` also provides the `indexPathsForRowConfiguration()` method so you can access the actual `NSIndexPath` array for a `RowConfiguration`. This is useful for (among other things) calling `reloadRowsAtIndexPaths()` on your `UITableView` to force your cells to reload from their models or constant configuration.
+`TableViewConfigurator` also provides the `indexPathsFor(rowConfiguration:)` method so you can access the actual `NSIndexPath` array for a `RowConfiguration`. This is useful for (among other things) calling `reloadRowsAtIndexPaths()` on your `UITableView` to force your cells to reload from their models or constant configuration.
 
 ##### .refreshAllRowConfigurations()
 
-Sometimes you may want to refresh the contents of a currently visible cell without forcing a complete reload of the cell. For example, if your cell contained a `UITextField`, performing a reload (which destroys and replaces the existing cell) would cause the text field to lose focus. To address this, `TableViewConfigurator` provides the `refreshAllRowConfigurations()` method which non-destructively refreshes any visible cells from their model or constant configuration. Any offscreen cells will of course be updated when they become visible and `UITableView` queries it's delegate.
+Sometimes you may want to refresh the contents of a currently visible cell (or all visibile cells) without forcing a complete reload of the cell. For example, if your cell contained a `UITextField`, performing a reload (which destroys and replaces the existing cell) would cause the text field to lose focus. To address this, `TableViewConfigurator` provides the `refreshAllRowConfigurations()` method which non-destructively refreshes any visible cells from their model or constant configuration. Any offscreen cells will of course be updated when they become visible and `UITableView` queries it's delegate.
 
 ## Author
 
