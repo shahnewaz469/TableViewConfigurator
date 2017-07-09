@@ -170,6 +170,14 @@ let rowConfiguration = ConstantRowConfiguration<BasicCell>()
     .selectionHandler({ self.performSegueWithIdentifier("someSegue", sender: self) })
 ```
 
+##### .canEditHandler()
+
+You can specify a closure that determines whether a cell can participate in the `UITableView` edit workflow.
+
+##### .editHandler()
+
+You can specify a closure that handles an edit event received from the underlying UITableView.
+
 ##### .hideWhen()
 
 Finally, you can specify a closure that indicates when the row in the `ConstantRowConfiguration` should be hidden.
@@ -183,7 +191,7 @@ let rowConfiguration = ConstantRowConfiguration<BasicCell>()
 
 #### ModelRowConfiguration
 
-A `ModelRowConfiguration` represents a group of rows that are defined by an array of some model type. It has all the same configuration options as `ConstantRowConfiguration` but closure callbacks you define will take an additional `model` parameter that represents the model associated with the actual row in question. Additionally, it's constructor requires two generic type parameters. The first is an implementation of `ModelConfigurableTableViewCell` and the second is any Swift type you wish (e.g., a "model" object, a tuple, a `Bool`, etc.). It's constructor can also be passed a function that returns an up-to-date model array. This is useful in dynamic UIs.
+A `ModelRowConfiguration` represents a group of rows that are defined by an array of some model type. It has all the same configuration options as `ConstantRowConfiguration` but closure callbacks you define will take a `model` parameter that represents the model associated with the actual row in question and an `index` parameter that indicates the position of the model in the current model sequence. Additionally, it's constructor requires two generic type parameters. The first is an implementation of `ModelConfigurableTableViewCell` and the second is class conforming to the RowModel protocol. It's constructor can also be passed a function that returns an up-to-date model array. This is useful in dynamic UIs. When using the `modelGenerator` you can also optionally specify whether model generation should be optimized. When you pass `true`, the generator will only be called when invoking `changeSetAfterPerformingOperation()` or `reloadData()` on the TableViewConfigurator itself. Calling `reloadData()` on the underlying `UITableView` will produce no visible changes.
 
 ```swift
 class PersonCell: UITableViewCell, ModelConfigurableTableViewCell {
@@ -199,6 +207,10 @@ class PersonCell: UITableViewCell, ModelConfigurableTableViewCell {
 ```
 
 `let rowConfiguration = ModelRowConfiguration<PersonCell, Person>(models: self.people)`
+
+##### RowModel
+
+The `RowModel` protocol allows ModelRowConfiguration to accurately diff successive states of the configuration for the purposes of animating table changes. The protocol requires a single property called `identityTag` that should uniquely identify any given `RowModel`. By default, each model gets an `identityTag` corresponding to its index in the current model sequence. This should be sufficient for cases where only the visibility of a model in the current sequence is changing, but will provide incorrect results when the sequence itself is modified. 
 
 `ModelRowConfiguration` adds a couple of additional "generator" attributes as well.
 
