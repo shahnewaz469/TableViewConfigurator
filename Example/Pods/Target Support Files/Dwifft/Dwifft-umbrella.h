@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double TableViewConfiguratorVersionNumber;
-FOUNDATION_EXPORT const unsigned char TableViewConfiguratorVersionString[];
+FOUNDATION_EXPORT double DwifftVersionNumber;
+FOUNDATION_EXPORT const unsigned char DwifftVersionString[];
 

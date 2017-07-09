@@ -6,9 +6,9 @@
 //  Copyright © 2016 John Volk. All rights reserved.
 //
 
-import Foundation
+import TableViewConfigurator
 
-class Thing {
+class Thing: RowModel {
     
     let name: String
     

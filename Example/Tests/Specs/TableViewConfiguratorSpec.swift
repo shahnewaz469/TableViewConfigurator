@@ -128,7 +128,7 @@ class TableViewConfiguratorSpec: QuickSpec {
                     expect(cell?.configured).to(beFalse())
                     
                     tableView.storeCell(cell!, forIndexPath: indexPath)
-                    configurator.refresh(rowConfiguration: constantRowConfiguration)
+                    configurator.refreshAllRowConfigurations()
                     expect(cell?.configured).to(beTrue())
                 }
                 
@@ -142,7 +142,7 @@ class TableViewConfiguratorSpec: QuickSpec {
                     expect(cell?.model).to(beNil())
                     
                     tableView.storeCell(cell!, forIndexPath: indexPath)
-                    configurator.refresh(rowConfiguration: modelRowConfiguration)
+                    configurator.refreshAllRowConfigurations()
                     expect(cell?.model).toNot(beNil())
                 }
             }

@@ -8,10 +8,20 @@
 
 import UIKit
 
+typealias SnapshotChangeSet = (initialRowCount: Int, rowInsertions: [Int], rowDeletions: [Int])
+
 public class SectionConfiguration {
 
     private var headerTitle: String?
+    private var headerViewGenerator: (() -> UIView?)?
+    private var headerViewHeight: CGFloat?
+    private var displayHeaderHandler: ((UIView) -> Void)?
+    
     private var footerTitle: String?
+    private var footerViewGenerator: (() -> UIView?)?
+    private var footerViewHeight: CGFloat?
+    private var displayFooterHandler: ((UIView) -> Void)?
+    
     private let rowConfigurations: [RowConfiguration]
     
     public init(rowConfigurations: [RowConfiguration]) {
@@ -27,18 +37,47 @@ public class SectionConfiguration {
         return self
     }
     
+    public func headerViewGenerator(_ headerViewGenerator: @escaping () -> UIView?) -> Self {
+        self.headerViewGenerator = headerViewGenerator
+        return self
+    }
+    
+    public func headerViewHeight(_ height: CGFloat) -> Self {
+        self.headerViewHeight = height
+        return self
+    }
+    
+    public func displayHeaderHandler(_ handler: @escaping (UIView) -> Void) -> Self {
+        self.displayHeaderHandler = handler
+        return self
+    }
+    
     public func footerTitle(_ footerTitle: String) -> Self {
         self.footerTitle = footerTitle
         return self
     }
     
+    public func footerViewGenerator(_ footerViewGenerator: @escaping () -> UIView?) -> Self {
+        self.footerViewGenerator = footerViewGenerator
+        return self
+    }
+    
+    public func footerViewHeight(_ height: CGFloat) -> Self {
+        self.footerViewHeight = height
+        return self
+    }
+    
+    public func displayFooterHandler(_ handler: @escaping (UIView) -> Void) -> Self {
+        self.displayFooterHandler = handler
+        return self
+    }
     
     internal func indexSetFor(rowConfiguration: RowConfiguration) -> IndexSet {
         var result = IndexSet()
         var rowTotal = 0
         
         for candidateConfiguration in self.rowConfigurations {
-            let numberOfRows = candidateConfiguration.numberOfRows(countHidden: false)
+            let numberOfRows = candidateConfiguration.numberOfRows()
             
             if candidateConfiguration === rowConfiguration {
                 for i in 0 ..< numberOfRows {
@@ -52,21 +91,31 @@ public class SectionConfiguration {
         return result
     }
     
-    internal func visibilityMap() -> [[Int: Bool]] {
-        var result = [[Int: Bool]]()
+    internal func saveSnapshot() {
+        self.rowConfigurations.forEach { $0.saveSnapshot() }
+    }
+    
+    internal func snapshotChangeSet() -> SnapshotChangeSet {
+        var rowInsertions = [Int]()
+        var rowDeletions = [Int]()
+        var insertionOffset = 0
+        var deletionOffset = 0
         
         for configuration in self.rowConfigurations {
-            var visibilityMap = [Int: Bool]()
-            let numberOfRows = configuration.numberOfRows(countHidden: true)
-            
-            for i in 0 ..< numberOfRows {
-                visibilityMap[i] = configuration.rowIsVisible(row: i)!
+            if let changeSet = configuration.snapshotChangeSet() {
+                let insertions = changeSet.rowInsertions
+                let deletions = changeSet.rowDeletions
+                let preOpCount = changeSet.initialRowCount
+                let postOpCount = preOpCount + insertions.count - deletions.count
+                
+                insertions.forEach { rowInsertions.append( $0 + insertionOffset ) }
+                deletions.forEach { rowDeletions.append( $0 + deletionOffset ) }
+                deletionOffset += preOpCount
+                insertionOffset += postOpCount
             }
-            
-            result.append(visibilityMap)
         }
         
-        return result
+        return (deletionOffset, rowInsertions, rowDeletions)
     }
     
     internal func refreshAllRowConfigurationsWith(section: Int, inTableView tableView: UITableView) {
@@ -88,13 +137,37 @@ public class SectionConfiguration {
         return self.headerTitle
     }
     
+    internal func viewForHeader() -> UIView? {
+        return self.headerViewGenerator?()
+    }
+    
+    internal func heightForHeader() -> CGFloat {
+        return self.headerViewHeight ?? 0
+    }
+    
+    internal func willDisplayHeaderView(_ view: UIView) {
+        self.displayHeaderHandler?(view)
+    }
+    
     internal func titleForFooter() -> String? {
         return self.footerTitle
+    }
+
+    internal func viewForFooter() -> UIView? {
+        return self.footerViewGenerator?()
+    }
+    
+    internal func heightForFooter() -> CGFloat {
+        return self.footerViewHeight ?? 0
+    }
+    
+    internal func willDisplayFooterView(_ view: UIView) {
+        self.displayFooterHandler?(view)
     }
     
     internal func numberOfRows() -> Int {
         return self.rowConfigurations.reduce(0) { (totalRows, rowConfiguration) -> Int in
-            return totalRows + rowConfiguration.numberOfRows(countHidden: false)
+            return totalRows + rowConfiguration.numberOfRows()
         }
     }
     
@@ -122,11 +195,23 @@ public class SectionConfiguration {
         })
     }
     
+    internal func canEdit(row: Int) -> Bool {
+        return performOperationFor(row: row, handler: { (rowConfiguration, localizedRow) -> Bool in
+            return rowConfiguration.canEdit(row: localizedRow)
+        })
+    }
+    
+    internal func commit(editingStyle: UITableViewCellEditingStyle, forRow row: Int) {
+        performOperationFor(row: row, handler: { (rowConfiguration, localizedRow) -> Void in
+            rowConfiguration.commit(editingStyle: editingStyle, forRow: localizedRow)
+        })
+    }
+    
     private func performOperationFor<T>(row: Int, handler: (RowConfiguration, Int) -> T) -> T {
         var rowTotal = 0
         
         for rowConfiguration in self.rowConfigurations {
-            let numberOfRows = rowConfiguration.numberOfRows(countHidden: false)
+            let numberOfRows = rowConfiguration.numberOfRows()
             
             if row < rowTotal + numberOfRows {
                 return handler(rowConfiguration, row - rowTotal)

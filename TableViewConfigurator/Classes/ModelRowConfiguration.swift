@@ -7,26 +7,59 @@
 //
 
 import UIKit
+import Dwifft
 
-public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, ModelType>: RowConfiguration where CellType: UITableViewCell, CellType.ModelType == ModelType {
+public protocol RowModel: class, Equatable {
+    
+    var identityTag: String? { get set }
+    
+}
 
-    private let models: [ModelType]?
+public func == <T: RowModel>(lhs: T, rhs: T) -> Bool {
+    return lhs.identityTag == rhs.identityTag
+}
+
+private var identityTagAssociationKey: UInt8 = 0
+
+public extension RowModel {
+    
+    var identityTag: String? {
+        get {
+            return objc_getAssociatedObject(self, &identityTagAssociationKey) as? String
+        }
+        set(value) {
+            objc_setAssociatedObject(self, &identityTagAssociationKey, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+    
+}
+
+public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
+    where CellType: UITableViewCell, CellType: ModelConfigurableTableViewCell, ModelType == CellType.ModelType {
+    
+    private let optimizeModels: Bool
+    private var models: [ModelType]?
     private let modelGenerator: (() -> [ModelType]?)?
+    private var modelSnapshot = [ModelType]()
     
     private var heightGenerator: ((_ model: ModelType) -> CGFloat)?
     private var estimatedHeightGenerator: ((_ model: ModelType) -> CGFloat)?
-    private var additionalConfig: ((_ cell: CellType, _ model: ModelType) -> Void)?
+    private var additionalConfig: ((_ cell: CellType, _ model: ModelType, _ index: Int) -> Void)?
     private var selectionHandler: ((_ model: ModelType, _ index: Int) -> Void)?
+    private var canEditHandler: ((_ model: ModelType, _ index: Int) -> Bool)?
+    private var editHandler: ((_ editingStyle: UITableViewCellEditingStyle, _ model: ModelType, _ index: Int) -> Void)?
     private var hideWhen: ((_ model: ModelType) -> Bool)?
     
     public init(models: [ModelType]) {
+        self.optimizeModels = true
         self.models = models
         self.modelGenerator = nil
     }
     
-    public init(modelGenerator: @escaping () -> [ModelType]?) {
+    public init(modelGenerator: @escaping () -> [ModelType]?, optimizeModels: Bool = false) {
+        self.optimizeModels = optimizeModels
         self.modelGenerator = modelGenerator
-        self.models = nil
+        self.models = modelGenerator()
     }
     
     public func heightGenerator(_ heightGenerator: @escaping (_ model: ModelType) -> CGFloat) -> Self {
@@ -39,7 +72,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         return self
     }
     
-    public func additionalConfig(_ additionalConfig: @escaping (_ cell: CellType, _ model: ModelType) -> Void) -> Self {
+    public func additionalConfig(_ additionalConfig: @escaping (_ cell: CellType, _ model: ModelType, _ index: Int) -> Void) -> Self {
         self.additionalConfig = additionalConfig
         return self
     }
@@ -49,14 +82,24 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         return self
     }
     
+    public func canEditHandler(_ canEditHandler: @escaping (_ model: ModelType, _ index: Int) -> Bool) -> Self {
+        self.canEditHandler = canEditHandler
+        return self
+    }
+    
+    public func editHandler(_ editHandler: @escaping (_ editingStyle: UITableViewCellEditingStyle, _ model: ModelType, _ index: Int) -> Void) -> Self {
+        self.editHandler = editHandler
+        return self
+    }
+    
     public func hideWhen(_ hideWhen: @escaping (_ model: ModelType) -> Bool) -> Self {
         self.hideWhen = hideWhen
         return self
     }
     
-    override internal func numberOfRows(countHidden: Bool) -> Int {
-        if let models = generateModels() {
-            if let hideWhen = self.hideWhen, !countHidden {
+    override internal func numberOfRows() -> Int {
+        if let models = getModels() {
+            if let hideWhen = self.hideWhen {
                 return models.reduce(0) { (totalRows, model) -> Int in
                     return totalRows + (hideWhen(model) ? 0 : 1)
                 }
@@ -68,37 +111,61 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         return 0
     }
     
-    override func rowIsVisible(row: Int) -> Bool? {
-        if let models = generateModels() {
-            if row < numberOfRows(countHidden: true) {
-                if let hideWhen = self.hideWhen {
-                    return !hideWhen(models[row])
-                }
+    override func saveSnapshot() {
+        self.modelSnapshot.removeAll(keepingCapacity: true)
+        self.refreshModels()
+        
+        if let models = getModels() {
+            for i in 0 ..< models.count {
+                let model = models[i]
                 
-                return true
+                if model.identityTag == nil {
+                    model.identityTag = String(i)
+                }
+            }
+            
+            if let hideWhen = self.hideWhen {
+                self.modelSnapshot.append(contentsOf: models.filter { !hideWhen($0) })
+            } else {
+                self.modelSnapshot.append(contentsOf: models)
+            }
+        }
+    }
+    
+    override func snapshotChangeSet() -> SnapshotChangeSet? {
+        let before = self.modelSnapshot
+        
+        saveSnapshot()
+        
+        var rowInsertions = [Int]()
+        var rowDeletions = [Int]()
+        let diff = Dwifft.diff(before, self.modelSnapshot)
+        
+        for result in diff {
+            switch result {
+            case let .insert(i, _):
+                rowInsertions.append(i)
+            case let .delete(i, _):
+                rowDeletions.append(i)
             }
         }
         
-        return nil
+        return (before.count, rowInsertions, rowDeletions)
     }
     
     override func cellFor(row: Int, inTableView tableView: UITableView) -> UITableViewCell? {
-        if row < numberOfRows(countHidden: false) {
-            let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier()
+        let reuseId = self.cellReuseId ?? CellType.buildReuseIdentifier()
 
-            if let cell = tableView.dequeueReusableCell(withIdentifier: reuseId) as? CellType {
-                return configure(cell: cell, forRow: row)
-            }
+        if let cell = tableView.dequeueReusableCell(withIdentifier: reuseId) as? CellType {
+            return configure(cell: cell, forRow: row)
         }
-        
+
         return nil
     }
     
     override func refreshCellFor(row: Int, withIndexPath indexPath: IndexPath, inTableView tableView: UITableView) {
-        if row < numberOfRows(countHidden: false) {
-            if let cell = tableView.cellForRow(at: indexPath) as? CellType {
-                _ = configure(cell: cell, forRow: row)
-            }
+        if let cell = tableView.cellForRow(at: indexPath) as? CellType {
+            _ = configure(cell: cell, forRow: row)
         }
     }
     
@@ -107,7 +174,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
             cell.configure(model: model)
             
             if let additionalConfig = self.additionalConfig {
-                additionalConfig(cell, model)
+                additionalConfig(cell, model, originalIndexFor(row: row))
             }
         }
         
@@ -115,7 +182,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     }
     
     override func heightFor(row: Int) -> CGFloat? {
-        if let heightGenerator = self.heightGenerator, row < numberOfRows(countHidden: false), let model = selectModelFor(row: row) {
+        if let heightGenerator = self.heightGenerator, let model = selectModelFor(row: row) {
             return heightGenerator(model)
         }
         
@@ -123,7 +190,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     }
     
     override func estimatedHeightFor(row: Int) -> CGFloat? {
-        if let estimatedHeightGenerator = self.estimatedHeightGenerator, row < numberOfRows(countHidden: false), let model = selectModelFor(row: row) {
+        if let estimatedHeightGenerator = self.estimatedHeightGenerator, let model = selectModelFor(row: row) {
             return estimatedHeightGenerator(model)
         }
         
@@ -131,16 +198,29 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     }
     
     override internal func didSelect(row: Int) {
-        if row < numberOfRows(countHidden: false), let model = selectModelFor(row: row) {
+        if let model = selectModelFor(row: row) {
             self.selectionHandler?(model, originalIndexFor(row: row))
         }
     }
     
+    override func canEdit(row: Int) -> Bool {
+        if let model = selectModelFor(row: row) {
+            return self.canEditHandler?(model, originalIndexFor(row: row)) ?? false
+        }
+        return false
+    }
+    
+    override func commit(editingStyle: UITableViewCellEditingStyle, forRow row: Int) {
+        if let model = selectModelFor(row: row) {
+            self.editHandler?(editingStyle, model, originalIndexFor(row: row))
+        }
+    }
+    
     private func selectModelFor(row: Int) -> ModelType? {
-        if let models = generateModels() {
+        if let models = getModels() {
             if let hideWhen = self.hideWhen {
                 var unhiddenTotal = 0
-                
+
                 for model in models {
                     unhiddenTotal += (hideWhen(model) ? 0 : 1)
                     
@@ -157,7 +237,7 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
     }
     
     private func originalIndexFor(row: Int) -> Int {
-        if let hideWhen = self.hideWhen, let models = generateModels() {
+        if let hideWhen = self.hideWhen, let models = getModels() {
             var total = 0
             var unhiddenTotal = 0
             
@@ -174,11 +254,18 @@ public class ModelRowConfiguration<CellType: ModelConfigurableTableViewCell, Mod
         return row
     }
     
-    private func generateModels() -> [ModelType]? {
-        if let models = self.models {
-            return models
+    private func getModels() -> [ModelType]? {
+        if self.optimizeModels {
+            return self.models
+        } else if let modelGenerator = self.modelGenerator {
+            return modelGenerator()
         }
-        
-        return self.modelGenerator?()
+        return nil
+    }
+    
+    private func refreshModels() {
+        if self.optimizeModels, let modelGenerator = self.modelGenerator {
+            self.models = modelGenerator()
+        }
     }
 }

@@ -46,7 +46,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 .additionalConfig({ (cell) in
                     cell.textLabel!.text = "Reset Text"
                 })
-                .selectionHandler({ self.configurator.refresh(rowConfiguration: textRow) })
+                .selectionHandler({ self.configurator.refreshAllRowConfigurations() })
                 .height(44.0)]).headerTitle("Refreshable UITextField")
         
         let peopleRows = ModelRowConfiguration<PersonCell, Person>(models: self.people)
@@ -55,7 +55,14 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             })
             .heightGenerator { (model) -> CGFloat in
                 return 44.0
-        }
+            }
+        
+        let youngDoeRow = ModelRowConfiguration<PersonCell, Person>(modelGenerator: { () -> [Person]? in
+            if let johnDoe = self.people.first, johnDoe.age > 60 {
+                return [Person(firstName: "Young", lastName: "Doe", age: 20)]
+            }
+            return nil
+        }).height(44.0)
         
         let peopleSection = SectionConfiguration(rowConfigurations:
             [ConstantRowConfiguration<SwitchCell>()
@@ -77,14 +84,16 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                                 insertRowAnimation: .top, deleteRowAnimation: .top)
                         }
                     })
-                    .height(44.0), peopleRows,
+                    .height(44.0), peopleRows, youngDoeRow,
                 ConstantRowConfiguration<BasicCell>()
                     .additionalConfig({ (cell) in
                         cell.textLabel!.text = "Increment Age"
                     })
                     .selectionHandler({
-                        self.people.forEach({ $0.incrementAge() })
-                        self.tableView.reloadRows(at: self.configurator.indexPathsFor(rowConfiguration: peopleRows), with: .automatic)
+                        self.configurator.animate(changeSet: self.configurator.changeSetAfterPerformingOperation {
+                            self.people.forEach({ $0.incrementAge() })
+                        })
+                        self.configurator.refreshAllRowConfigurations()
                     })
                     .height(44.0)]).headerTitle("People")
         

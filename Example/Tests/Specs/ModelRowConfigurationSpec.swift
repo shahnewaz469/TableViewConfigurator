@@ -49,10 +49,6 @@ class ModelRowConfigurationSpec: QuickSpec {
                     expect(implicitIdRowConfiguration.cellFor(row: 0, inTableView: tableView)).to(beAnInstanceOf(ModelImplicitReuseIdCell.self))
                 }
                 
-                it("is nil when asking for non-existant row") {
-                    expect(implicitIdRowConfiguration.cellFor(row: 3, inTableView: tableView)).to(beNil())
-                }
-                
                 it("is configured correctly") {
                     let cell = implicitIdRowConfiguration.cellFor(row: 1, inTableView: tableView) as? ModelImplicitReuseIdCell
                     
@@ -88,7 +84,7 @@ class ModelRowConfigurationSpec: QuickSpec {
             }
             
             describe("its height") {
-                it("is set correctly for existant row") {
+                it("is set correctly for row") {
                     expect(rowConfiguration.height(100.0).heightFor(row: 0))
                         .to(equal(100.0))
                 }
@@ -99,15 +95,10 @@ class ModelRowConfigurationSpec: QuickSpec {
                     }).heightFor(row: 0))
                         .to(equal(100.0))
                 }
-                
-                it("is nil when asking for non-existant row") {
-                    expect(rowConfiguration.height(100.0).heightFor(row: 3))
-                        .to(beNil())
-                }
             }
             
             describe("its estimated height") {
-                it("is set correctly for existant row") {
+                it("is set correctly for row") {
                     expect(rowConfiguration.estimatedHeight(200.0).estimatedHeightFor(row: 0))
                         .to(equal(200.0))
                 }
@@ -118,52 +109,19 @@ class ModelRowConfigurationSpec: QuickSpec {
                     }).estimatedHeightFor(row: 0))
                         .to(equal(200.0))
                 }
-                
-                it("is nil when asking for non-existant row") {
-                    expect(rowConfiguration.estimatedHeight(100.0).estimatedHeightFor(row: 3))
-                        .to(beNil())
-                }
             }
             
             describe("its visible row count") {
                 context("when visible") {
                     it("is correct") {
-                        expect(rowConfiguration.numberOfRows(countHidden: false)).to(equal(3))
+                        expect(rowConfiguration.numberOfRows()).to(equal(3))
                     }
                 }
                 
                 context("when hidden") {
                     it("is correct") {
-                        expect(rowConfiguration.hideWhen({ return $0 === self.things[0] || $0 === self.things[2] }).numberOfRows(countHidden: false)).to(equal(1))
+                        expect(rowConfiguration.hideWhen({ return $0 === self.things[0] || $0 === self.things[2] }).numberOfRows()).to(equal(1))
                     }
-                }
-            }
-            
-            describe("its total row count") {
-                context("when visible") {
-                    it("is correct") {
-                        expect(rowConfiguration.numberOfRows(countHidden: true)).to(equal(3))
-                    }
-                }
-                
-                context("when hidden") {
-                    it("is correct") {
-                        expect(rowConfiguration.hideWhen({ return $0 === self.things[0] || $0 === self.things[2] }).numberOfRows(countHidden: true)).to(equal(3))
-                    }
-                }
-            }
-            
-            describe("its row visibility") {
-                it("is correct when visible") {
-                    expect(rowConfiguration.rowIsVisible(row: 1)).to(beTrue())
-                }
-                
-                it("is correct when hidden") {
-                    expect(rowConfiguration.hideWhen({ return $0 === self.things[1] }).rowIsVisible(row: 1)).to(beFalse())
-                }
-                
-                it("is nil when asking for non-existant row") {
-                    expect(rowConfiguration.rowIsVisible(row: 3)).to(beNil())
                 }
             }
             
@@ -177,22 +135,12 @@ class ModelRowConfigurationSpec: QuickSpec {
                     
                     expect(selectionHandlerInvoked).to(beTrue())
                 }
-                
-                it("is not invoked when selecting non-existant row") {
-                    var selectionHandlerInvoked = false
-                    
-                    rowConfiguration.selectionHandler({ (model) -> Void in
-                        selectionHandlerInvoked = true
-                    }).didSelect(row: 5)
-                    
-                    expect(selectionHandlerInvoked).to(beFalse())
-                }
             }
             
             describe("its additional config") {
                 it("is applied when retrieving a cell") {
                     let cell = implicitIdRowConfiguration
-                        .additionalConfig({ (cell, model) -> Void in
+                        .additionalConfig({ (cell, model, index) -> Void in
                             cell.additionallyConfigured = true
                         }).cellFor(row: 2, inTableView: tableView) as? ModelImplicitReuseIdCell
                     

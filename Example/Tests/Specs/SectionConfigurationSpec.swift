@@ -46,31 +46,6 @@ class SectionConfigurationSpec: QuickSpec {
                 }
             }
             
-            describe("its visibility map") {
-                it("is correct") {
-                    // These tests should be of the form:
-                    // expect(sectionConfiguration.visibilityMap()).to(equal([[0: true, 1: true, 2: true], [0: true]]))
-                    // but I can't get that to work with Swift 3
-                    
-                    expect(sectionConfiguration.visibilityMap()[0]).to(equal([0: true, 1: true, 2: true]))
-                    expect(sectionConfiguration.visibilityMap()[1]).to(equal([0: true]))
-                    
-                    _ = modelRowConfiguration.hideWhen({ $0 === self.things[0] })
-                    expect(sectionConfiguration.visibilityMap()[0]).to(equal([0: false, 1: true, 2: true]))
-                    expect(sectionConfiguration.visibilityMap()[1]).to(equal([0: true]))
-                    
-                    _ = constantRowConfiguration.hideWhen({ return true })
-                    expect(sectionConfiguration.visibilityMap()[0]).to(equal([0: false, 1: true, 2: true]))
-                    expect(sectionConfiguration.visibilityMap()[1]).to(equal([0: false]))
-                    
-                    _ = modelRowConfiguration.hideWhen({ (model) -> Bool in
-                        return true
-                    })
-                    expect(sectionConfiguration.visibilityMap()[0]).to(equal([0: false, 1: false, 2: false]))
-                    expect(sectionConfiguration.visibilityMap()[1]).to(equal([0: false]))
-                }
-            }
-            
             describe("its number of rows") {
                 it("is correct") {
                     expect(sectionConfiguration.numberOfRows()).to(equal(4))

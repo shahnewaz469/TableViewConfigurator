@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Dwifft
 
 public class RowConfiguration {
     
@@ -30,29 +31,27 @@ public class RowConfiguration {
         return self
     }
     
-    internal func numberOfRows(countHidden: Bool) -> Int { return 0 }
+    internal func numberOfRows() -> Int { return 0 }
     
-    internal func rowIsVisible(row: Int) -> Bool? { return true }
+    internal func saveSnapshot() { }
+    
+    internal func snapshotChangeSet() -> SnapshotChangeSet? { return nil }
     
     internal func cellFor(row: Int, inTableView tableView: UITableView) -> UITableViewCell? { return nil };
     
     internal func refreshCellFor(row: Int, withIndexPath indexPath: IndexPath, inTableView tableView: UITableView) { }
     
     internal func heightFor(row: Int) -> CGFloat? {
-        if row < numberOfRows(countHidden: false) {
-            return self.height
-        }
-        
-        return nil
+        return self.height
     }
     
     internal func estimatedHeightFor(row: Int) -> CGFloat? {
-        if row < numberOfRows(countHidden: false) {
-            return self.estimatedHeight
-        }
-        
-        return nil
+        return self.estimatedHeight
     }
     
-    internal func didSelect(row: Int) { };
+    internal func didSelect(row: Int) { }
+    
+    internal func canEdit(row: Int) -> Bool { return false }
+    
+    internal func commit(editingStyle: UITableViewCellEditingStyle, forRow row: Int) { }
 }

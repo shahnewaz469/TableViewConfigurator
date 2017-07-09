@@ -6,9 +6,9 @@
 //  Copyright © 2016 John Volk. All rights reserved.
 //
 
-import Foundation
+import TableViewConfigurator
 
-class Animal {
+class Animal: RowModel {
 
     let name: String
     let scientificName: String
