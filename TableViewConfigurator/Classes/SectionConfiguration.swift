@@ -201,7 +201,7 @@ public class SectionConfiguration {
         })
     }
     
-    internal func commit(editingStyle: UITableViewCellEditingStyle, forRow row: Int) {
+    internal func commit(editingStyle: UITableViewCell.EditingStyle, forRow row: Int) {
         performOperationFor(row: row, handler: { (rowConfiguration, localizedRow) -> Void in
             rowConfiguration.commit(editingStyle: editingStyle, forRow: localizedRow)
         })

@@ -92,10 +92,10 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
     }
     
     public func animate(changeSet: TableViewChangeSet,
-                                 insertRowAnimation: UITableViewRowAnimation = .automatic,
-                                 deleteRowAnimation: UITableViewRowAnimation = .automatic,
-                                 insertSectionAnimation: UITableViewRowAnimation = .automatic,
-                                 deleteSectionAnimation: UITableViewRowAnimation = .automatic) {
+                        insertRowAnimation: UITableView.RowAnimation = .automatic,
+                        deleteRowAnimation: UITableView.RowAnimation = .automatic,
+                        insertSectionAnimation: UITableView.RowAnimation = .automatic,
+                        deleteSectionAnimation: UITableView.RowAnimation = .automatic) {
         self.tableView.beginUpdates()
         self.tableView.insertRows(at: changeSet.rowInsertions, with: insertRowAnimation)
         self.tableView.deleteRows(at: changeSet.rowDeletions, with: deleteRowAnimation)
@@ -285,7 +285,7 @@ public class TableViewConfigurator: NSObject, UITableViewDataSource, UITableView
         fatalError("Provided tableView doesn't match configured table view.")
     }
     
-    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if tableView === self.tableView {
             return performOperationFor(section: indexPath.section, handler: { (sectionConfiguration) -> Void in
                 sectionConfiguration.commit(editingStyle: editingStyle, forRow: indexPath.row)

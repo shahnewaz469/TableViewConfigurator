@@ -129,7 +129,7 @@ class ModelRowConfigurationSpec: QuickSpec {
                 it("is invoked when selected") {
                     var selectionHandlerInvoked = false
                     
-                    rowConfiguration.selectionHandler({ (model) -> Void in
+                    rowConfiguration.selectionHandler({ (model, index) -> Void in
                         selectionHandlerInvoked = true
                     }).didSelect(row: 2)
                     

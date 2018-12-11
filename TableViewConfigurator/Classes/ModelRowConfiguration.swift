@@ -47,7 +47,7 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
     private var additionalConfig: ((_ cell: CellType, _ model: ModelType, _ index: Int) -> Void)?
     private var selectionHandler: ((_ model: ModelType, _ index: Int) -> Void)?
     private var canEditHandler: ((_ model: ModelType, _ index: Int) -> Bool)?
-    private var editHandler: ((_ editingStyle: UITableViewCellEditingStyle, _ model: ModelType, _ index: Int) -> Void)?
+    private var editHandler: ((_ editingStyle: UITableViewCell.EditingStyle, _ model: ModelType, _ index: Int) -> Void)?
     private var hideWhen: ((_ model: ModelType) -> Bool)?
     
     public init(models: [ModelType]) {
@@ -87,7 +87,7 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
         return self
     }
     
-    public func editHandler(_ editHandler: @escaping (_ editingStyle: UITableViewCellEditingStyle, _ model: ModelType, _ index: Int) -> Void) -> Self {
+    public func editHandler(_ editHandler: @escaping (_ editingStyle: UITableViewCell.EditingStyle, _ model: ModelType, _ index: Int) -> Void) -> Self {
         self.editHandler = editHandler
         return self
     }
@@ -210,7 +210,7 @@ public class ModelRowConfiguration<CellType, ModelType>: RowConfiguration
         return false
     }
     
-    override func commit(editingStyle: UITableViewCellEditingStyle, forRow row: Int) {
+    override func commit(editingStyle: UITableViewCell.EditingStyle, forRow row: Int) {
         if let model = selectModelFor(row: row) {
             self.editHandler?(editingStyle, model, originalIndexFor(row: row))
         }

@@ -76,7 +76,7 @@ public enum SectionedDiffStep<Section, Value>: CustomDebugStringConvertible {
 }
 
 /// Namespace for the `diff` and `apply` functions.
-public struct Dwifft {
+public enum Dwifft {
 
     /// Returns the sequence of `DiffStep`s required to transform one array into another.
     ///
@@ -91,7 +91,7 @@ public struct Dwifft {
             return lhs.enumerated().map(DiffStep.delete).reversed()
         }
 
-        let table = MemoizedSequenceComparison.buildTable(lhs, rhs, lhs.count, rhs.count)
+        let table = MemoizedSequenceComparison.buildTable(lhs, rhs)
         var result = diffInternal(table, lhs, rhs, lhs.count, rhs.count, ([], []))
         while case let .call(f) = result {
             result = f()
@@ -128,7 +128,7 @@ public struct Dwifft {
     ///   - lhs: a `SectionedValues`
     ///   - rhs: another, uh, `SectionedValues`
     /// - Returns: the series of transformations that, when applied to `lhs`, will yield `rhs`.
-    public static func diff<Section: Equatable, Value: Equatable>(lhs: SectionedValues<Section, Value>, rhs: SectionedValues<Section, Value>) -> [SectionedDiffStep<Section, Value>] {
+    public static func diff<Section, Value>(lhs: SectionedValues<Section, Value>, rhs: SectionedValues<Section, Value>) -> [SectionedDiffStep<Section, Value>] {
         if lhs.sections == rhs.sections {
             let allResults: [[SectionedDiffStep<Section, Value>]] = (0..<lhs.sections.count).map { i in
                 let lValues = lhs.sectionsAndValues[i].1
@@ -279,7 +279,8 @@ fileprivate enum Result<T>{
 }
 
 fileprivate struct MemoizedSequenceComparison<T: Equatable> {
-    static func buildTable(_ x: [T], _ y: [T], _ n: Int, _ m: Int) -> [[Int]] {
+    static func buildTable(_ x: [T], _ y: [T]) -> [[Int]] {
+        let n = x.count, m = y.count
         var table = Array(repeating: Array(repeating: 0, count: m + 1), count: n + 1)
         // using unsafe pointers lets us avoid swift array bounds-checking, which results in a considerable speed boost.
         table.withUnsafeMutableBufferPointer { unsafeTable in

@@ -146,7 +146,7 @@ class SectionConfigurationSpec: QuickSpec {
                     
                     beforeEach {
                         selectionHandlerInvoked = false
-                        _ = modelRowConfiguration.selectionHandler({ (model) -> Void in
+                        _ = modelRowConfiguration.selectionHandler({ (model, index) -> Void in
                             selectionHandlerInvoked = true
                         })
                     }

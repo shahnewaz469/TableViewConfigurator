@@ -15,7 +15,7 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell>: RowC
     private var additionalConfig: ((_ cell: CellType) -> Void)?
     private var selectionHandler: (() -> Void)?
     private var canEditHandler: (() -> Bool)?
-    private var editHandler: ((_ editingStyle: UITableViewCellEditingStyle) -> Void)?
+    private var editHandler: ((_ editingStyle: UITableViewCell.EditingStyle) -> Void)?
     private var hideWhen: (() -> Bool)?
     
     public override init() { }
@@ -35,7 +35,7 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell>: RowC
         return self
     }
     
-    public func editHandler(_ editHandler: @escaping (_ editingStyle: UITableViewCellEditingStyle) -> Void) -> Self {
+    public func editHandler(_ editHandler: @escaping (_ editingStyle: UITableViewCell.EditingStyle) -> Void) -> Self {
         self.editHandler = editHandler
         return self
     }
@@ -103,7 +103,7 @@ public class ConstantRowConfiguration<CellType: ConfigurableTableViewCell>: RowC
         return self.canEditHandler?() ?? false
     }
     
-    override func commit(editingStyle: UITableViewCellEditingStyle, forRow row: Int) {
+    override func commit(editingStyle: UITableViewCell.EditingStyle, forRow row: Int) {
         self.editHandler?(editingStyle)
     }
 }

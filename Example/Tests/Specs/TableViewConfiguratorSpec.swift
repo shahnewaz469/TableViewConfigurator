@@ -179,7 +179,7 @@ class TableViewConfiguratorSpec: QuickSpec {
                     constantRowSelected = false
                     modelRowSelected = false
                     _ = constantRowConfiguration.selectionHandler({ constantRowSelected = true })
-                    _ = modelRowConfiguration.selectionHandler({ (model) -> Void in
+                    _ = modelRowConfiguration.selectionHandler({ (model, index) -> Void in
                         modelRowSelected = true
                     })
                 }

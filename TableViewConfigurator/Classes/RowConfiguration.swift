@@ -53,5 +53,5 @@ public class RowConfiguration {
     
     internal func canEdit(row: Int) -> Bool { return false }
     
-    internal func commit(editingStyle: UITableViewCellEditingStyle, forRow row: Int) { }
+    internal func commit(editingStyle: UITableViewCell.EditingStyle, forRow row: Int) { }
 }
