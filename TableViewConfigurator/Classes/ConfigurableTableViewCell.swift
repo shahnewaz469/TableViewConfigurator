@@ -24,7 +24,7 @@ public protocol ModelConfigurableTableViewCell {
 
 public extension UITableViewCell {
     
-    public class func buildReuseIdentifier() -> String {
+    class func buildReuseIdentifier() -> String {
         return String(describing: self)
     }
     
