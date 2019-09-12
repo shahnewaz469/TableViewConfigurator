@@ -3,7 +3,7 @@ PODS:
   - Nimble (8.0.4)
   - Quick (2.1.0)
   - TableViewConfigurator (2.0.0):
-    - Dwifft
+    - Dwifft (~> 0.9)
 
 DEPENDENCIES:
   - Nimble (~> 8.0)
@@ -24,7 +24,7 @@ SPEC CHECKSUMS:
   Dwifft: 42912068ed2a8146077d1a1404df18625bd086e1
   Nimble: 18d5360282923225d62b09d781f63abc1a0111fc
   Quick: 4be43f6634acfa727dd106bdf3929ce125ffa79d
-  TableViewConfigurator: fd0ae7538a1fe2e1911fa3eaf3526bb91487a017
+  TableViewConfigurator: 6e59aa8a77276a106d4dc5d2fed485bd03ec191b
 
 PODFILE CHECKSUM: c34f34724285eb7c84830fc730f3583767046153
 
