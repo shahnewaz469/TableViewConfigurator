@@ -10,6 +10,7 @@
 #endif
 #endif
 
+#import "Dwifft.h"
 
 FOUNDATION_EXPORT double TableViewConfiguratorVersionNumber;
 FOUNDATION_EXPORT const unsigned char TableViewConfiguratorVersionString[];

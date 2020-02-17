@@ -16,10 +16,5 @@
     "ios": "8.0"
   },
   "requires_arc": true,
-  "source_files": "TableViewConfigurator/Classes/**/*",
-  "dependencies": {
-    "Dwifft": [
-      "~> 0.9"
-    ]
-  }
+  "source_files": "TableViewConfigurator/**/*"
 }
