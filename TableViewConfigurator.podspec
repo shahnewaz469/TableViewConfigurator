@@ -21,6 +21,6 @@ Pod::Spec.new do |s|
   s.source           = { :git => "https://github.com/johntvolk/TableViewConfigurator.git", :tag => s.version.to_s }
   s.platform     = :ios, '8.0'
   s.requires_arc = true
-  s.source_files = 'TableViewConfigurator/Classes/**/*'
-  s.dependency 'Dwifft', '~> 0.9'
+  s.source_files = 'TableViewConfigurator/**/*'
+#  s.dependency 'Dwifft', '~> 0.9'
 end

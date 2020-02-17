@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Dwifft
 
 public typealias TableViewChangeSet = (rowInsertions: [IndexPath], rowDeletions: [IndexPath], sectionInsertions: IndexSet, sectionDeletions: IndexSet)
 

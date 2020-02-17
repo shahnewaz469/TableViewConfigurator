@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Dwifft
 
 public class RowConfiguration {
     
